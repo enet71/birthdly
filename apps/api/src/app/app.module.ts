@@ -70,6 +70,7 @@ import { HealthModule } from './health/health.module';
         googleClientId: config.get('GOOGLE_CLIENT_ID', { infer: true }),
         googleClientSecret: config.get('GOOGLE_CLIENT_SECRET', { infer: true }),
         tokenEncryptionKey: config.get('GOOGLE_TOKEN_ENCRYPTION_KEY', { infer: true }),
+        eventIdTag: config.get('GOOGLE_CALENDAR_EVENT_TAG', { infer: true }),
       }),
     }),
     NotificationsModule.forRootAsync({

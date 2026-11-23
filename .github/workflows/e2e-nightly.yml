@@ -43,6 +43,7 @@ jobs:
       VAPID_PUBLIC_KEY: 'BNcCr1mIJ8JlZiRApyL5EC3V53R-zE7V88j-NAnTV0Lt99DOvQcVOt7CDcZiAPb5GXcM18Lk05cWuKV5ZxNSBxg'
       VAPID_PRIVATE_KEY: 'IxnVgDnpNpqdt4hIlN5ktIe6gy2lHJ-itSKeGxE0zH8'
       VAPID_SUBJECT: 'mailto:e2e@example.com'
+      GOOGLE_CALENDAR_EVENT_TAG: 'ci'
     steps:
       - uses: actions/checkout@v7
 

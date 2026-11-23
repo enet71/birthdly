@@ -17,6 +17,10 @@ export const envSchema = z.object({
   // Encrypts the saved Google Calendar refresh tokens (AES-256). Generate it with `openssl rand -hex 32`; changing it
   // makes every saved connection unusable, so users have to connect Google Calendar again.
   GOOGLE_TOKEN_ENCRYPTION_KEY: z.string().regex(/^[0-9a-f]{64}$/i, { message: 'Must be 64 hex characters: openssl rand -hex 32' }),
+  // Ends the ids of the Google Calendar events this installation creates, so installations sharing a Google account do
+  // not remove each other's events. Every installation needs its own tag. Production's is empty (set in
+  // deploy/compose.yml): its events were created before the tag existed, and any other value would recreate them all.
+  GOOGLE_CALENDAR_EVENT_TAG: z.string().regex(/^[0-9a-v]{0,8}$/, { message: 'Must be up to 8 characters from 0-9 and a-v' }),
   // The VAPID key pair that signs birthday push notifications, from `npm run push:vapid-keys`. The public key must equal
   // `vapidPublicKey` in the web app; a new pair makes every existing browser subscription stop working.
   VAPID_PUBLIC_KEY: z.string().regex(/^[A-Za-z0-9_-]{87}$/, { message: 'Must be the base64url public key from npm run push:vapid-keys' }),

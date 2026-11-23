@@ -58,11 +58,13 @@ describe('GoogleImportService with a real Postgres', () => {
     listBirthdayEvents: Mock;
     saveEventId: Mock<GoogleCalendarEventsService['saveEventId']>;
     syncBirthdayEvent: Mock<GoogleCalendarEventsService['syncBirthdayEvent']>;
+    isOwnEventId: Mock<GoogleCalendarEventsService['isOwnEventId']>;
   } = {
     reconcile: vi.fn(),
     listBirthdayEvents: vi.fn(),
     saveEventId: vi.fn(),
     syncBirthdayEvent: vi.fn(),
+    isOwnEventId: vi.fn(() => true),
   };
   const pushQueue: { birthdayChanged: Mock<GoogleCalendarPushQueue['birthdayChanged']> } = { birthdayChanged: vi.fn() };
 
@@ -302,6 +304,51 @@ describe('GoogleImportService with a real Postgres', () => {
       expect(connections.saveContactsSyncToken).not.toHaveBeenCalled();
       expect(connections.markSynced).not.toHaveBeenCalled();
       expect(connection.syncRunningUntil).toBe('-infinity');
+    });
+  });
+
+  describe('deleted birthday events', () => {
+    const EVENT_ID = `b${'1'.repeat(32)}abcdefgh`;
+
+    // A connected user whose birthday points to EVENT_ID, which Google lists as deleted after the birthday's last change.
+    async function arrangeDeletedEvent(): Promise<{ userId: string; birthdayId: string }> {
+      const userId = await createConnectedUser(null);
+      const birthdayId = await createBirthday(userId, 'Some Person', '1990-05-01');
+
+      await db.update(birthdays).set({ googleEventId: EVENT_ID }).where(eq(birthdays.id, birthdayId));
+      await db
+        .update(googleCalendarConnections)
+        .set({ deletionsCheckedAt: new Date().toISOString() })
+        .where(eq(googleCalendarConnections.userId, userId));
+      respondWithPages({ connections: [], nextSyncToken: 'next-token' });
+      connections.isConnected.mockResolvedValue(true);
+      events.listBirthdayEvents.mockResolvedValue([{ id: EVENT_ID, status: 'cancelled', updated: new Date(Date.now() + 60_000).toISOString() }]);
+      events.saveEventId.mockResolvedValue(true);
+      events.syncBirthdayEvent.mockResolvedValue(undefined);
+
+      return { userId, birthdayId };
+    }
+
+    it('deletes the birthday when the user deleted its own event in Google', async () => {
+      const { userId, birthdayId } = await arrangeDeletedEvent();
+
+      const summary = await service.runSync(userId, INCREMENTAL);
+
+      expect(summary).toEqual({ added: 0, updated: 0, deleted: 1 });
+      expect(await findBirthday(birthdayId)).toBeUndefined();
+    });
+
+    it('keeps the birthday and gives it a new event when the deleted event is not its own', async () => {
+      const { userId, birthdayId } = await arrangeDeletedEvent();
+      events.isOwnEventId.mockReturnValueOnce(false);
+
+      const summary = await service.runSync(userId, INCREMENTAL);
+
+      expect(summary).toEqual({ added: 0, updated: 0, deleted: 0 });
+      expect(events.isOwnEventId).toHaveBeenCalledWith(EVENT_ID);
+      expect(await findBirthday(birthdayId)).toMatchObject({ name: 'Some Person' });
+      expect(events.saveEventId).toHaveBeenCalledWith({ id: birthdayId, googleEventId: EVENT_ID }, null);
+      expect(events.syncBirthdayEvent).toHaveBeenCalledWith(userId, ACCESS_TOKEN, birthdayId);
     });
   });
 

@@ -327,8 +327,11 @@ export class GoogleImportService {
     // Without `updated`, the deletion may be as old as the start of the read.
     const isWhileConnected = isKnownTime ? eventUpdatedAt >= connectedAt : checkedAt - DELETION_LOOKBACK_MS >= connectedAt;
     const isGoogleLater = isKnownTime ? eventUpdatedAt > record.updatedAtMs : record.updatedAtMs <= checkedAt;
+    // An event without this installation's tag may have been removed as an orphan by the installation it looks like it
+    // belongs to, so its deletion is not the user's.
+    const isOwnEvent = this.events.isOwnEventId(event.id);
 
-    if (isWhileConnected && isGoogleLater && (await this.deleteBirthday(record.id, record.updatedAt))) {
+    if (isOwnEvent && isWhileConnected && isGoogleLater && (await this.deleteBirthday(record.id, record.updatedAt))) {
       summary.deleted++;
       return;
     }

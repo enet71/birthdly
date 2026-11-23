@@ -32,6 +32,15 @@ primary Google calendar, and the birthdays of the user's Google contacts come in
     minutes;
   - on "Sync now" (`manual`) and as the first sync after connecting: these read every contact and reconcile every
     event.
+- **Own events.** An event id is `b`, the birthday id, 8 random characters, and the installation's tag
+  (`eventIdTag`, from the required `GOOGLE_CALENDAR_EVENT_TAG`; empty in production, set in `deploy/compose.yml`, so
+  its events created before the tag existed stay its own; `dev` locally). Several installations with
+  their own databases, such as production and a local one, may share a Google account: each treats only events with
+  its own tag as its own, so its reconcile never removes another installation's events, which that installation would
+  then import as deletions of its birthdays. A deleted event without the tag is never imported as a deletion. A
+  birthday whose event lacks the tag gets a new event on its next push; the old one is only forgotten, because it may
+  belong to another installation (a copied database), and the installation it looks like it belongs to removes it as an
+  orphan.
 - **Disconnecting** revokes the access and drops the token; the birthdays stay. The user chooses in the app whether
   Birthdly's events in Google go too (`removeEvents`): then they are forgotten and deleted. Otherwise they stay in Google
   without updates and keep their ids, so connecting the same account again updates them instead of adding them twice;

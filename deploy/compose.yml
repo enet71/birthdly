@@ -15,6 +15,9 @@ services:
     env_file: .env
     environment:
       NODE_ENV: production
+      # Must stay empty: production's Google Calendar events were created before the tag existed, and any other value
+      # would give every birthday a new event and leave the old ones as duplicates. See libs/api/google-calendar.
+      GOOGLE_CALENDAR_EVENT_TAG: ''
       # Built from POSTGRES_PASSWORD, so .env needs no DATABASE_URL.
       DATABASE_URL: postgresql://birthdly:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is not set}@postgres:5432/birthdly
     depends_on:

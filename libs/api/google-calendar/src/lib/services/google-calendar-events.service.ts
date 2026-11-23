@@ -3,7 +3,8 @@ import { and, eq, inArray, isNotNull, isNull } from 'drizzle-orm';
 import { randomBytes } from 'node:crypto';
 import { birthdays, DATABASE, Database } from '@birthday/api-database';
 import { UNKNOWN_BIRTH_YEAR } from '../constants';
-import { BirthdayRecord, GoogleEvent } from '../types';
+import { MODULE_OPTIONS_TOKEN } from '../google-calendar.module-definition';
+import { BirthdayRecord, GoogleCalendarModuleOptions, GoogleEvent } from '../types';
 import { findBirthdayRecord, readBirthdayRecords } from './birthday-records';
 import { GoogleApiClient } from './google-api.client';
 import { GoogleConnectionsService } from './google-connections.service';
@@ -13,9 +14,6 @@ const BIRTHDAY_EVENTS_URL = 'https://www.googleapis.com/calendar/v3/calendars/pr
 const YEARLESS_START_YEAR = '2000';
 // All-day reminders count from the start of the day, so this is 9:00 the day before.
 const REMINDER_MINUTES = 15 * 60;
-// Birthdly's events: `b`, the 32 hex digits of the birthday id, then 8 random base32hex characters, because Google never
-// lets a deleted event id be used again.
-const EVENT_ID_PATTERN = /^b[0-9a-f]{32}[0-9a-v]{8}$/;
 const EVENT_ID_ALPHABET = '0123456789abcdefghijklmnopqrstuv';
 const PARALLEL_REQUESTS = 5;
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -23,11 +21,18 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 // Birthdly's birthdays as birthday events in the user's primary Google calendar.
 @Injectable()
 export class GoogleCalendarEventsService {
+  // This installation's events: `b`, the 32 hex digits of the birthday id, 8 random base32hex characters, because Google
+  // never lets a deleted event id be used again, then the installation's tag.
+  private readonly ownEventIdPattern: RegExp;
+
   constructor(
     @Inject(DATABASE) private readonly db: Database,
+    @Inject(MODULE_OPTIONS_TOKEN) private readonly options: GoogleCalendarModuleOptions,
     private readonly api: GoogleApiClient,
     private readonly connections: GoogleConnectionsService,
-  ) {}
+  ) {
+    this.ownEventIdPattern = new RegExp(`^b[0-9a-f]{32}[0-9a-v]{8}${options.eventIdTag}$`);
+  }
 
   // Brings one birthday's event in line with the database. A change only says which birthday changed: changes can
   // arrive out of order, so the current row decides between updating and deleting the event. A birthday linked to a
@@ -130,7 +135,7 @@ export class GoogleCalendarEventsService {
   }
 
   private pickOwnEventIds(events: GoogleEvent[]): string[] {
-    return events.filter((event) => !event.recurringEventId && EVENT_ID_PATTERN.test(event.id)).map((event) => event.id);
+    return events.filter((event) => !event.recurringEventId && this.isOwnEventId(event.id)).map((event) => event.id);
   }
 
   private async deleteEvent(accessToken: string, eventId: string): Promise<void> {
@@ -138,9 +143,16 @@ export class GoogleCalendarEventsService {
     await this.api.request(accessToken, 'DELETE', `${BIRTHDAY_EVENTS_URL}/${eventId}`, undefined, [404, 410]);
   }
 
-  // Updates the birthday's event, or creates one with a new id when it has none or Google deleted it.
+  // Whether this installation created the event: only its own events count as orphans or as deletions by the user.
+  public isOwnEventId(eventId: string): boolean {
+    return this.ownEventIdPattern.test(eventId);
+  }
+
+  // Updates the birthday's event, or creates one with a new id when it has none, Google deleted it, or its id lacks this
+  // installation's tag. Such an event, made before the tag existed or by another installation whose database this one
+  // was copied from, is only forgotten, never deleted: the installation it belongs to removes it as an orphan.
   private async upsertBirthdayEvent(accessToken: string, birthday: BirthdayRecord): Promise<void> {
-    if (birthday.googleEventId) {
+    if (birthday.googleEventId && this.isOwnEventId(birthday.googleEventId)) {
       const event = this.toGoogleEvent(birthday, birthday.googleEventId);
       const updated = await this.api.request(accessToken, 'PUT', `${BIRTHDAY_EVENTS_URL}/${birthday.googleEventId}`, event, [404, 410]);
 
@@ -197,7 +209,7 @@ export class GoogleCalendarEventsService {
   private createEventId(birthdayId: string): string {
     const suffix = Array.from(randomBytes(8), (byte) => EVENT_ID_ALPHABET[byte % EVENT_ID_ALPHABET.length]).join('');
 
-    return `b${birthdayId.replaceAll('-', '')}${suffix}`;
+    return `b${birthdayId.replaceAll('-', '')}${suffix}${this.options.eventIdTag}`;
   }
 
   // Runs the tasks a few at a time; one failing does not stop the others, but the whole run fails at the end.

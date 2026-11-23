@@ -3,6 +3,10 @@ export interface GoogleCalendarModuleOptions {
   googleClientSecret: string;
   // 64 hex characters (32 bytes); encrypts the saved Google refresh tokens.
   tokenEncryptionKey: string;
+  // Ends the ids of the events this installation creates (base32hex, up to 8 characters; empty in production). Several
+  // installations with their own databases, such as production and a local one, may share one Google account; each
+  // treats only events with its own tag as its own, so none removes the others' events as orphans.
+  eventIdTag: string;
 }
 
 // A birthday as the sync sees it.

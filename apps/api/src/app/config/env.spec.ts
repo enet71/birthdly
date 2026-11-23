@@ -11,6 +11,7 @@ describe('validateEnv', () => {
     VAPID_PUBLIC_KEY: 'B'.repeat(87),
     VAPID_PRIVATE_KEY: 'd'.repeat(43),
     VAPID_SUBJECT: 'mailto:test@example.com',
+    GOOGLE_CALENDAR_EVENT_TAG: 'test',
   };
   const required = { DATABASE_URL: databaseUrl, ...auth };
 
@@ -63,6 +64,18 @@ describe('validateEnv', () => {
       expect(validateEnv({ ...required, DATABASE_URL: url }).DATABASE_URL).toBe(url);
     },
   );
+
+  it('throws an error naming GOOGLE_CALENDAR_EVENT_TAG when it is missing', () => {
+    expect(() => validateEnv({ ...required, GOOGLE_CALENDAR_EVENT_TAG: undefined })).toThrow(/GOOGLE_CALENDAR_EVENT_TAG/);
+  });
+
+  it.each(['', 'dev', '0123abcv', 'v'])('accepts the GOOGLE_CALENDAR_EVENT_TAG "%s"', (tag: string) => {
+    expect(validateEnv({ ...required, GOOGLE_CALENDAR_EVENT_TAG: tag }).GOOGLE_CALENDAR_EVENT_TAG).toBe(tag);
+  });
+
+  it.each(['DEV', 'w', 'xyz', 'dev-1', '123456789'])('rejects the GOOGLE_CALENDAR_EVENT_TAG "%s"', (tag: string) => {
+    expect(() => validateEnv({ ...required, GOOGLE_CALENDAR_EVENT_TAG: tag })).toThrow(/GOOGLE_CALENDAR_EVENT_TAG/);
+  });
 
   it('rejects an unknown NODE_ENV', () => {
     expect(() => validateEnv({ ...required, NODE_ENV: 'staging' })).toThrow(/NODE_ENV/);
