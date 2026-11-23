@@ -23,17 +23,20 @@
     "people": "People",
     "celebrities": "Celebrities",
     "settings": "Settings",
+    "feedback": "Feedback",
     "addBirthday": "Add birthday"
   },
   "footer": {
     "tagline": "birthday calendar",
     "about": "About",
     "guides": "Guides",
+    "feedback": "Feedback",
     "privacy": "Privacy Policy",
     "terms": "Terms of Service"
   },
   "layout": {
     "mainNavigation": "Main navigation",
+    "secondaryNavigation": "More",
     "siteLinks": "Site links",
     "collapseMenu": "Collapse menu",
     "expandMenu": "Expand menu",
@@ -43,6 +46,9 @@
   "routes": {
     "adminImports": {
       "title": "Celebrity imports"
+    },
+    "adminFeedback": {
+      "title": "Feedback"
     },
     "calendar": {
       "title": "Calendar",
@@ -63,6 +69,12 @@
       "documentTitle": "About Birthdly: Features & FAQ",
       "heading": "Birthday calendar & reminders",
       "description": "Learn how Birthdly works: upcoming birthdays, notes and gift ideas, reminders and Google Calendar sync. Answers to common questions."
+    },
+    "feedback": {
+      "title": "Feedback",
+      "documentTitle": "Feedback · Birthdly",
+      "heading": "Feedback",
+      "description": "Report a bug, suggest an idea, or ask a question about Birthdly. We read every message."
     },
     "privacy": {
       "title": "Privacy Policy",
@@ -244,6 +256,10 @@
       "approved": "Added to your calendar: {{ name }}",
       "approveFailed": "Couldn't add the birthday",
       "rejectFailed": "Couldn't reject the request"
+    },
+    "feedback": {
+      "failed": "Couldn't send the message. Check your connection and try again.",
+      "tooMany": "Too many messages. Try again later."
     }
   },
   "people": {
@@ -479,6 +495,30 @@
     "guidesTitle": "Guides",
     "allGuides": "All guides",
     "legalTitle": "Legal"
+  },
+  "feedback": {
+    "label": "Feedback form",
+    "title": "Tell us what you think",
+    "text": "Found a bug or have an idea? Write to us, we read every message.",
+    "type": "Topic",
+    "types": {
+      "bug": "Bug",
+      "idea": "Idea",
+      "other": "Other"
+    },
+    "message": "Message",
+    "email": "Email",
+    "emailHint": "Optional. Leave it if you want a reply.",
+    "send": "Send",
+    "sentTitle": "Thank you!",
+    "sentText": "Your message has been sent. If you left an email, we may reply to it.",
+    "sendAnother": "Send another message",
+    "errors": {
+      "typeRequired": "Choose a topic",
+      "messageRequired": "Write a message",
+      "messageTooLong": "The message can be up to {{ max }} characters",
+      "emailInvalid": "Enter a valid email"
+    }
   },
   "guides": {
     "googleCalendarBirthdays": {

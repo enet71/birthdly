@@ -33,6 +33,8 @@ The web app signs in with Google Identity Services in the browser and hands the 
   cannot forge it, which blocks cross-site request forgery.
 - `AuthGuard` (global): every endpoint needs a session unless it is marked `@Public()`. `@CurrentUser()` gives a
   controller the signed-in `AuthUser` (`{ id, email, name }`); it throws on a `@Public()` endpoint.
+- `@OptionalAuth()` opens an endpoint to everyone but still resolves a valid session; `@OptionalCurrentUser()` gives the
+  `AuthUser` or null there.
 - `GET /api/me` returns the signed-in user.
 
 ```ts

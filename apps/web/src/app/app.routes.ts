@@ -59,6 +59,16 @@ export const appRoutes: Route[] = [
     },
     loadComponent: () => import('./pages/legal/terms/terms.component').then((m) => m.TermsComponent),
   },
+  {
+    path: 'feedback',
+    title: 'routes.feedback.title',
+    data: {
+      [APP_DOCUMENT_TITLE_DATA_KEY]: 'routes.feedback.documentTitle',
+      [APP_LAYOUT_HEADING_DATA_KEY]: 'routes.feedback.heading',
+      [APP_DESCRIPTION_DATA_KEY]: 'routes.feedback.description',
+    },
+    loadChildren: () => import('@birthday/web-feedback-feature-feedback').then((m) => m.FEEDBACK_ROUTES),
+  },
   { path: 'calendar', redirectTo: '' },
   {
     // Only for the admins listed in the API's `ADMIN_EMAILS`; everyone else sees "Page not found". Not in the menu; the
@@ -67,6 +77,13 @@ export const appRoutes: Route[] = [
     title: 'routes.adminImports.title',
     data: { [APP_NOINDEX_DATA_KEY]: true },
     loadChildren: () => import('@birthday/web-admin-feature-imports').then((m) => m.ADMIN_IMPORTS_ROUTES),
+  },
+  {
+    // Like `admin/imports`: only for the API's `ADMIN_EMAILS`, not in the menu, English only.
+    path: 'admin/feedback',
+    title: 'routes.adminFeedback.title',
+    data: { [APP_NOINDEX_DATA_KEY]: true },
+    loadChildren: () => import('@birthday/web-admin-feature-feedback').then((m) => m.ADMIN_FEEDBACK_ROUTES),
   },
   {
     // Indexed; the date pages are listed in `sitemap-born.xml`, and filtered URLs point to the date page as canonical.

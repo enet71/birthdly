@@ -1,5 +1,6 @@
 export const IS_PUBLIC_KEY = 'auth:isPublic';
 export const IS_ADMIN_ONLY_KEY = 'auth:isAdminOnly';
+export const IS_OPTIONAL_AUTH_KEY = 'auth:isOptionalAuth';
 
 // `__Host-` cookies must be Secure, have Path=/ and no Domain, so they reach only this exact origin.
 export const SESSION_COOKIE = '__Host-session';

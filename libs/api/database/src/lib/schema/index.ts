@@ -1,5 +1,6 @@
 export * from './birthdays';
 export * from './celebrities';
+export * from './feedback';
 export * from './google-calendar-connections';
 export * from './invite-links';
 export * from './invite-submissions';

@@ -45,6 +45,13 @@ export const APP_LAYOUT: AppLayoutConfig = {
       icon: 'settings',
     },
   ],
+  secondaryMenu: [
+    {
+      label: 'nav.feedback',
+      path: '/feedback',
+      icon: 'feedback',
+    },
+  ],
   primaryAction: {
     label: 'nav.addBirthday',
     icon: 'add',
@@ -57,6 +64,7 @@ export const APP_LAYOUT: AppLayoutConfig = {
     links: [
       { label: 'footer.about', path: '/about' },
       { label: 'footer.guides', path: '/guides' },
+      { label: 'footer.feedback', path: '/feedback' },
       { label: 'footer.privacy', path: '/privacy' },
       { label: 'footer.terms', path: '/terms' },
     ],

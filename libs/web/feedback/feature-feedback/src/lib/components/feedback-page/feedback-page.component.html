@@ -1,0 +1,55 @@
+<section class="feedback" [attr.aria-label]="'feedback.label' | transloco">
+  @if (isSent()) {
+    <div class="card card_message" role="status">
+      <mat-icon class="card__icon" aria-hidden="true">check_circle</mat-icon>
+      <h2 #cardTitle tabindex="-1" class="card__title">{{ 'feedback.sentTitle' | transloco }}</h2>
+      <p class="card__text">{{ 'feedback.sentText' | transloco }}</p>
+      <button matButton type="button" (click)="sendAnother()">{{ 'feedback.sendAnother' | transloco }}</button>
+    </div>
+  } @else {
+    <form class="card" novalidate (submit)="send($event)">
+      <h2 #cardTitle tabindex="-1" class="card__title">{{ 'feedback.title' | transloco }}</h2>
+      <p class="card__text">{{ 'feedback.text' | transloco }}</p>
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'feedback.type' | transloco }}</mat-label>
+        <mat-select [formField]="feedbackForm.type">
+          @for (type of types; track type) {
+            <mat-option [value]="type">
+              <mat-icon>{{ typeIcons[type] }}</mat-icon>
+              {{ 'feedback.types.' + type | transloco }}
+            </mat-option>
+          }
+        </mat-select>
+        @for (error of feedbackForm.type().errors(); track error.kind) {
+          <mat-error>{{ error.message ?? '' | transloco }}</mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'feedback.message' | transloco }}</mat-label>
+        <textarea matInput rows="6" [formField]="feedbackForm.message"></textarea>
+        <mat-hint align="end">{{ messageLength() }} / {{ messageMaxLength }}</mat-hint>
+        @for (error of feedbackForm.message().errors(); track error.kind) {
+          <mat-error>{{ error.message ?? '' | transloco: { max: messageMaxLength } }}</mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'feedback.email' | transloco }}</mat-label>
+        <mat-icon matPrefix>mail</mat-icon>
+        <input matInput type="email" autocomplete="email" [formField]="feedbackForm.email" />
+        <mat-hint>{{ 'feedback.emailHint' | transloco }}</mat-hint>
+        @for (error of feedbackForm.email().errors(); track error.kind) {
+          <mat-error>{{ error.message ?? '' | transloco }}</mat-error>
+        }
+      </mat-form-field>
+      <!-- A honeypot: hidden from people and screen readers, so only bots fill it in. -->
+      <div class="honeypot" aria-hidden="true">
+        <label for="feedback-website">Website</label>
+        <input id="feedback-website" type="text" tabindex="-1" autocomplete="off" [formField]="feedbackForm.website" />
+      </div>
+      <button class="card__submit" matButton="filled" type="submit" disabledInteractive [disabled]="isSending()">
+        <mat-icon>send</mat-icon>
+        {{ 'feedback.send' | transloco }}
+      </button>
+    </form>
+  }
+</section>

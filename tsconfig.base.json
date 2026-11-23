@@ -49,7 +49,11 @@
       "@birthday/web-admin-feature-imports": ["./libs/web/admin/feature-imports/src/index.ts"],
       "@birthday/api-invites": ["./libs/api/invites/src/index.ts"],
       "@birthday/web-invites-data-access": ["./libs/web/invites/data-access/src/index.ts"],
-      "@birthday/web-invites-feature-invite": ["./libs/web/invites/feature-invite/src/index.ts"]
+      "@birthday/web-invites-feature-invite": ["./libs/web/invites/feature-invite/src/index.ts"],
+      "@birthday/api-feedback": ["./libs/api/feedback/src/index.ts"],
+      "@birthday/web-feedback-data-access": ["./libs/web/feedback/data-access/src/index.ts"],
+      "@birthday/web-feedback-feature-feedback": ["./libs/web/feedback/feature-feedback/src/index.ts"],
+      "@birthday/web-admin-feature-feedback": ["./libs/web/admin/feature-feedback/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

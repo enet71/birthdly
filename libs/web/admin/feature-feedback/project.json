@@ -1,0 +1,11 @@
+{
+  "name": "web-admin-feature-feedback",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/web/admin/feature-feedback/src",
+  "prefix": "ui",
+  "projectType": "library",
+  "tags": ["platform:web", "type:feature"],
+  "targets": {
+    "typecheck": {}
+  }
+}

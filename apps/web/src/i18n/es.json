@@ -23,17 +23,20 @@
     "people": "Personas",
     "celebrities": "Famosos",
     "settings": "Ajustes",
+    "feedback": "Comentarios",
     "addBirthday": "Añadir cumpleaños"
   },
   "footer": {
     "tagline": "calendario de cumpleaños",
     "about": "Acerca de",
     "guides": "Guías",
+    "feedback": "Comentarios",
     "privacy": "Política de privacidad",
     "terms": "Términos del servicio"
   },
   "layout": {
     "mainNavigation": "Navegación principal",
+    "secondaryNavigation": "Más",
     "siteLinks": "Enlaces del sitio",
     "collapseMenu": "Contraer menú",
     "expandMenu": "Expandir menú",
@@ -43,6 +46,9 @@
   "routes": {
     "adminImports": {
       "title": "Celebrity imports"
+    },
+    "adminFeedback": {
+      "title": "Feedback"
     },
     "calendar": {
       "title": "Calendario",
@@ -63,6 +69,12 @@
       "documentTitle": "Acerca de Birthdly: funciones y preguntas frecuentes",
       "heading": "Calendario y recordatorios de cumpleaños",
       "description": "Descubre cómo funciona Birthdly: próximos cumpleaños, notas e ideas de regalo, recordatorios y sincronización con Google Calendar. Preguntas frecuentes."
+    },
+    "feedback": {
+      "title": "Comentarios",
+      "documentTitle": "Comentarios · Birthdly",
+      "heading": "Comentarios",
+      "description": "Informa de un error, sugiere una idea o haz una pregunta sobre Birthdly. Leemos todos los mensajes."
     },
     "privacy": {
       "title": "Política de privacidad",
@@ -244,6 +256,10 @@
       "approved": "Añadido a tu calendario: {{ name }}",
       "approveFailed": "No se pudo añadir el cumpleaños",
       "rejectFailed": "No se pudo rechazar la solicitud"
+    },
+    "feedback": {
+      "failed": "No se pudo enviar el mensaje. Comprueba la conexión e inténtalo de nuevo.",
+      "tooMany": "Demasiados mensajes. Inténtalo más tarde."
     }
   },
   "people": {
@@ -479,6 +495,30 @@
     "guidesTitle": "Guías",
     "allGuides": "Todas las guías",
     "legalTitle": "Legal"
+  },
+  "feedback": {
+    "label": "Formulario de comentarios",
+    "title": "Cuéntanos qué opinas",
+    "text": "¿Has encontrado un error o tienes una idea? Escríbenos, leemos todos los mensajes.",
+    "type": "Tema",
+    "types": {
+      "bug": "Error",
+      "idea": "Idea",
+      "other": "Otro"
+    },
+    "message": "Mensaje",
+    "email": "Correo electrónico",
+    "emailHint": "Opcional. Déjalo si quieres una respuesta.",
+    "send": "Enviar",
+    "sentTitle": "¡Gracias!",
+    "sentText": "Tu mensaje se ha enviado. Si dejaste un correo, puede que te respondamos.",
+    "sendAnother": "Enviar otro mensaje",
+    "errors": {
+      "typeRequired": "Elige un tema",
+      "messageRequired": "Escribe un mensaje",
+      "messageTooLong": "El mensaje puede tener hasta {{ max }} caracteres",
+      "emailInvalid": "Introduce un correo válido"
+    }
   },
   "guides": {
     "googleCalendarBirthdays": {

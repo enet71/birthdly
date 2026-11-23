@@ -42,6 +42,7 @@ const TABLES = [
   'birthdays',
   'celebrities',
   'celebrity_imports',
+  'feedback',
   'google_calendar_connections',
   'invite_links',
   'invite_submissions',

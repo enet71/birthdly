@@ -4,6 +4,7 @@ import { APP_FILTER } from '@nestjs/core';
 import { AuthModule } from '@birthday/api-auth';
 import { BirthdaysModule } from '@birthday/api-birthdays';
 import { CelebritiesModule } from '@birthday/api-celebrities';
+import { FeedbackModule } from '@birthday/api-feedback';
 import { GoogleCalendarModule } from '@birthday/api-google-calendar';
 import { InvitesModule } from '@birthday/api-invites';
 import { JobsModule } from '@birthday/api-jobs';
@@ -80,6 +81,7 @@ import { HealthModule } from './health/health.module';
       }),
     }),
     CelebritiesModule,
+    FeedbackModule,
     HealthModule,
     BirthdaysModule,
     InvitesModule,

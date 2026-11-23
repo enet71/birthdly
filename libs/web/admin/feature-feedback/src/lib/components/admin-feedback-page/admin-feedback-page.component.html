@@ -1,0 +1,59 @@
+@if (isNotFound()) {
+  <div class="state">
+    <mat-icon class="state__icon" aria-hidden="true">search_off</mat-icon>
+    <p class="state__text">Page not found</p>
+  </div>
+} @else if (hasLoadError()) {
+  <div class="state" role="alert">
+    <mat-icon class="state__icon" aria-hidden="true">cloud_off</mat-icon>
+    <p class="state__text">Could not load the feedback.</p>
+    <button matButton="outlined" type="button" disabledInteractive [disabled]="isRefreshing()" (click)="refresh()">Try again</button>
+  </div>
+} @else if (isLoading()) {
+  <div class="state">
+    <mat-progress-spinner mode="indeterminate" diameter="40" aria-label="Loading the feedback"></mat-progress-spinner>
+  </div>
+} @else if (feedback(); as feedback) {
+  <section class="feedback" [attr.aria-busy]="isRefreshing()">
+    <header class="toolbar">
+      <span class="toolbar__count">
+        @if (feedback.length >= listLimit) {
+          The newest {{ listLimit }} messages; older ones are not shown
+        } @else {
+          {{ feedback.length }} {{ feedback.length === 1 ? 'message' : 'messages' }}, newest first
+        }
+      </span>
+      <button matButton="tonal" type="button" disabledInteractive [disabled]="isRefreshing()" (click)="refresh()">
+        <mat-icon>refresh</mat-icon>
+        Refresh
+      </button>
+    </header>
+    @if (feedback.length) {
+      <ol class="messages">
+        @for (item of feedback; track item.id) {
+          <li class="message">
+            <div class="message__head">
+              <span class="type" [class]="'type--' + item.type">{{ typeLabels[item.type] }}</span>
+              <time class="message__muted" [attr.datetime]="item.createdAt">{{ item.createdAt | date: dateFormat }}</time>
+              <span class="message__muted">{{ item.locale }}</span>
+              @if (item.email; as email) {
+                <a class="message__email" [href]="'mailto:' + email">{{ email }}</a>
+              } @else {
+                <span class="message__muted">No email</span>
+              }
+            </div>
+            <p class="message__text">{{ item.message }}</p>
+            <dl class="meta">
+              <dt>User</dt>
+              <dd>{{ item.userId ?? 'Signed out' }}</dd>
+              <dt>User agent</dt>
+              <dd>{{ item.userAgent ?? '—' }}</dd>
+            </dl>
+          </li>
+        }
+      </ol>
+    } @else {
+      <p class="empty">No feedback yet.</p>
+    }
+  </section>
+}

@@ -41,6 +41,8 @@ export interface AppLayoutConfig {
   logo: AppLayoutLogo;
   logoSmall: AppLayoutLogo;
   menu: AppLayoutMenuItem[];
+  // Less frequent destinations, such as feedback; only the sidenav shows them, below the main menu.
+  secondaryMenu?: AppLayoutMenuItem[];
   primaryAction?: AppLayoutPrimaryAction;
   footer?: AppLayoutFooter;
 }

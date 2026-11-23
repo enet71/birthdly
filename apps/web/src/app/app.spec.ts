@@ -41,6 +41,8 @@ describe('App', () => {
     const compiled = fixture.nativeElement as HTMLElement;
 
     expect(compiled.querySelector('ui-app-layout')).toBeTruthy();
-    expect(compiled.querySelectorAll('ui-app-layout-sidenav a[mat-list-item]')).toHaveLength(APP_LAYOUT.menu.length);
+    expect(compiled.querySelectorAll('ui-app-layout-sidenav .items:not(.items_secondary) a[mat-list-item]')).toHaveLength(APP_LAYOUT.menu.length);
+    expect(compiled.querySelectorAll('ui-app-layout-sidenav .items_secondary a[mat-list-item]')).toHaveLength(APP_LAYOUT.secondaryMenu?.length ?? 0);
+    expect(compiled.querySelectorAll('ui-app-layout-bottom-nav a')).toHaveLength(APP_LAYOUT.menu.length);
   });
 });

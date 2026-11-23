@@ -23,17 +23,20 @@
     "people": "Personnes",
     "celebrities": "Célébrités",
     "settings": "Paramètres",
+    "feedback": "Avis",
     "addBirthday": "Ajouter un anniversaire"
   },
   "footer": {
     "tagline": "calendrier d'anniversaires",
     "about": "À propos",
     "guides": "Guides",
+    "feedback": "Avis",
     "privacy": "Politique de confidentialité",
     "terms": "Conditions d'utilisation"
   },
   "layout": {
     "mainNavigation": "Navigation principale",
+    "secondaryNavigation": "Plus",
     "siteLinks": "Liens du site",
     "collapseMenu": "Réduire le menu",
     "expandMenu": "Développer le menu",
@@ -43,6 +46,9 @@
   "routes": {
     "adminImports": {
       "title": "Celebrity imports"
+    },
+    "adminFeedback": {
+      "title": "Feedback"
     },
     "calendar": {
       "title": "Calendrier",
@@ -63,6 +69,12 @@
       "documentTitle": "À propos de Birthdly : fonctionnalités et FAQ",
       "heading": "Calendrier et rappels d'anniversaires",
       "description": "Découvrez comment fonctionne Birthdly : anniversaires à venir, notes et idées de cadeaux, rappels et synchronisation avec Google Agenda. Questions fréquentes."
+    },
+    "feedback": {
+      "title": "Avis",
+      "documentTitle": "Avis · Birthdly",
+      "heading": "Avis",
+      "description": "Signalez un bug, proposez une idée ou posez une question sur Birthdly. Nous lisons chaque message."
     },
     "privacy": {
       "title": "Politique de confidentialité",
@@ -244,6 +256,10 @@
       "approved": "Ajouté à votre calendrier : {{ name }}",
       "approveFailed": "Impossible d'ajouter l'anniversaire",
       "rejectFailed": "Impossible de refuser la demande"
+    },
+    "feedback": {
+      "failed": "Impossible d'envoyer le message. Vérifiez la connexion et réessayez.",
+      "tooMany": "Trop de messages. Réessayez plus tard."
     }
   },
   "people": {
@@ -479,6 +495,30 @@
     "guidesTitle": "Guides",
     "allGuides": "Tous les guides",
     "legalTitle": "Informations légales"
+  },
+  "feedback": {
+    "label": "Formulaire d'avis",
+    "title": "Dites-nous ce que vous en pensez",
+    "text": "Vous avez trouvé un bug ou vous avez une idée ? Écrivez-nous, nous lisons chaque message.",
+    "type": "Sujet",
+    "types": {
+      "bug": "Bug",
+      "idea": "Idée",
+      "other": "Autre"
+    },
+    "message": "Message",
+    "email": "E-mail",
+    "emailHint": "Facultatif. Indiquez-le si vous souhaitez une réponse.",
+    "send": "Envoyer",
+    "sentTitle": "Merci !",
+    "sentText": "Votre message a été envoyé. Si vous avez laissé un e-mail, nous pourrons vous répondre.",
+    "sendAnother": "Envoyer un autre message",
+    "errors": {
+      "typeRequired": "Choisissez un sujet",
+      "messageRequired": "Écrivez un message",
+      "messageTooLong": "Le message peut contenir jusqu'à {{ max }} caractères",
+      "emailInvalid": "Saisissez un e-mail valide"
+    }
   },
   "guides": {
     "googleCalendarBirthdays": {

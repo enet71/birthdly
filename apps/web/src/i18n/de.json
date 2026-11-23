@@ -23,17 +23,20 @@
     "people": "Personen",
     "celebrities": "Prominente",
     "settings": "Einstellungen",
+    "feedback": "Feedback",
     "addBirthday": "Geburtstag hinzufügen"
   },
   "footer": {
     "tagline": "Geburtstagskalender",
     "about": "Über uns",
     "guides": "Anleitungen",
+    "feedback": "Feedback",
     "privacy": "Datenschutzerklärung",
     "terms": "Nutzungsbedingungen"
   },
   "layout": {
     "mainNavigation": "Hauptnavigation",
+    "secondaryNavigation": "Mehr",
     "siteLinks": "Website-Links",
     "collapseMenu": "Menü einklappen",
     "expandMenu": "Menü ausklappen",
@@ -43,6 +46,9 @@
   "routes": {
     "adminImports": {
       "title": "Celebrity imports"
+    },
+    "adminFeedback": {
+      "title": "Feedback"
     },
     "calendar": {
       "title": "Kalender",
@@ -63,6 +69,12 @@
       "documentTitle": "Über Birthdly: Funktionen & FAQ",
       "heading": "Geburtstagskalender & Erinnerungen",
       "description": "So funktioniert Birthdly: kommende Geburtstage, Notizen und Geschenkideen, Erinnerungen und Synchronisierung mit Google Kalender. Antworten auf häufige Fragen."
+    },
+    "feedback": {
+      "title": "Feedback",
+      "documentTitle": "Feedback · Birthdly",
+      "heading": "Feedback",
+      "description": "Melde einen Fehler, schlage eine Idee vor oder stelle eine Frage zu Birthdly. Wir lesen jede Nachricht."
     },
     "privacy": {
       "title": "Datenschutzerklärung",
@@ -244,6 +256,10 @@
       "approved": "Zu deinem Kalender hinzugefügt: {{ name }}",
       "approveFailed": "Der Geburtstag konnte nicht hinzugefügt werden",
       "rejectFailed": "Die Anfrage konnte nicht abgelehnt werden"
+    },
+    "feedback": {
+      "failed": "Die Nachricht konnte nicht gesendet werden. Prüfe die Verbindung und versuche es erneut.",
+      "tooMany": "Zu viele Nachrichten. Versuche es später erneut."
     }
   },
   "people": {
@@ -479,6 +495,30 @@
     "guidesTitle": "Anleitungen",
     "allGuides": "Alle Anleitungen",
     "legalTitle": "Rechtliches"
+  },
+  "feedback": {
+    "label": "Feedback-Formular",
+    "title": "Sag uns deine Meinung",
+    "text": "Einen Fehler gefunden oder eine Idee? Schreib uns, wir lesen jede Nachricht.",
+    "type": "Thema",
+    "types": {
+      "bug": "Fehler",
+      "idea": "Idee",
+      "other": "Sonstiges"
+    },
+    "message": "Nachricht",
+    "email": "E-Mail",
+    "emailHint": "Optional. Gib sie an, wenn du eine Antwort möchtest.",
+    "send": "Senden",
+    "sentTitle": "Danke!",
+    "sentText": "Deine Nachricht wurde gesendet. Wenn du eine E-Mail angegeben hast, antworten wir vielleicht.",
+    "sendAnother": "Weitere Nachricht senden",
+    "errors": {
+      "typeRequired": "Wähle ein Thema",
+      "messageRequired": "Schreib eine Nachricht",
+      "messageTooLong": "Die Nachricht darf höchstens {{ max }} Zeichen lang sein",
+      "emailInvalid": "Gib eine gültige E-Mail-Adresse ein"
+    }
   },
   "guides": {
     "googleCalendarBirthdays": {

@@ -38,6 +38,26 @@
     </a>
   }
 </mat-nav-list>
+@if (config.secondaryMenu?.length) {
+  <mat-nav-list class="items items_secondary" [attr.aria-label]="'layout.secondaryNavigation' | transloco">
+    @for (item of config.secondaryMenu; track item.path) {
+      <a
+        class="item"
+        mat-list-item
+        routerLinkActive
+        [routerLinkActiveOptions]="{ exact: item.path === config.homePath }"
+        #link="routerLinkActive"
+        ariaCurrentWhenActive="page"
+        [routerLink]="item.path"
+        [activated]="link.isActive"
+        [attr.title]="item.label | transloco"
+      >
+        <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+        <span class="item-label" matListItemTitle>{{ item.label | transloco }}</span>
+      </a>
+    }
+  </mat-nav-list>
+}
 @if (config.primaryAction; as action) {
   <a class="primary-action" matButton="filled" [routerLink]="action.path" [queryParams]="action.queryParams" [attr.title]="action.label | transloco">
     <mat-icon>{{ action.icon }}</mat-icon>
