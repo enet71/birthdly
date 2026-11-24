@@ -4,14 +4,23 @@ import { TranslocoTestingModule } from '@jsverse/transloco';
 import { NEVER, of } from 'rxjs';
 import { AuthApiService, GoogleIdentityService } from '@birthday/web-auth-data-access';
 import { APP_LAYOUT_CONFIG } from '@birthday/web-layout-util';
+import { NotificationsService } from '@birthday/web-shared-util';
 import { App } from './app';
 import { APP_LAYOUT } from './app.constants';
 import en from '../i18n/en.json';
 
 describe('App', () => {
   beforeEach(async () => {
-    // jsdom has no `matchMedia`; the theme controller watches the system color scheme through it.
-    vi.stubGlobal('matchMedia', (query: string) => ({ matches: false, media: query, addEventListener: vi.fn(), removeEventListener: vi.fn() }));
+    // jsdom has no `matchMedia`; the theme controller watches the system color scheme through it, and the account button
+    // watches the screen width through the CDK `BreakpointObserver`, which uses the legacy `addListener`.
+    vi.stubGlobal('matchMedia', (query: string) => ({
+      matches: false,
+      media: query,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+    }));
 
     await TestBed.configureTestingModule({
       imports: [
@@ -21,12 +30,13 @@ describe('App', () => {
       providers: [
         provideRouter([]),
         { provide: APP_LAYOUT_CONFIG, useValue: APP_LAYOUT },
-        // The account button in the top bar reads the signed-in user; signed out, the app also prepares Google sign-in.
+        // The account menu in the top bar reads the signed-in user and can sign in or out; signed out, the app also prepares Google sign-in.
         {
           provide: AuthApiService,
           useValue: { userChanges: () => of(null), getGoogleSignInConfig: () => of({ clientId: 'client-id', nonce: 'nonce' }) },
         },
         { provide: GoogleIdentityService, useValue: { load: () => of(undefined), promptOneTap: () => NEVER } },
+        { provide: NotificationsService, useValue: {} },
       ],
     }).compileComponents();
   });

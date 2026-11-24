@@ -1,0 +1,7 @@
+@if (picture(); as picture) {
+  <img class="picture" alt="" referrerpolicy="no-referrer" [src]="picture" (error)="onPictureError(picture)" />
+} @else if (initial(); as initial) {
+  <span aria-hidden="true">{{ initial }}</span>
+} @else {
+  <mat-icon aria-hidden="true">person</mat-icon>
+}

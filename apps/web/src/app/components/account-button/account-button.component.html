@@ -1,9 +1,33 @@
-<a class="avatar" routerLink="/settings" [attr.aria-label]="label()" [attr.title]="label()">
-  @if (picture(); as picture) {
-    <img class="avatar__picture" alt="" referrerpolicy="no-referrer" [src]="picture" (error)="onPictureError(picture)" />
-  } @else if (initial(); as initial) {
-    <span aria-hidden="true">{{ initial }}</span>
-  } @else {
-    <mat-icon aria-hidden="true">person</mat-icon>
+@if (isCompact()) {
+  <button class="trigger" type="button" aria-haspopup="dialog" [attr.aria-label]="label()" [attr.title]="label()" (click)="openAccountSheet()">
+    <app-account-avatar />
+  </button>
+} @else {
+  <button class="trigger" type="button" [matMenuTriggerFor]="menu" [attr.aria-label]="label()" [attr.title]="label()">
+    <app-account-avatar />
+  </button>
+}
+<mat-menu #menu="matMenu" xPosition="before">
+  @if (view() === 'signedIn') {
+    <div class="menu-header">
+      <span class="menu-header__caption">{{ 'account.signedInAs' | transloco }}</span>
+      <strong class="menu-header__email" [attr.title]="email()">{{ email() }}</strong>
+    </div>
+    <mat-divider />
   }
-</a>
+  <a mat-menu-item routerLink="/settings">
+    <mat-icon>settings</mat-icon>
+    <span>{{ 'nav.settings' | transloco }}</span>
+  </a>
+  <a mat-menu-item routerLink="/feedback">
+    <mat-icon>feedback</mat-icon>
+    <span>{{ 'nav.feedback' | transloco }}</span>
+  </a>
+  @if (view() !== 'loading') {
+    <mat-divider />
+    <button mat-menu-item type="button" disabledInteractive [disabled]="isPending()" (click)="runAccountAction()">
+      <mat-icon>{{ view() === 'signedIn' ? 'logout' : 'login' }}</mat-icon>
+      <span>{{ (view() === 'signedIn' ? 'account.signOut' : 'account.signIn') | transloco }}</span>
+    </button>
+  }
+</mat-menu>

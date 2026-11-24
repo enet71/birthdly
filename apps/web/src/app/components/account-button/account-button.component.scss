@@ -1,35 +1,13 @@
-.avatar {
+.trigger {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.5rem;
-  height: 2.5rem;
-  border: 0.09375rem solid color-mix(in srgb, var(--mat-sys-primary) 40%, transparent);
+  padding: 0;
+  border: 0;
   border-radius: 50%;
-  background: linear-gradient(
-    135deg,
-    color-mix(in srgb, var(--mat-sys-primary) 15%, transparent),
-    color-mix(in srgb, var(--mat-sys-primary-container) 60%, transparent)
-  );
-  box-shadow: 0 0.0625rem 0.1875rem color-mix(in srgb, var(--mat-sys-shadow) 6%, transparent);
-  color: var(--mat-sys-primary);
+  background: none;
+  font: inherit;
   font-size: 1rem;
-  font-weight: 700;
-  overflow: hidden;
-  text-decoration: none;
+  cursor: pointer;
   transition: box-shadow 150ms ease;
-
-  &__picture {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  mat-icon {
-    width: 1.25rem;
-    height: 1.25rem;
-    font-size: 1.25rem;
-  }
 
   &:hover {
     box-shadow: 0 0.25rem 0.75rem color-mix(in srgb, var(--app-shadow-tint) 20%, transparent);
@@ -38,5 +16,26 @@
   &:focus-visible {
     outline: 0.125rem solid var(--mat-sys-primary);
     outline-offset: 0.125rem;
+  }
+}
+
+.menu-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  max-width: 17.5rem;
+  padding: 0.5rem 1rem 0.75rem;
+
+  &__caption {
+    color: var(--mat-sys-on-surface-variant);
+    font: var(--mat-sys-label-medium);
+  }
+
+  &__email {
+    overflow: hidden;
+    color: var(--mat-sys-on-surface);
+    font: var(--mat-sys-title-small);
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }

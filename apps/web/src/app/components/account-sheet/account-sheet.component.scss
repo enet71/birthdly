@@ -1,0 +1,65 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding-block: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-bottom));
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 0.5rem 1rem 1rem;
+  border-bottom: 0.0625rem solid var(--mat-sys-outline-variant);
+
+  &__avatar {
+    --account-avatar-size: 3rem;
+    font-size: 1.25rem;
+  }
+
+  &__text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 0.125rem;
+    min-width: 0;
+    margin: 0;
+  }
+
+  &__caption {
+    color: var(--mat-sys-on-surface-variant);
+    font: var(--mat-sys-label-medium);
+  }
+
+  &__email,
+  &__title {
+    overflow: hidden;
+    color: var(--mat-sys-on-surface);
+    font: var(--mat-sys-title-small);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__title {
+    font: var(--mat-sys-title-medium);
+  }
+
+  &__close {
+    flex: none;
+  }
+}
+
+.items {
+  flex: 1;
+  padding-inline: 0.5rem;
+  overflow-y: auto;
+}
+
+.footer {
+  padding: 1rem 1rem 0;
+  border-top: 0.0625rem solid var(--mat-sys-outline-variant);
+
+  &__action {
+    width: 100%;
+  }
+}

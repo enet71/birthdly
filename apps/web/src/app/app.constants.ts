@@ -39,13 +39,13 @@ export const APP_LAYOUT: AppLayoutConfig = {
       path: '/born',
       icon: 'star',
     },
+  ],
+  secondaryMenu: [
     {
       label: 'nav.settings',
       path: '/settings',
       icon: 'settings',
     },
-  ],
-  secondaryMenu: [
     {
       label: 'nav.feedback',
       path: '/feedback',
@@ -70,6 +70,9 @@ export const APP_LAYOUT: AppLayoutConfig = {
     ],
   },
 };
+
+// Narrow screens, where the layout shows the bottom navigation instead of the sidenav (`app-layout.component.scss`).
+export const APP_COMPACT_LAYOUT_QUERY = '(max-width: 48rem)';
 
 // Also used by the inline script in `index.html`.
 export const APP_DARK_SCHEME_QUERY = '(prefers-color-scheme: dark)';

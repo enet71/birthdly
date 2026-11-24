@@ -1,0 +1,32 @@
+<header class="header">
+  <app-account-avatar class="header__avatar" />
+  <p class="header__text">
+    @if (view() === 'signedIn') {
+      <span class="header__caption">{{ 'account.signedInAs' | transloco }}</span>
+      <strong class="header__email" [attr.title]="email()">{{ email() }}</strong>
+    } @else {
+      <strong class="header__title">{{ 'account.title' | transloco }}</strong>
+    }
+  </p>
+  <button class="header__close" matIconButton type="button" mat-dialog-close [aria-label]="'common.close' | transloco">
+    <mat-icon>close</mat-icon>
+  </button>
+</header>
+<mat-nav-list class="items">
+  <a mat-list-item routerLink="/settings" mat-dialog-close>
+    <mat-icon matListItemIcon>settings</mat-icon>
+    <span matListItemTitle>{{ 'nav.settings' | transloco }}</span>
+  </a>
+  <a mat-list-item routerLink="/feedback" mat-dialog-close>
+    <mat-icon matListItemIcon>feedback</mat-icon>
+    <span matListItemTitle>{{ 'nav.feedback' | transloco }}</span>
+  </a>
+</mat-nav-list>
+@if (view() !== 'loading') {
+  <div class="footer">
+    <button class="footer__action" matButton="outlined" type="button" disabledInteractive [disabled]="isPending()" (click)="runAccountAction()">
+      <mat-icon>{{ view() === 'signedIn' ? 'logout' : 'login' }}</mat-icon>
+      {{ (view() === 'signedIn' ? 'account.signOut' : 'account.signIn') | transloco }}
+    </button>
+  </div>
+}
