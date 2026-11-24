@@ -46,8 +46,8 @@ export const appConfig: ApplicationConfig = {
         baseUrl: '',
         // Pairs with `VAPID_PRIVATE_KEY` in the API's environment (`npm run push:vapid-keys`).
         vapidPublicKey: 'BA3CPp15GUmhVEZzfQ00PBKGvPCUIdR5OExo9RXEobdrHUf4kMoZNWqpGgOXK_PgJpt365Ph4WNdD7Xru__LdIo',
-        // Set after adding the website in the Umami dashboard (deploy/README.md, step 9).
-        umamiWebsiteId: null,
+        // The website in the Umami dashboard (stats.birthdly.com, deploy/README.md, step 9).
+        umamiWebsiteId: '41e9c8fb-6e32-4ff5-a291-ad02a7e34eb6',
         notificationErrorTime: 5000,
         notificationSuccessTime: 3000,
       },
