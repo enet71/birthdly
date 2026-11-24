@@ -10,6 +10,8 @@ export interface AuthUser {
   birthDate: string | null;
   // An ISO 8601 date and time.
   createdAt: string;
+  // May open the admin pages.
+  isAdmin: boolean;
 }
 
 // `unknown` until the stored session has been restored.

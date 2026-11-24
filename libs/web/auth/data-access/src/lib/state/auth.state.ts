@@ -26,6 +26,7 @@ export class AuthState extends State {
     return this.user() ? 'signedIn' : 'signedOut';
   });
   public readonly isAuthenticated: Signal<boolean> = computed(() => this.status() === 'signedIn');
+  public readonly isAdmin: Signal<boolean> = computed(() => this.user()?.isAdmin ?? false);
   // The name the user set, otherwise the name from Google; empty when neither is known.
   public readonly displayName: Signal<string> = computed(() => this.user()?.displayName ?? this.user()?.name ?? '');
 

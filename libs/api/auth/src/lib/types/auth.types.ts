@@ -1,8 +1,8 @@
 import type { Request } from 'express';
 import type { UserDto } from '@birthday/shared-models';
 
-// The signed-in user of a request.
-export type AuthUser = UserDto;
+// The signed-in user of a request; `isAdmin` is added only to the `/me` answers.
+export type AuthUser = Omit<UserDto, 'isAdmin'>;
 
 export interface AuthModuleOptions {
   googleClientId: string;

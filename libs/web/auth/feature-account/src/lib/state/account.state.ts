@@ -18,6 +18,7 @@ export class AccountState extends State {
   });
   public readonly email: Signal<string> = computed(() => this.authState.user()?.email ?? '');
   public readonly name: Signal<string> = computed(() => this.authState.displayName());
+  public readonly isAdmin: Signal<boolean> = computed(() => this.view() === 'signedIn' && this.authState.isAdmin());
 
   public override resetState(): void {
     this.isPending.set(false);

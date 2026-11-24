@@ -118,4 +118,24 @@
       </div>
     </dl>
   </section>
+
+  @if (isAdmin()) {
+    <!-- Only admins see it; like the admin pages themselves, English only. -->
+    <section class="panel" aria-labelledby="profile-admin-heading">
+      <h2 class="panel__heading" id="profile-admin-heading">
+        <mat-icon aria-hidden="true">admin_panel_settings</mat-icon>
+        Admin
+      </h2>
+      <nav class="admin-links" aria-labelledby="profile-admin-heading">
+        <a matButton="tonal" routerLink="/admin/imports">
+          <mat-icon>upload_file</mat-icon>
+          Imports
+        </a>
+        <a matButton="tonal" routerLink="/admin/feedback">
+          <mat-icon>feedback</mat-icon>
+          Feedback
+        </a>
+      </nav>
+    </section>
+  }
 }

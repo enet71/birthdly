@@ -46,6 +46,10 @@ export class ProfileComponent {
     return this.accountState.email;
   }
 
+  protected get isAdmin(): Signal<boolean> {
+    return this.accountState.isAdmin;
+  }
+
   protected get isPending(): Signal<boolean> {
     return this.accountState.isPending;
   }

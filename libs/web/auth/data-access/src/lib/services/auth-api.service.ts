@@ -92,6 +92,7 @@ function toAuthUser(user: UserDto): AuthUser {
     picture: user.picture,
     birthDate: user.birthDate,
     createdAt: user.createdAt,
+    isAdmin: user.isAdmin,
   };
 }
 

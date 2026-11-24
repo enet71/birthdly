@@ -3,11 +3,12 @@ import { APP_GUARD } from '@nestjs/core';
 import { ConfigurableModuleClass } from './auth.module-definition';
 import { AuthController, MeController } from './controllers';
 import { AdminGuard, AuthGuard, OriginGuard } from './guards';
-import { AuthUsersService, GoogleSignInService, SessionsService, SignInNonceSealer } from './services';
+import { AdminEmailsService, AuthUsersService, GoogleSignInService, SessionsService, SignInNonceSealer } from './services';
 
 @Module({
   controllers: [AuthController, MeController],
   providers: [
+    AdminEmailsService,
     GoogleSignInService,
     SignInNonceSealer,
     SessionsService,

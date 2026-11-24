@@ -18,6 +18,7 @@ const USER_DTO: UserDto = {
   picture: null,
   birthDate: null,
   createdAt: '2026-01-01T00:00:00.000Z',
+  isAdmin: false,
 };
 const USER: AuthUser = { ...USER_DTO };
 

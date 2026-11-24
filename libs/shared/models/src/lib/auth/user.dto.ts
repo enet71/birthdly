@@ -12,4 +12,6 @@ export interface UserDto {
   birthDate: string | null;
   // When the account was created, an ISO 8601 date and time.
   createdAt: string;
+  // The user is listed in the API's `ADMIN_EMAILS` and may open the admin pages.
+  isAdmin: boolean;
 }
