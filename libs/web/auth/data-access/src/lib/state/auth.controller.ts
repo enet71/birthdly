@@ -23,7 +23,7 @@ import {
 import { GoogleSignInConfigDto, UpdateProfileRequest } from '@birthday/shared-models';
 import { StateController } from '@birthday/web-shared-data-access';
 import { AppTranslateService } from '@birthday/web-shared-i18n';
-import { NotificationsService } from '@birthday/web-shared-util';
+import { AnalyticsService, NotificationsService } from '@birthday/web-shared-util';
 import { GoogleConsentDeniedError } from '../errors';
 import { AuthApiService, GoogleIdentityService } from '../services';
 import { AuthUser, GoogleCodeRequestOptions } from '../types';
@@ -32,6 +32,8 @@ import { AuthState } from './auth.state';
 // Shorter than the API's 10-minute nonce cookie: asking again keeps the same nonce valid while One Tap stays open.
 const NONCE_REFRESH_MS = 5 * 60 * 1000;
 const SIGN_IN_SCOPES = 'openid email profile';
+// A sign-in this soon after the account was created is the sign-up.
+const NEW_ACCOUNT_MAX_AGE_MS = 5 * 60 * 1000;
 
 // `provideAuth` creates it with the app, so One Tap is offered on every page.
 @Injectable({ providedIn: 'root' })
@@ -41,6 +43,7 @@ export class AuthController extends StateController {
   private readonly googleIdentity: GoogleIdentityService = inject(GoogleIdentityService);
   private readonly notifications: NotificationsService = inject(NotificationsService);
   private readonly translator: AppTranslateService = inject(AppTranslateService);
+  private readonly analytics: AnalyticsService = inject(AnalyticsService);
   // The loaded config, `null` when it failed, `undefined` while the first load runs.
   private readonly settledGoogleSignInConfig: Observable<GoogleSignInConfigDto | null | undefined> = toObservable(
     computed(() => this.authState.googleSignInConfig() ?? (this.authState.googleSignInResource.isLoading() ? undefined : null)),
@@ -74,7 +77,9 @@ export class AuthController extends StateController {
 
     this.requestGoogleCode({ scope: SIGN_IN_SCOPES })
       .pipe(
-        exhaustMap((code: string) => this.authApi.signInWithGoogleCode(code).pipe(tap(() => this.recoverUser()))),
+        exhaustMap((code: string) =>
+          this.authApi.signInWithGoogleCode(code).pipe(tap((user: AuthUser | null) => this.completeSignIn('popup', user))),
+        ),
         // Denying the consent cancels the sign-in like closing the popup.
         catchError((error: unknown) => (error instanceof GoogleConsentDeniedError ? EMPTY : this.reportSignInFailed())),
         finalize(() => done.complete()),
@@ -125,7 +130,7 @@ export class AuthController extends StateController {
       switchMap((config: GoogleSignInConfigDto) => this.googleIdentity.promptOneTap(config).pipe(take(1))),
       exhaustMap((credential: string) =>
         this.authApi.signInWithGoogleCredential(credential).pipe(
-          tap(() => this.recoverUser()),
+          tap((user: AuthUser | null) => this.completeSignIn('one_tap', user)),
           switchMap(() => NEVER),
           catchError(() => this.reportSignInFailed()),
         ),
@@ -150,6 +155,11 @@ export class AuthController extends StateController {
         return config ? of(config) : EMPTY;
       }),
     );
+  }
+
+  private completeSignIn(method: 'popup' | 'one_tap', user: AuthUser | null): void {
+    this.recoverUser();
+    this.analytics.track('sign_in', { method, new_account: !!user && Date.now() - Date.parse(user.createdAt) < NEW_ACCOUNT_MAX_AGE_MS });
   }
 
   // The API pushes the signed-in user into the user stream; a stream that failed on the restore has ended and must load

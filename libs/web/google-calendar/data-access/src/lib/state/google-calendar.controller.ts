@@ -4,7 +4,7 @@ import { catchError, EMPTY, exhaustMap, finalize, map, Observable, Subject, tap 
 import { GOOGLE_CALENDAR_SCOPES } from '@birthday/shared-models';
 import { AuthController, AuthState, GoogleConsentDeniedError } from '@birthday/web-auth-data-access';
 import { StateController } from '@birthday/web-shared-data-access';
-import { NotificationsService } from '@birthday/web-shared-util';
+import { AnalyticsService, NotificationsService } from '@birthday/web-shared-util';
 import { GoogleCalendarApiService } from '../services';
 import { GoogleCalendarConnectResult, GoogleCalendarStatus, GoogleCalendarSyncResult } from '../types';
 import { GoogleCalendarState } from './google-calendar.state';
@@ -18,6 +18,7 @@ export class GoogleCalendarController extends StateController {
   private readonly authState: AuthState = inject(AuthState);
   private readonly notifications: NotificationsService = inject(NotificationsService);
   private readonly translator: AppTranslateService = inject(AppTranslateService);
+  private readonly analytics: AnalyticsService = inject(AnalyticsService);
 
   constructor() {
     super();
@@ -48,6 +49,7 @@ export class GoogleCalendarController extends StateController {
           if (result === 'connected') {
             this.notifications.createSuccessNotification(this.translator.translate('notifications.googleCalendar.connected'));
             this.setStatus('connected');
+            this.analytics.track('google_calendar_connected');
           } else {
             this.reportConnectDenied();
           }
@@ -145,7 +147,10 @@ export class GoogleCalendarController extends StateController {
 
   public disconnect(removeEvents: boolean): Observable<void> {
     return this.googleCalendarApi.disconnect(removeEvents).pipe(
-      tap(() => this.setStatus('disconnected')),
+      tap(() => {
+        this.setStatus('disconnected');
+        this.analytics.track('google_calendar_disconnected', { remove_events: removeEvents });
+      }),
       catchError(() => {
         this.notifications.createErrorNotification(this.translator.translate('notifications.googleCalendar.disconnectFailed'));
         return EMPTY;

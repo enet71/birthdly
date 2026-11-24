@@ -6,7 +6,7 @@ import { FeedbackType } from '@birthday/shared-models';
 import { FeedbackApiService } from '@birthday/web-feedback-data-access';
 import { injectState, ReadonlyState, StateController } from '@birthday/web-shared-data-access';
 import { AppTranslateService, LocaleState } from '@birthday/web-shared-i18n';
-import { NotificationsService } from '@birthday/web-shared-util';
+import { AnalyticsService, NotificationsService } from '@birthday/web-shared-util';
 import { FeedbackFormModel } from '../types';
 import { FeedbackState } from './feedback.state';
 
@@ -17,6 +17,7 @@ export class FeedbackController extends StateController {
   private readonly feedbackApi: FeedbackApiService = inject(FeedbackApiService);
   private readonly notifications: NotificationsService = inject(NotificationsService);
   private readonly translator: AppTranslateService = inject(AppTranslateService);
+  private readonly analytics: AnalyticsService = inject(AnalyticsService);
 
   // The form validates the type before calling this. A filled honeypot is sent as is: the API drops it and answers
   // like for a real message. A failed send keeps the form as it was, so the sender can try again.
@@ -25,17 +26,22 @@ export class FeedbackController extends StateController {
       return;
     }
 
+    const feedbackType: FeedbackType = type as FeedbackType;
+
     this.feedbackState.isSending.set(true);
     this.feedbackApi
       .send({
-        type: type as FeedbackType,
+        type: feedbackType,
         message: message.trim(),
         email: email.trim() || null,
         locale: this.localeState.locale(),
         ...(website && { website }),
       })
       .pipe(
-        tap(() => this.feedbackState.isSent.set(true)),
+        tap(() => {
+          this.feedbackState.isSent.set(true);
+          this.analytics.track('feedback_sent', { type: feedbackType });
+        }),
         catchError((error: unknown) => {
           this.notifications.createErrorNotification(this.translator.translate(getErrorKey(error)));
           return EMPTY;

@@ -1,3 +1,4 @@
+export * from './analytics.service';
 export * from './audio.service';
 export * from './browser-storage.service';
 export * from './notifications.service';

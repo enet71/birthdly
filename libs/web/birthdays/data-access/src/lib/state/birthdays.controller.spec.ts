@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { AuthApiService } from '@birthday/web-auth-data-access';
 import { AppTranslateService } from '@birthday/web-shared-i18n';
-import { NotificationsService } from '@birthday/web-shared-util';
+import { AnalyticsService, NotificationsService } from '@birthday/web-shared-util';
 import { Birthday, UpcomingBirthday } from '@birthday/web-birthdays-util';
 import { BirthdaysDataService, BirthdaysApiService, BirthdaysLocalStorageService } from '../services';
 import { BirthdayInput } from '../types';
@@ -36,6 +36,7 @@ describe('BirthdaysController', () => {
           provide: NotificationsService,
           useValue: { createErrorNotification: vi.fn() },
         },
+        { provide: AnalyticsService, useValue: { track: vi.fn() } },
         // Error messages are translated; the tests check the workflow, not the texts.
         {
           provide: AppTranslateService,

@@ -4,7 +4,7 @@ import { TranslocoTestingModule } from '@jsverse/transloco';
 import { NEVER, of } from 'rxjs';
 import { AuthApiService, GoogleIdentityService } from '@birthday/web-auth-data-access';
 import { APP_LAYOUT_CONFIG } from '@birthday/web-layout-util';
-import { NotificationsService } from '@birthday/web-shared-util';
+import { AnalyticsService, NotificationsService } from '@birthday/web-shared-util';
 import { App } from './app';
 import { APP_LAYOUT } from './app.constants';
 import en from '../i18n/en.json';
@@ -37,6 +37,7 @@ describe('App', () => {
         },
         { provide: GoogleIdentityService, useValue: { load: () => of(undefined), promptOneTap: () => NEVER } },
         { provide: NotificationsService, useValue: {} },
+        { provide: AnalyticsService, useValue: { track: vi.fn() } },
       ],
     }).compileComponents();
   });

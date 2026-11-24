@@ -6,6 +6,7 @@ import { PublicInviteDto } from '@birthday/shared-models';
 import { toBirthDate } from '@birthday/web-birthdays-util';
 import { InvitesApiService } from '@birthday/web-invites-data-access';
 import { StateController } from '@birthday/web-shared-data-access';
+import { AnalyticsService } from '@birthday/web-shared-util';
 import { INVITE_ANY_LEAP_YEAR } from '../constants';
 import { InviteFormModel, InviteLoadResult, InviteSubmitError } from '../types';
 import { InviteState } from './invite.state';
@@ -14,6 +15,7 @@ import { InviteState } from './invite.state';
 export class InviteController extends StateController {
   private readonly inviteState: InviteState = inject(InviteState);
   private readonly invitesApi: InvitesApiService = inject(InvitesApiService);
+  private readonly analytics: AnalyticsService = inject(AnalyticsService);
   // Only on the server.
   private readonly responseInit: ResponseInit | null = inject(RESPONSE_INIT, { optional: true });
 
@@ -73,6 +75,9 @@ export class InviteController extends StateController {
       .subscribe((submitError: InviteSubmitError | null) => {
         this.inviteState.submitError.set(submitError);
         this.inviteState.isSent.set(!submitError && this.inviteState.loadResult()?.status === 'ready');
+        if (this.inviteState.isSent()) {
+          this.analytics.track('invite_submitted');
+        }
       });
   }
 

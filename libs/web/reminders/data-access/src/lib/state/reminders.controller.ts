@@ -3,7 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, EMPTY, map, Observable, Subject, switchMap, tap } from 'rxjs';
 import { injectState, ReadonlyState, StateController } from '@birthday/web-shared-data-access';
 import { AppLocale, AppTranslateService, LocaleState } from '@birthday/web-shared-i18n';
-import { Environment, ENVIRONMENT_TOKEN, NotificationsService } from '@birthday/web-shared-util';
+import { AnalyticsService, Environment, ENVIRONMENT_TOKEN, NotificationsService } from '@birthday/web-shared-util';
 import { DevicePushService, RemindersApiService } from '../services';
 import { DevicePushSubscription, ReminderSettings } from '../types';
 import { RemindersState } from './reminders.state';
@@ -16,6 +16,7 @@ export class RemindersController extends StateController {
   private readonly environment: Environment = inject(ENVIRONMENT_TOKEN);
   private readonly notifications: NotificationsService = inject(NotificationsService);
   private readonly translator: AppTranslateService = inject(AppTranslateService);
+  private readonly analytics: AnalyticsService = inject(AnalyticsService);
   private readonly localeState: ReadonlyState<LocaleState> = injectState(LocaleState);
   private readonly localeSaves: Subject<AppLocale> = new Subject<AppLocale>();
 
@@ -87,6 +88,7 @@ export class RemindersController extends StateController {
             this.setSettings(settings);
             this.setDeviceSubscription(subscription);
             this.notifications.createSuccessNotification(this.translator.translate('notifications.reminders.turnedOn'));
+            this.analytics.track('push_reminders_enabled');
           }),
           catchError(() => {
             this.notifications.createErrorNotification(this.translator.translate('notifications.reminders.turnOnFailed'));
@@ -110,6 +112,7 @@ export class RemindersController extends StateController {
       tap(() => {
         this.setDeviceSubscription(null);
         this.notifications.createSuccessNotification(this.translator.translate('notifications.reminders.turnedOff'));
+        this.analytics.track('push_reminders_disabled');
       }),
       catchError(() => {
         this.notifications.createErrorNotification(this.translator.translate('notifications.reminders.turnOffFailed'));

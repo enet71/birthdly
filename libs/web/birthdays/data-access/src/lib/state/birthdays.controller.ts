@@ -4,7 +4,7 @@ import { catchError, concatMap, EMPTY, filter, from, map, Observable, of, switch
 import { BirthdayDto, CreateBirthdayRequest } from '@birthday/shared-models';
 import { AuthState } from '@birthday/web-auth-data-access';
 import { injectState, ReadonlyState, StateController } from '@birthday/web-shared-data-access';
-import { NotificationsService } from '@birthday/web-shared-util';
+import { AnalyticsService, NotificationsService } from '@birthday/web-shared-util';
 import { Birthday, toBirthDate } from '@birthday/web-birthdays-util';
 import { BirthdaysDataService, BirthdaysApiService, BirthdaysLocalStorageService } from '../services';
 import { BirthdayInput } from '../types';
@@ -20,6 +20,7 @@ export class BirthdaysController extends StateController {
   private readonly birthdaysApi: BirthdaysApiService = inject(BirthdaysApiService);
   private readonly notifications: NotificationsService = inject(NotificationsService);
   private readonly translator: AppTranslateService = inject(AppTranslateService);
+  private readonly analytics: AnalyticsService = inject(AnalyticsService);
   private readonly isListLoading$: Observable<boolean> = toObservable(this.birthdaysState.birthdaysResource.isLoading);
 
   constructor() {
@@ -57,7 +58,10 @@ export class BirthdaysController extends StateController {
   // The methods below complete without emitting when the change could not be saved.
   public addBirthday(input: BirthdayInput): Observable<Birthday> {
     return this.birthdaysData.create(this.toRequest(input)).pipe(
-      tap((birthday: Birthday) => this.updateBirthdays((birthdays: Birthday[]) => [...birthdays, birthday])),
+      tap((birthday: Birthday) => {
+        this.updateBirthdays((birthdays: Birthday[]) => [...birthdays, birthday]);
+        this.analytics.track('birthday_added', { signed_in: this.authState.isAuthenticated() });
+      }),
       catchError(() => {
         this.notifications.createErrorNotification(this.translator.translate('notifications.birthdays.saveFailed'));
         return EMPTY;
@@ -81,7 +85,10 @@ export class BirthdaysController extends StateController {
     // A `DELETE` response may complete without emitting a value.
     return this.birthdaysData.delete(id).pipe(
       tap({
-        complete: () => this.updateBirthdays((birthdays: Birthday[]) => birthdays.filter((birthday: Birthday) => birthday.id !== id)),
+        complete: () => {
+          this.updateBirthdays((birthdays: Birthday[]) => birthdays.filter((birthday: Birthday) => birthday.id !== id));
+          this.analytics.track('birthday_deleted');
+        },
       }),
       catchError(() => {
         this.notifications.createErrorNotification(this.translator.translate('notifications.birthdays.deleteFailed'));

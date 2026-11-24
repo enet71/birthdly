@@ -30,7 +30,22 @@ birthdly.com, www.birthdly.com {
 		import proxy api:3000
 	}
 
+	# Only Umami's tracker script and collect endpoint, on the site's own origin so fewer ad blockers stop them. The
+	# tracker sends events next to where its script came from, /m/e.
+	@analytics path /m/m.js /m/e
+	handle @analytics {
+		uri strip_prefix /m
+		import proxy umami:3000
+	}
+
 	handle {
 		import proxy web:4000
 	}
+}
+
+# The Umami dashboard; it has its own sign-in.
+stats.birthdly.com {
+	import site
+
+	import proxy umami:3000
 }

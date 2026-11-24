@@ -76,6 +76,63 @@ services:
       start_interval: 2s
     logging: *logging
 
+  # Creates Umami's role and database in the stack's Postgres if they are missing, and sets the role's password from
+  # .env, then exits. Runs on every deployment. The app's database is closed to every role but its owner, so a
+  # compromised Umami cannot reach it.
+  umami-db:
+    image: postgres:17-alpine
+    environment:
+      PGHOST: postgres
+      PGUSER: birthdly
+      PGDATABASE: birthdly
+      PGPASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is not set}
+      UMAMI_DB_PASSWORD: ${UMAMI_DB_PASSWORD:?UMAMI_DB_PASSWORD is not set}
+    entrypoint: ['sh', '-c']
+    command:
+      - |
+        psql -q -v ON_ERROR_STOP=1 -v password="$$UMAMI_DB_PASSWORD" <<'SQL'
+        SELECT 'CREATE ROLE umami LOGIN' WHERE NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'umami') \gexec
+        ALTER ROLE umami PASSWORD :'password';
+        SELECT 'CREATE DATABASE umami OWNER umami' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'umami') \gexec
+        REVOKE CONNECT ON DATABASE birthdly FROM PUBLIC;
+        SQL
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: 'no'
+    logging: *logging
+
+  # Self-hosted web analytics. The dashboard is on stats.birthdly.com; birthdly.com serves only the tracker script and
+  # the collect endpoint under /m/ (see Caddyfile).
+  umami:
+    image: ghcr.io/umami-software/umami:3.5.0
+    environment:
+      DATABASE_URL: postgresql://umami:${UMAMI_DB_PASSWORD:?UMAMI_DB_PASSWORD is not set}@postgres:5432/umami
+      APP_SECRET: ${UMAMI_APP_SECRET:?UMAMI_APP_SECRET is not set}
+      # Neutral names, so ad blockers that match Umami's defaults (script.js, /api/send) let them through.
+      TRACKER_SCRIPT_NAME: m.js
+      COLLECT_API_ENDPOINT: /e
+      # Caddy replaces X-Forwarded-For with the visitor's address alone.
+      CLIENT_IP_HEADER: x-forwarded-for
+      DISABLE_TELEMETRY: '1'
+      DISABLE_UPDATES: '1'
+    depends_on:
+      umami-db:
+        condition: service_completed_successfully
+    # Keeps a leak in analytics from taking memory from the app on the 2 GB droplet.
+    mem_limit: 384m
+    init: true
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD-SHELL', 'wget -qO- http://127.0.0.1:3000/api/heartbeat > /dev/null || exit 1']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      # The first start applies its database migrations.
+      start_period: 90s
+      start_interval: 2s
+    logging: *logging
+
   caddy:
     image: caddy:2.11-alpine
     ports:

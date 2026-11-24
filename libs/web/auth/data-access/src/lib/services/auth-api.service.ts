@@ -34,14 +34,14 @@ export class AuthApiService extends ApiService {
   }
 
   // The authorization code from the Google sign-in popup.
-  public signInWithGoogleCode(code: string): Observable<void> {
+  public signInWithGoogleCode(code: string): Observable<AuthUser | null> {
     const body: GoogleCodeSignInRequest = { code };
 
     return this.signIn(this.httpClient.post<void>(`${this.baseUrl}/auth/google/code`, body));
   }
 
   // The ID token from One Tap.
-  public signInWithGoogleCredential(credential: string): Observable<void> {
+  public signInWithGoogleCredential(credential: string): Observable<AuthUser | null> {
     const body: GoogleCredentialSignInRequest = { credential };
 
     return this.signIn(this.httpClient.post<void>(`${this.baseUrl}/auth/google/credential`, body));
@@ -59,12 +59,11 @@ export class AuthApiService extends ApiService {
     return this.httpClient.post<void>(`${this.baseUrl}/auth/sign-out`, null).pipe(tap(() => this.userChanged.next(null)));
   }
 
-  // Completes once the signed-in user is known and passed on, so the view changes straight to signed in.
-  private signIn(request: Observable<void>): Observable<void> {
+  // Emits the signed-in user once it is known and passed on, so the view changes straight to signed in.
+  private signIn(request: Observable<void>): Observable<AuthUser | null> {
     return request.pipe(
       switchMap(() => this.loadUser()),
       tap((user: AuthUser | null) => this.userChanged.next(user)),
-      map(() => undefined),
     );
   }
 

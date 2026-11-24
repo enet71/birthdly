@@ -1,12 +1,15 @@
 # Production server
 
 The web app (Angular SSR) and the API run on a DigitalOcean droplet behind Cloudflare. The API is served on the same
-origin as the site, under `birthdly.com/api`.
+origin as the site, under `birthdly.com/api`. Umami web analytics runs next to them: its dashboard is on
+`stats.birthdly.com`, and `birthdly.com` serves only its tracker script and collect endpoint under `/m/`.
 
 ```
 visitor ──HTTPS──► Cloudflare (proxy) ──HTTPS, Origin CA──► droplet :443 Caddy ─┬─► web:4000 (Angular SSR)
-                                                                                └─► api:3000 (NestJS, /api/*)
-                                                                                     └──► postgres:5432 (Postgres 17, volume postgres_data)
+                                                                                ├─► api:3000 (NestJS, /api/*)
+                                                                                │    └──► postgres:5432 (Postgres 17, volume postgres_data)
+                                                                                └─► umami:3000 (/m/m.js, /m/e, stats.birthdly.com)
+                                                                                     └──► postgres:5432 (database umami)
 ```
 
 | What       | Where                                                                                                  |
@@ -81,6 +84,13 @@ previous release.
 Cloudflare changes them, update both: the `Caddyfile` through a commit, the firewall with
 `doctl compute firewall update` (see step 3).
 
+**Analytics:** https://stats.birthdly.com, with the Umami account (not Google). Every deployment runs the one-off
+`umami-db` service first: it creates the `umami` role and database in the stack's Postgres when they are missing and
+sets the role's password from `UMAMI_DB_PASSWORD`, so changing the password needs only `.env` and a deployment. The
+image tag is pinned in `compose.yml`; to update Umami, read its release notes and change the tag through a commit.
+The web app loads the tracker only on `birthdly.com`, in the production build, and only when `umamiWebsiteId` in
+`apps/web/src/app/app.config.ts` is set. Umami keeps its data until it is deleted in its settings.
+
 **More memory or CPU:** `doctl compute droplet-action resize <id> --size <slug> --wait` (powers the droplet off for
 about a minute; without `--resize-disk` it can be sized down again).
 
@@ -128,7 +138,7 @@ doctl compute firewall create --name birthdly-web --tag-names birthdly \
 
 ### 4. Cloudflare (dashboard, zone `birthdly.com`)
 
-1. **DNS → Records:** `A @` and `A www`, each `<droplet IP>` and Proxied (orange cloud).
+1. **DNS → Records:** `A @`, `A www` and `A stats`, each `<droplet IP>` and Proxied (orange cloud).
 2. **SSL/TLS → Origin Server → Create certificate:** RSA or ECC, hostnames `birthdly.com, *.birthdly.com`, 15 years.
    Save the certificate as `origin.pem` and the key as `origin-key.pem`; Cloudflare shows the key only once.
 3. **SSL/TLS → Overview → Configure:** **Full (Strict)**, not Automatic: Cloudflare then always validates the Origin
@@ -184,5 +194,19 @@ Actions → Deploy → Run workflow. Then check `https://birthdly.com` (200), `h
 `birthdly.com`), `https://birthdly.com/api/health` (200) and `https://birthdly.com/api/me` (401 without a session).
 Requests to `https://<droplet IP>` must time out.
 
+Also check `https://stats.birthdly.com` (the Umami sign-in page).
+
 The packages `birthday-api` and `birthday-web` may stay private: the server pulls with the workflow's token, and
 rollbacks use local images.
+
+### 9. Analytics
+
+Do this right after the first deployment with Umami: until the password is changed, anyone who opens
+`stats.birthdly.com` can sign in with Umami's well-known defaults. To keep the dashboard closed to everyone else as
+well, put it behind Cloudflare Zero Trust → Access (an application for `stats.birthdly.com` that allows only your email).
+
+Open `https://stats.birthdly.com`, sign in as `admin` / `umami` and set a strong password (Profile → Change password).
+Settings → Websites → Add website: name `Birthdly`, domain `birthdly.com`. Put its website ID into `umamiWebsiteId` in
+`apps/web/src/app/app.config.ts` and deploy; until then the web app loads no tracker. Check that
+`https://birthdly.com/m/m.js` returns the script, and that opening the site with the Network tab open sends a request
+to `https://birthdly.com/m/e`.

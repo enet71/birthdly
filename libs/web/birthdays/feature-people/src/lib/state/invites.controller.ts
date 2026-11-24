@@ -10,7 +10,7 @@ import { BirthdaysController } from '@birthday/web-birthdays-data-access';
 import { InvitesApiService } from '@birthday/web-invites-data-access';
 import { StateController } from '@birthday/web-shared-data-access';
 import { AppTranslateService } from '@birthday/web-shared-i18n';
-import { NotificationsService } from '@birthday/web-shared-util';
+import { AnalyticsService, NotificationsService } from '@birthday/web-shared-util';
 import { SubmissionChangeResult } from '../types';
 import { InvitesState } from './invites.state';
 
@@ -22,6 +22,7 @@ export class InvitesController extends StateController {
   private readonly birthdaysController: BirthdaysController = inject(BirthdaysController);
   private readonly notifications: NotificationsService = inject(NotificationsService);
   private readonly translator: AppTranslateService = inject(AppTranslateService);
+  private readonly analytics: AnalyticsService = inject(AnalyticsService);
   private readonly clipboard: Clipboard = inject(Clipboard);
   private readonly navigator: Navigator | undefined = inject(DOCUMENT).defaultView?.navigator;
 
@@ -72,20 +73,25 @@ export class InvitesController extends StateController {
     }
     if (this.clipboard.copy(url)) {
       this.notifications.createSuccessNotification(this.translator.translate('notifications.invites.copied'));
+      this.analytics.track('invite_link_copied');
     } else {
       this.notifications.createErrorNotification(this.translator.translate('notifications.invites.copyFailed'));
     }
   }
 
   // Call it while handling the click: browsers allow sharing only right after a user action.
-  public shareLink(): void {
+  public async shareLink(): Promise<void> {
     const url: string | null = this.invitesState.inviteUrl();
 
     if (!url || !this.navigator) {
       return;
     }
-    // Rejects when the user closes the share sheet, which needs no message.
-    this.navigator.share({ title: this.translator.translate('invites.shareTitle'), url }).catch(() => undefined);
+    try {
+      await this.navigator.share({ title: this.translator.translate('invites.shareTitle'), url });
+      this.analytics.track('invite_link_shared');
+    } catch {
+      // The user closed the share sheet, which needs no message.
+    }
   }
 
   public signInWithGoogle(): void {
@@ -104,6 +110,7 @@ export class InvitesController extends StateController {
     this.runSubmissionChange(submission, this.invitesApi.approveSubmission(submission.id), 'notifications.invites.approveFailed', () => {
       this.birthdaysController.reloadBirthdaysWhenIdle();
       this.notifications.createSuccessNotification(this.translator.translate('notifications.invites.approved', { name: submission.name }));
+      this.analytics.track('invite_submission_approved');
     });
   }
 

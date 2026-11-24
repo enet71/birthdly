@@ -8,7 +8,7 @@ import { provideAuth } from '@birthday/web-auth-data-access';
 import { APP_LAYOUT_CONFIG } from '@birthday/web-layout-util';
 import { provideReminders } from '@birthday/web-reminders-data-access';
 import { provideI18n } from '@birthday/web-shared-i18n';
-import { ENVIRONMENT_TOKEN } from '@birthday/web-shared-util';
+import { AnalyticsService, ENVIRONMENT_TOKEN } from '@birthday/web-shared-util';
 import { loadAppTranslation } from './app.i18n';
 import { appRoutes } from './app.routes';
 import { APP_LAYOUT } from './app.constants';
@@ -32,6 +32,7 @@ export const appConfig: ApplicationConfig = {
     provideAppInitializer(() => {
       inject(ThemeController);
     }),
+    provideAppInitializer(() => inject(AnalyticsService).loadTracker()),
     {
       provide: MAT_ICON_DEFAULT_OPTIONS,
       useValue: { fontSet: 'material-symbols-outlined' },
@@ -45,6 +46,8 @@ export const appConfig: ApplicationConfig = {
         baseUrl: '',
         // Pairs with `VAPID_PRIVATE_KEY` in the API's environment (`npm run push:vapid-keys`).
         vapidPublicKey: 'BA3CPp15GUmhVEZzfQ00PBKGvPCUIdR5OExo9RXEobdrHUf4kMoZNWqpGgOXK_PgJpt365Ph4WNdD7Xru__LdIo',
+        // Set after adding the website in the Umami dashboard (deploy/README.md, step 9).
+        umamiWebsiteId: null,
         notificationErrorTime: 5000,
         notificationSuccessTime: 3000,
       },

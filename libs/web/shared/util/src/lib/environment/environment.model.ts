@@ -6,6 +6,8 @@ export interface Environment {
   baseUrl: string;
   // The public VAPID key of birthday push notifications (`npm run push:vapid-keys`), base64url.
   vapidPublicKey: string;
+  // The website ID from the Umami dashboard (stats.birthdly.com); `null` loads no tracker.
+  umamiWebsiteId: string | null;
   notificationErrorTime: number;
   notificationSuccessTime: number;
 }
