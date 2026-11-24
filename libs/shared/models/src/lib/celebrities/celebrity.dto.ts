@@ -4,7 +4,7 @@ export const CELEBRITY_OCCUPATIONS = ['film', 'music', 'sports', 'literature', '
 export type CelebrityOccupation = (typeof CELEBRITY_OCCUPATIONS)[number];
 
 // ISO 3166-1 alpha-2 codes of the countries the import covers; it grows with every imported country.
-export const CELEBRITY_COUNTRIES = ['US', 'UA'] as const;
+export const CELEBRITY_COUNTRIES = ['US', 'UA', 'DE', 'FR', 'ES'] as const;
 
 export interface CelebrityDto {
   // Wikidata item id, for example `Q42`.
