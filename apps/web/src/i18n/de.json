@@ -796,9 +796,6 @@
       "science": "Wissenschaft",
       "art": "Kunst",
       "business": "Wirtschaft"
-    },
-    "card": {
-      "turns": "Wird {{ age }}"
     }
   }
 }

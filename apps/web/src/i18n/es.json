@@ -796,9 +796,6 @@
       "science": "Ciencia",
       "art": "Arte",
       "business": "Negocios"
-    },
-    "card": {
-      "turns": "Cumple {{ age }}"
     }
   }
 }

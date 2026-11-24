@@ -13,7 +13,7 @@
       <span>{{ 'born.occupations.' + person.occupation | transloco }}</span>
     }
     @if (person.deathYear === null) {
-      <span>{{ person.birthYear }}</span>
+      <span>{{ person.birthYear }} ({{ person.age }})</span>
     } @else {
       <span>{{ person.birthYear }}–{{ person.deathYear }}</span>
     }
@@ -22,6 +22,3 @@
     <p class="countries">{{ person.countries }}</p>
   }
 </div>
-@if (person.age !== null) {
-  <span class="age">{{ 'born.card.turns' | transloco: { age: person.age } }}</span>
-}
