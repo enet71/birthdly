@@ -1,0 +1,61 @@
+<form novalidate (submit)="save($event)">
+  <ui-dialog-header class="header">
+    <div class="heading" dialog-header="title">
+      <h2 class="heading__title" mat-dialog-title>{{ 'profile.dialog.title' | transloco }}</h2>
+      <p class="heading__subtitle">{{ 'profile.dialog.subtitle' | transloco }}</p>
+    </div>
+    <button matIconButton type="button" [attr.aria-label]="'common.close' | transloco" dialog-header="buttons" mat-dialog-close>
+      <mat-icon>close</mat-icon>
+    </button>
+  </ui-dialog-header>
+  <mat-dialog-content class="content">
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'profile.dialog.name' | transloco }}</mat-label>
+      <mat-icon matPrefix>person</mat-icon>
+      <input matInput autocomplete="name" [formField]="profileForm.name" />
+      @if (googleName) {
+        <mat-hint>{{ 'profile.dialog.nameHint' | transloco: { name: googleName } }}</mat-hint>
+      }
+      @for (error of profileForm.name().errors(); track error.kind) {
+        <mat-error>{{ error.message ?? '' | transloco }}</mat-error>
+      }
+    </mat-form-field>
+    <fieldset class="birthday">
+      <legend class="birthday__legend">{{ 'profile.dialog.birthday' | transloco }}</legend>
+      <div class="date">
+        <mat-form-field class="date__month" appearance="outline">
+          <mat-label>{{ 'birthdayDialog.month' | transloco }}</mat-label>
+          <mat-select [formField]="profileForm.month">
+            <mat-option [value]="null">{{ 'profile.dialog.notSet' | transloco }}</mat-option>
+            @for (month of months; track $index) {
+              <mat-option [value]="$index + 1">{{ month | localeDate: 'LLLL' }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'birthdayDialog.day' | transloco }}</mat-label>
+          <mat-select [formField]="profileForm.day">
+            @for (day of days(); track day) {
+              <mat-option [value]="day">{{ day }}</mat-option>
+            }
+          </mat-select>
+          @for (error of profileForm.day().errors(); track error.kind) {
+            <mat-error>{{ error.message ?? '' | transloco }}</mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'birthdayDialog.year' | transloco }}</mat-label>
+          <input matInput inputmode="numeric" autocomplete="bday-year" [formField]="profileForm.year" />
+          <mat-hint>{{ 'birthdayDialog.optional' | transloco }}</mat-hint>
+          @for (error of profileForm.year().errors(); track error.kind) {
+            <mat-error>{{ error.message ?? '' | transloco }}</mat-error>
+          }
+        </mat-form-field>
+      </div>
+    </fieldset>
+  </mat-dialog-content>
+  <mat-dialog-actions class="actions">
+    <button matButton="outlined" type="button" mat-dialog-close>{{ 'common.cancel' | transloco }}</button>
+    <button matButton="filled" type="submit" disabledInteractive [disabled]="isSaving()">{{ 'common.save' | transloco }}</button>
+  </mat-dialog-actions>
+</form>

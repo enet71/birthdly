@@ -1,0 +1,86 @@
+@use '@angular/material' as mat;
+
+// Matches the Birthday dialog.
+:host {
+  display: block;
+  background: var(--mat-sys-surface-container-lowest);
+  @include mat.form-field-overrides(
+    (
+      outlined-outline-color: var(--mat-sys-outline-variant),
+    )
+  );
+}
+
+.header {
+  background: var(--mat-sys-surface-container-lowest);
+}
+
+.heading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  // The subtitle sits under the title, so the title keeps no padding of its own.
+  @include mat.dialog-overrides(
+    (
+      headline-padding: 0,
+    )
+  );
+
+  &__title {
+    font-size: 1.125rem;
+    font-weight: 700;
+  }
+
+  &__subtitle {
+    margin: 0;
+    font: var(--mat-sys-body-medium);
+    color: var(--mat-sys-on-surface-variant);
+  }
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-top: 1.5rem;
+  container-type: inline-size;
+}
+
+.birthday {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+
+  &__legend {
+    margin-bottom: 0.5rem;
+    padding: 0;
+    font: var(--mat-sys-body-medium);
+    color: var(--mat-sys-on-surface-variant);
+  }
+}
+
+.date {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 0.75rem;
+
+  &__month {
+    grid-column: 1 / -1;
+  }
+
+  @container (min-width: 22rem) {
+    grid-template-columns: minmax(0, 1fr) 6rem 6.5rem;
+
+    &__month {
+      grid-column: auto;
+    }
+  }
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  padding: 2rem 1.5rem 1.5rem;
+}
