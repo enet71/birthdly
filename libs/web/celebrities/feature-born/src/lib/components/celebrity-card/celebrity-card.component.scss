@@ -16,6 +16,25 @@
   border-radius: 0.875rem;
   box-shadow: 0 0.0625rem 0.1875rem color-mix(in srgb, var(--mat-sys-shadow) 6%, transparent);
   font-size: 1rem;
+
+  &_photo {
+    overflow: hidden;
+    background: var(--mat-sys-surface-container-high);
+
+    &:focus-visible {
+      outline: 0.125rem solid var(--mat-sys-primary);
+      outline-offset: 0.125rem;
+    }
+  }
+
+  &__image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    // Portraits put the face near the top.
+    object-position: 50% 20%;
+  }
 }
 
 .body {

@@ -1,5 +1,21 @@
 @let person = celebrity();
-<ui-birthday-avatar class="avatar" [name]="person.name"></ui-birthday-avatar>
+@if (person.photo && !isPhotoMissing()) {
+  @let photo = person.photo;
+  @let credit = photo.author ? photo.author + ' · ' + photo.license : photo.license;
+  <!-- The link to the file's page credits the photo's author and license, which the tooltip also shows. -->
+  <a
+    class="avatar avatar_photo"
+    target="_blank"
+    rel="noopener"
+    [href]="photo.pageUrl"
+    [title]="'born.card.photoCredit' | transloco: { credit }"
+    [attr.aria-label]="'born.card.photoLink' | transloco: { name: person.name, credit }"
+  >
+    <img class="avatar__image" alt="" width="44" height="44" loading="lazy" [src]="photo.url" (error)="markPhotoMissing()" />
+  </a>
+} @else {
+  <ui-birthday-avatar class="avatar" [name]="person.name"></ui-birthday-avatar>
+}
 <div class="body">
   <h3 class="name">
     @if (person.wikipediaUrl) {

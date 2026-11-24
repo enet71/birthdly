@@ -13,8 +13,14 @@ import { CelebrityCard } from '../../types';
 export class CelebrityCardComponent {
   public readonly celebrity: InputSignal<CelebrityCard> = input.required();
 
+  // Set when the photo fails to load; the initials take its place.
+  protected readonly isPhotoMissing: WritableSignal<boolean> = signal(false);
   // Country codes whose flag image failed to load.
   protected readonly missingFlags: WritableSignal<ReadonlySet<string>> = signal(new Set());
+
+  protected markPhotoMissing(): void {
+    this.isPhotoMissing.set(true);
+  }
 
   protected markFlagMissing(code: string): void {
     this.missingFlags.update((codes: ReadonlySet<string>) => new Set(codes).add(code));

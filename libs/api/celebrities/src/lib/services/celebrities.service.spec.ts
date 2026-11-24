@@ -81,7 +81,16 @@ describe('CelebritiesService', () => {
 
     expect(response).toEqual({
       celebrities: [
-        { id: 'Q1', name: 'Erika', occupation: 'film', countries: ['US'], birthDate: '1970-05-17', deathDate: '2001-09-11', wikipediaUrl: null },
+        {
+          id: 'Q1',
+          name: 'Erika',
+          occupation: 'film',
+          countries: ['US'],
+          birthDate: '1970-05-17',
+          deathDate: '2001-09-11',
+          wikipediaUrl: null,
+          photo: null,
+        },
       ],
       total: 120,
     });

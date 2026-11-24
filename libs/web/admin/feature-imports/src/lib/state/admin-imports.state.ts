@@ -43,10 +43,17 @@ export class AdminImportsState extends State {
       return [];
     }
 
-    const { people, withDetails, withPageviews } = status.progress;
+    const { people, withDetails, withPageviews, withPhotosChecked, withPhotos } = status.progress;
 
     return [
       { label: 'Details (names, links, field)', done: withDetails, total: people, percent: toPercent(withDetails, people) },
+      {
+        label: 'Photos checked (Wikidata image, Commons license)',
+        done: withPhotosChecked,
+        total: people,
+        percent: toPercent(withPhotosChecked, people),
+      },
+      { label: 'Photos shown, of those checked', done: withPhotos, total: withPhotosChecked, percent: toPercent(withPhotos, withPhotosChecked) },
       { label: 'Page views', done: withPageviews, total: people, percent: toPercent(withPageviews, people) },
     ];
   }

@@ -2,20 +2,30 @@ import { Injectable, Logger } from '@nestjs/common';
 import {
   CELEBRITY_FALLBACK_LABEL_LANGUAGE,
   CELEBRITY_LANGUAGES,
+  CELEBRITY_PHOTO_WIDTH,
+  COMMONS_API_URL,
   PAGEVIEWS_API_URL,
   QLEVER_SPARQL_URL,
   WDQS_SPARQL_URL,
   WIKIDATA_API_URL,
   WIKIMEDIA_USER_AGENT,
 } from '../constants';
-import { buildOccupationRootsQuery, buildSegmentQuery, getPageviewsPeriod, SparqlResults, WikidataEntity } from '../helpers';
+import {
+  buildOccupationRootsQuery,
+  buildSegmentQuery,
+  CommonsImagesResponse,
+  getPageviewsPeriod,
+  SparqlResults,
+  toCommonsTitle,
+  WikidataEntity,
+} from '../helpers';
 import { CelebritySegment } from '../types';
 
 // The Wikidata Query Service stops a query after 60 seconds; QLever answers in seconds.
 const SPARQL_TIMEOUT_MS = 2 * 60 * 1000;
 const REQUEST_TIMEOUT_MS = 30 * 1000;
 
-// Reads Wikidata and Wikipedia page views. Failed requests throw; the jobs retry them later with growing pauses, which
+// Reads Wikidata, Commons photo metadata and Wikipedia page views. Failed requests throw; the jobs retry them later with growing pauses, which
 // also keeps the import within Wikimedia's rate limits.
 @Injectable()
 export class WikimediaClient {
@@ -45,14 +55,14 @@ export class WikimediaClient {
     }
   }
 
-  // At most `WIKIDATA_ENTITIES_PER_REQUEST` ids.
-  public async getEntities(ids: string[]): Promise<Record<string, WikidataEntity>> {
+  // At most `WIKIDATA_ENTITIES_PER_REQUEST` ids; the photos step needs only the claims.
+  public async getEntities(ids: string[], props = 'labels|sitelinks|claims'): Promise<Record<string, WikidataEntity>> {
     const url = new URL(WIKIDATA_API_URL);
 
     url.search = new URLSearchParams({
       action: 'wbgetentities',
       ids: ids.join('|'),
-      props: 'labels|sitelinks|claims',
+      props,
       languages: [...CELEBRITY_LANGUAGES, CELEBRITY_FALLBACK_LABEL_LANGUAGE].join('|'),
       sitefilter: CELEBRITY_LANGUAGES.map((language: string) => `${language}wiki`).join('|'),
       format: 'json',
@@ -66,6 +76,30 @@ export class WikimediaClient {
     }
 
     return body.entities;
+  }
+
+  // Thumbnails and license metadata of at most 50 Commons files. A POST, since 50 long percent-encoded file names can
+  // outgrow a URL. Errors and partial answers throw, so the job retries instead of storing the files as photo-less.
+  public async getCommonsImages(files: string[]): Promise<CommonsImagesResponse> {
+    const form = new URLSearchParams({
+      action: 'query',
+      titles: files.map(toCommonsTitle).join('|'),
+      redirects: '1',
+      prop: 'imageinfo',
+      iiprop: 'url|extmetadata',
+      iiurlwidth: String(CELEBRITY_PHOTO_WIDTH),
+      iiextmetadatafilter: 'Artist|LicenseShortName|LicenseUrl|AttributionRequired',
+      format: 'json',
+      formatversion: '2',
+    });
+    const response: Response = await this.fetch(new URL(COMMONS_API_URL), REQUEST_TIMEOUT_MS, 'application/json', form);
+    const body = (await this.readJson(response)) as CommonsImagesResponse & { error?: { info?: string }; continue?: unknown };
+
+    if (body.error || body.continue || !body.query?.pages) {
+      throw new Error(`Commons imageinfo failed: ${body.error?.info ?? (body.continue ? 'partial answer' : 'no pages')}`);
+    }
+
+    return body;
   }
 
   // Views of an English Wikipedia article in the last 12 full months; `null` when the API knows no views of it.
@@ -102,8 +136,11 @@ export class WikimediaClient {
     return this.readJson(await this.fetch(url, timeoutMs, accept));
   }
 
-  private fetch(url: URL, timeoutMs: number, accept = 'application/json'): Promise<Response> {
+  // A `form` is sent as a POST body.
+  private fetch(url: URL, timeoutMs: number, accept = 'application/json', form?: URLSearchParams): Promise<Response> {
     return fetch(url, {
+      method: form ? 'POST' : 'GET',
+      body: form,
       headers: { 'User-Agent': WIKIMEDIA_USER_AGENT, 'Api-User-Agent': WIKIMEDIA_USER_AGENT, Accept: accept },
       redirect: 'follow',
       signal: AbortSignal.timeout(timeoutMs),

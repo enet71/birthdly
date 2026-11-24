@@ -1,17 +1,19 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { and, arrayContains, eq, inArray, isNotNull, sql } from 'drizzle-orm';
+import { and, arrayContains, eq, gt, inArray, isNotNull, isNull, sql } from 'drizzle-orm';
 import { setTimeout as delay } from 'node:timers/promises';
 import { celebrities, celebrityImports, Database, DATABASE } from '@birthday/api-database';
 import { CELEBRITY_SEGMENTS } from '../constants';
 import { CelebrityOccupation } from '@birthday/shared-models';
-import { CelebrityDetails, CelebritySegment } from '../types';
+import { CelebrityDetails, CelebrityPhoto, CelebritySegment } from '../types';
 import {
   getListedOccupation,
   getPrimaryOccupation,
   isInSegments,
+  parseCommonsImages,
   parseEntityDetails,
   parseOccupationFields,
   parseSegmentResults,
+  readPhotoFile,
   WikidataEntity,
 } from '../helpers';
 import { WikimediaClient } from './wikimedia.client';
@@ -21,7 +23,8 @@ const ROWS_PER_INSERT = 1000;
 // Spreads the page view requests out, well below Wikimedia's rate limit; 200 ms ran into it on a large import.
 const PAGEVIEWS_REQUEST_PAUSE_MS = 500;
 
-// The steps of a celebrity import: the segment's people, then their details, then the page views of their articles.
+// The steps of a celebrity import: the segment's people, then their details, then their photos and the page views of
+// their articles.
 @Injectable()
 export class CelebritiesImportService {
   // Fields of the occupations met so far; few occupations repeat across thousands of people.
@@ -207,5 +210,54 @@ export class CelebritiesImportService {
       await this.db.update(celebrities).set({ pageviews, pageviewsLoadedAt: new Date() }).where(eq(celebrities.id, row.id));
       await delay(PAGEVIEWS_REQUEST_PAUSE_MS);
     }
+  }
+
+  // The Wikidata image of up to 50 people and its Commons thumbnail, author and license. Every run overwrites the stored
+  // photo, so a changed or removed image is picked up; a photo Commons gives no license for is stored without a URL.
+  public async loadPhotos(ids: string[]): Promise<void> {
+    const entities: Record<string, WikidataEntity> = await this.wikimedia.getEntities(ids, 'claims');
+    const rows = await this.db.select({ id: celebrities.id }).from(celebrities).where(inArray(celebrities.id, ids));
+    const files: Map<string, string | null> = new Map(
+      rows.map(({ id }) => {
+        const entity: WikidataEntity | undefined = entities[id];
+
+        return [id, entity && !entity.missing && entity.id === id ? readPhotoFile(entity) : null];
+      }),
+    );
+    const askedFiles: string[] = [...new Set([...files.values()].filter((file: string | null): file is string => !!file))];
+    const photos: Map<string, CelebrityPhoto | null> = askedFiles.length
+      ? parseCommonsImages(askedFiles, await this.wikimedia.getCommonsImages(askedFiles))
+      : new Map();
+
+    for (const [id, file] of files) {
+      const photo: CelebrityPhoto | null = file ? (photos.get(file) ?? null) : null;
+
+      await this.db
+        .update(celebrities)
+        .set({
+          photoFile: file,
+          photoUrl: photo?.url ?? null,
+          photoAuthor: photo?.author ?? null,
+          photoLicense: photo?.license ?? null,
+          photoLicenseUrl: photo?.licenseUrl ?? null,
+          photosLoadedAt: new Date(),
+        })
+        .where(eq(celebrities.id, id));
+    }
+  }
+
+  // Up to `limit` people after `afterId` whose details loaded but whose photos never did, in id order; the photos backfill
+  // works through them.
+  public async findIdsWithoutPhotos(afterId: string | null, limit: number): Promise<string[]> {
+    const rows = await this.db
+      .select({ id: celebrities.id })
+      .from(celebrities)
+      .where(
+        and(isNotNull(celebrities.detailsLoadedAt), isNull(celebrities.photosLoadedAt), afterId === null ? undefined : gt(celebrities.id, afterId)),
+      )
+      .orderBy(celebrities.id)
+      .limit(limit);
+
+    return rows.map(({ id }) => id);
   }
 }

@@ -9,12 +9,24 @@ import {
   CelebrityDecade,
   CelebrityDto,
   CelebrityOccupation,
+  CelebrityPhotoDto,
 } from '@birthday/shared-models';
 import { CELEBRITY_FALLBACK_LABEL_LANGUAGE } from '../constants';
 
 type CelebrityRow = Pick<
   typeof celebrities.$inferSelect,
-  'id' | 'names' | 'occupation' | 'countries' | 'birthDate' | 'deathDate' | 'wikipediaTitles'
+  | 'id'
+  | 'names'
+  | 'occupation'
+  | 'countries'
+  | 'birthDate'
+  | 'deathDate'
+  | 'wikipediaTitles'
+  | 'photoFile'
+  | 'photoUrl'
+  | 'photoAuthor'
+  | 'photoLicense'
+  | 'photoLicenseUrl'
 >;
 
 const BIRTH_YEAR: SQL<number> = sql<number>`extract(year from ${celebrities.birthDate})`;
@@ -47,6 +59,11 @@ export class CelebritiesService {
           birthDate: celebrities.birthDate,
           deathDate: celebrities.deathDate,
           wikipediaTitles: celebrities.wikipediaTitles,
+          photoFile: celebrities.photoFile,
+          photoUrl: celebrities.photoUrl,
+          photoAuthor: celebrities.photoAuthor,
+          photoLicense: celebrities.photoLicense,
+          photoLicenseUrl: celebrities.photoLicenseUrl,
         })
         .from(celebrities)
         .where(where)
@@ -92,6 +109,22 @@ function toDto(row: CelebrityRow, locale: AppLocale): CelebrityDto {
     birthDate: row.birthDate,
     deathDate: row.deathDate,
     wikipediaUrl: getWikipediaUrl(row.wikipediaTitles, locale),
+    photo: toPhotoDto(row),
+  };
+}
+
+// The import stores a URL only for a photo it may show.
+function toPhotoDto({ photoFile, photoUrl, photoAuthor, photoLicense, photoLicenseUrl }: CelebrityRow): CelebrityPhotoDto | null {
+  if (!photoFile || !photoUrl || !photoLicense) {
+    return null;
+  }
+
+  return {
+    url: photoUrl,
+    pageUrl: `https://commons.wikimedia.org/wiki/File:${encodeURIComponent(photoFile.replaceAll(' ', '_'))}`,
+    author: photoAuthor,
+    license: photoLicense,
+    licenseUrl: photoLicenseUrl,
   };
 }
 

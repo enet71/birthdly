@@ -80,6 +80,13 @@
           {{ 'born.day.showMore' | transloco }}
         </button>
       }
+      @if (hasPhotos()) {
+        <p class="credit">
+          {{ 'born.day.photosFrom' | transloco }}
+          <a class="credit__link" href="https://commons.wikimedia.org" target="_blank" rel="noopener">Wikimedia Commons</a>.
+          {{ 'born.day.photosAttribution' | transloco }}
+        </p>
+      }
     } @else if (!isLoading()) {
       <div class="state">
         <mat-icon class="state__icon" aria-hidden="true">person_search</mat-icon>

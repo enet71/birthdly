@@ -30,8 +30,18 @@ export const celebrities = pgTable(
     sitelinks: integer('sitelinks').notNull(),
     // Views of the English article in the last 12 full months; `null` without an English article or before they load.
     pageviews: integer('pageviews'),
+    // The Wikimedia Commons file of the Wikidata image (P18), for example `Douglas adams portrait.jpg`.
+    photoFile: text('photo_file'),
+    // A thumbnail of the file; `null` without a file or when Commons gives no license for it, so it is not shown.
+    photoUrl: text('photo_url'),
+    // The author as plain text; `null` when the license does not require attribution and Commons names nobody.
+    photoAuthor: text('photo_author'),
+    // The license's short name, for example `CC BY-SA 4.0` or `Public domain`.
+    photoLicense: text('photo_license'),
+    photoLicenseUrl: text('photo_license_url'),
     detailsLoadedAt: timestamp('details_loaded_at', { withTimezone: true }),
     pageviewsLoadedAt: timestamp('pageviews_loaded_at', { withTimezone: true }),
+    photosLoadedAt: timestamp('photos_loaded_at', { withTimezone: true }),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true })
       .notNull()

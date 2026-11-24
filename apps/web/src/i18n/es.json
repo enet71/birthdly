@@ -729,6 +729,8 @@
   },
   "born": {
     "day": {
+      "photosFrom": "Fotos de",
+      "photosAttribution": "Pasa el cursor sobre una foto para ver su autor y su licencia, o ábrela para ver todos los datos.",
       "heading": "Quién nació el {{ date }}",
       "documentTitle": "Famosos nacidos el {{ date }} · Birthdly",
       "description": "Famosos nacidos el {{ date }}: actores, músicos, deportistas, escritores y más, con su edad. Guarda los cumpleaños de tu gente en Birthdly.",
@@ -796,6 +798,10 @@
       "science": "Ciencia",
       "art": "Arte",
       "business": "Negocios"
+    },
+    "card": {
+      "photoCredit": "Foto: {{ credit }}",
+      "photoLink": "Foto de {{ name }} en Wikimedia Commons: {{ credit }}"
     },
     "historicalCountries": {
       "CS": "Checoslovaquia o Serbia y Montenegro",

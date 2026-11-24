@@ -10,10 +10,23 @@ import {
   CelebrityJobState,
   CelebritySegmentImportDto,
 } from '@birthday/shared-models';
-import { CELEBRITIES_DETAILS_QUEUE, CELEBRITIES_PAGEVIEWS_QUEUE, CELEBRITIES_SEGMENT_QUEUE, CELEBRITY_SEGMENTS } from '../constants';
+import {
+  CELEBRITIES_DETAILS_QUEUE,
+  CELEBRITIES_PAGEVIEWS_QUEUE,
+  CELEBRITIES_PHOTOS_BACKFILL_QUEUE,
+  CELEBRITIES_PHOTOS_QUEUE,
+  CELEBRITIES_SEGMENT_QUEUE,
+  CELEBRITY_SEGMENTS,
+} from '../constants';
 import { getSegmentImportStatus } from '../helpers';
 
-const QUEUES: string[] = [CELEBRITIES_SEGMENT_QUEUE, CELEBRITIES_DETAILS_QUEUE, CELEBRITIES_PAGEVIEWS_QUEUE];
+const QUEUES: string[] = [
+  CELEBRITIES_SEGMENT_QUEUE,
+  CELEBRITIES_DETAILS_QUEUE,
+  CELEBRITIES_PHOTOS_QUEUE,
+  CELEBRITIES_PHOTOS_BACKFILL_QUEUE,
+  CELEBRITIES_PAGEVIEWS_QUEUE,
+];
 const FAILURES_LIMIT = 20;
 const ERROR_MAX_LENGTH = 500;
 
@@ -61,7 +74,13 @@ export class CelebrityImportsStatusService {
 
   private async getProgress(): Promise<CelebrityImportProgressDto> {
     const [row] = await this.db
-      .select({ people: count(), withDetails: count(celebrities.detailsLoadedAt), withPageviews: count(celebrities.pageviewsLoadedAt) })
+      .select({
+        people: count(),
+        withDetails: count(celebrities.detailsLoadedAt),
+        withPageviews: count(celebrities.pageviewsLoadedAt),
+        withPhotosChecked: count(celebrities.photosLoadedAt),
+        withPhotos: count(celebrities.photoUrl),
+      })
       .from(celebrities);
 
     return row;

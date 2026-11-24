@@ -109,6 +109,13 @@ export function parseEntityDetails(entity: WikidataEntity): CelebrityDetails {
   };
 }
 
+// The Commons file of the person's image (P18), preferred statements first.
+export function readPhotoFile(entity: WikidataEntity): string | null {
+  const value: unknown = getRankedStatements(entity.claims?.['P18'] ?? [])[0]?.mainsnak.datavalue?.value;
+
+  return typeof value === 'string' && value ? value : null;
+}
+
 // The field of the first occupation, in Wikidata's order, that has one: an actor who also directs is in film, a designer
 // who also acted is in art, an alpine skier who presented a TV show is in sports. `fields` maps occupations to fields.
 export function getPrimaryOccupation(occupationItems: string[], fields: ReadonlyMap<string, CelebrityOccupation | null>): CelebrityOccupation | null {

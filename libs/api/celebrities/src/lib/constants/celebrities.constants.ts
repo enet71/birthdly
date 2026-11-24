@@ -139,6 +139,9 @@ export const WIKIMEDIA_USER_AGENT = 'Birthdly/1.0 (https://birthdly.com; birthdl
 export const QLEVER_SPARQL_URL = 'https://qlever.dev/api/wikidata';
 export const WDQS_SPARQL_URL = 'https://query.wikidata.org/sparql';
 export const WIKIDATA_API_URL = 'https://www.wikidata.org/w/api.php';
+export const COMMONS_API_URL = 'https://commons.wikimedia.org/w/api.php';
+// A standard Wikimedia thumbnail width, enough for the 2.75rem avatar on dense screens; other widths are throttled.
+export const CELEBRITY_PHOTO_WIDTH = 120;
 export const PAGEVIEWS_API_URL = 'https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia/all-access/user';
 // `wbgetentities` returns at most 50 items per request.
 export const WIKIDATA_ENTITIES_PER_REQUEST = 50;
@@ -146,6 +149,9 @@ export const WIKIDATA_ENTITIES_PER_REQUEST = 50;
 export const CELEBRITIES_SEGMENT_QUEUE = 'celebrities-segment';
 export const CELEBRITIES_DETAILS_QUEUE = 'celebrities-details';
 export const CELEBRITIES_PAGEVIEWS_QUEUE = 'celebrities-pageviews';
+export const CELEBRITIES_PHOTOS_QUEUE = 'celebrities-photos';
+// Loads the photos of people imported before photos existed, a batch at a time; see `CelebritiesJobsService`.
+export const CELEBRITIES_PHOTOS_BACKFILL_QUEUE = 'celebrities-photos-backfill';
 
 // The command that queues a new import in the API container: `node main.js celebrities:import [segment]`.
 export const CELEBRITIES_IMPORT_COMMAND = 'celebrities:import';

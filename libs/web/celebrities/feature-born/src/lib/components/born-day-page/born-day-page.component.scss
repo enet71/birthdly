@@ -161,6 +161,18 @@
   align-self: center;
 }
 
+.credit {
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.125rem;
+  text-align: center;
+  color: var(--mat-sys-on-surface-variant);
+
+  &__link {
+    color: inherit;
+  }
+}
+
 .state {
   display: flex;
   flex-direction: column;

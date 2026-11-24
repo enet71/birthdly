@@ -42,6 +42,10 @@ export class BornDayPageComponent {
     return this.bornDayState.cards;
   }
 
+  protected get hasPhotos(): Signal<boolean> {
+    return this.bornDayState.hasPhotos;
+  }
+
   protected get activeFilterCount(): Signal<number> {
     return this.bornDayState.activeFilterCount;
   }

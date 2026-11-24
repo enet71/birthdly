@@ -25,6 +25,26 @@ export interface CelebrityPageviewsJob {
   ids: string[];
 }
 
+export interface CelebrityPhotosJob {
+  ids: string[];
+}
+
+export interface CelebrityPhotosBackfillJob {
+  // The batch starts after this id, so a batch that keeps failing does not stop the ones after it.
+  afterId: string | null;
+}
+
+// A Commons photo the cards may show.
+export interface CelebrityPhoto {
+  // A thumbnail `CELEBRITY_PHOTO_WIDTH` pixels wide.
+  url: string;
+  // Plain text; `null` when the license does not require attribution and Commons names nobody.
+  author: string | null;
+  // For example `CC BY-SA 4.0`.
+  license: string;
+  licenseUrl: string | null;
+}
+
 // A person found by the segment query.
 export interface CelebrityCandidate {
   id: string;

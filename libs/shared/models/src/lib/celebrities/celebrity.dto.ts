@@ -20,4 +20,19 @@ export interface CelebrityDto {
   birthDate: string;
   deathDate: string | null;
   wikipediaUrl: string | null;
+  // `null` without a Wikidata image, or when Commons gives no license for it.
+  photo: CelebrityPhotoDto | null;
+}
+
+// A Wikimedia Commons photo; showing it requires crediting the author and the license.
+export interface CelebrityPhotoDto {
+  // A thumbnail 120 pixels wide.
+  url: string;
+  // The file's page on Commons, with the full attribution.
+  pageUrl: string;
+  // Plain text; `null` when the license does not require attribution and Commons names nobody.
+  author: string | null;
+  // For example `CC BY-SA 4.0` or `Public domain`.
+  license: string;
+  licenseUrl: string | null;
 }

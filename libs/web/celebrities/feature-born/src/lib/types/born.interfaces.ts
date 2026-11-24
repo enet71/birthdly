@@ -1,4 +1,4 @@
-import { CelebrityDecade, CelebrityOccupation, CelebritySort, CelebrityStatus } from '@birthday/shared-models';
+import { CelebrityDecade, CelebrityOccupation, CelebrityPhotoDto, CelebritySort, CelebrityStatus } from '@birthday/shared-models';
 
 // A birthday without a year; `month` is 1–12.
 export interface BornDate {
@@ -48,4 +48,5 @@ export interface CelebrityCard {
   // The age the person turns this year; `null` for deceased people.
   age: number | null;
   wikipediaUrl: string | null;
+  photo: CelebrityPhotoDto | null;
 }

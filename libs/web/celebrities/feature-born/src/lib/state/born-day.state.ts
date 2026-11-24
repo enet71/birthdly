@@ -39,6 +39,8 @@ export class BornDayState extends State {
   public readonly activeFilterCount: Signal<number> = computed(() => countActiveBornFilters(this.filters()));
   public readonly countryOptions: Signal<BornCountryOption[]> = computed(() => this.getCountryOptions());
   public readonly cards: Signal<CelebrityCard[]> = computed(() => this.celebrities().map((celebrity: CelebrityDto) => this.toCard(celebrity)));
+  // The page credits Wikimedia Commons once a photo is shown.
+  public readonly hasPhotos: Signal<boolean> = computed(() => this.cards().some((card: CelebrityCard) => !!card.photo));
   public readonly hasMore: Signal<boolean> = computed(() => this.celebrities().length < this.total());
 
   private getPickerDate(): Date | null {
@@ -104,6 +106,7 @@ export class BornDayState extends State {
       deathYear,
       age: deathYear === null ? this.currentYear - birthYear : null,
       wikipediaUrl: celebrity.wikipediaUrl,
+      photo: celebrity.photo,
     };
   }
 }

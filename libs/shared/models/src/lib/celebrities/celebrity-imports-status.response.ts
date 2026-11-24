@@ -19,6 +19,9 @@ export interface CelebrityImportProgressDto {
   people: number;
   withDetails: number;
   withPageviews: number;
+  // People whose Wikidata image was looked up on Commons, and those of them with a photo the cards show.
+  withPhotosChecked: number;
+  withPhotos: number;
 }
 
 export interface CelebrityImportQueueDto {
