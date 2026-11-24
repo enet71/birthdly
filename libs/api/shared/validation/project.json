@@ -1,0 +1,10 @@
+{
+  "name": "api-shared-validation",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/api/shared/validation/src",
+  "projectType": "library",
+  "tags": ["platform:api", "type:util"],
+  "targets": {
+    "typecheck": {}
+  }
+}

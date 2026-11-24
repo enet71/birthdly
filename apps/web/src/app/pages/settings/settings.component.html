@@ -1,5 +1,4 @@
-<ui-account-section />
-<!-- The Account section signs in, so these sections show only for a signed-in user. -->
+<!-- Signing in happens in the account menu and on the profile page, so these sections show only for a signed-in user. -->
 @if (isAuthenticated()) {
   <ui-google-calendar-section />
   <ui-reminder-section />

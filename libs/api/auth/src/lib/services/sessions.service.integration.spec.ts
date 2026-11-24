@@ -125,7 +125,15 @@ describe('SessionsService and AuthUsersService with a real Postgres', () => {
       const session = await sessionsService.authenticate(created.token);
 
       expect(session).toEqual({
-        user: { id: userId, email: 'person@example.com', name: 'Person', picture: null },
+        user: {
+          id: userId,
+          email: 'person@example.com',
+          name: 'Person',
+          displayName: null,
+          picture: null,
+          birthDate: null,
+          createdAt: expect.any(String),
+        },
         expiresAt: created.expiresAt,
         extended: false,
       });
@@ -198,8 +206,16 @@ describe('SessionsService and AuthUsersService with a real Postgres', () => {
       const updated = await authUsers.upsertGoogleUser({ sub, email: 'new@example.com', name: null, picture: null });
       const rows = await db.select().from(users).where(eq(users.googleSub, sub));
 
-      expect(created).toEqual({ id: expect.any(String), email: 'old@example.com', name: 'Old', picture: 'https://example.com/old.png' });
-      expect(updated).toEqual({ id: created.id, email: 'new@example.com', name: null, picture: null });
+      expect(created).toEqual({
+        id: expect.any(String),
+        email: 'old@example.com',
+        name: 'Old',
+        displayName: null,
+        picture: 'https://example.com/old.png',
+        birthDate: null,
+        createdAt: expect.any(String),
+      });
+      expect(updated).toEqual({ ...created, email: 'new@example.com', name: null, picture: null });
       expect(rows).toHaveLength(1);
       expect(rows[0]).toMatchObject({ id: created.id, email: 'new@example.com', name: null, picture: null });
     });

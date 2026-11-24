@@ -22,6 +22,7 @@
     "calendar": "Calendar",
     "people": "People",
     "celebrities": "Celebrities",
+    "profile": "Profile",
     "settings": "Settings",
     "feedback": "Feedback",
     "addBirthday": "Add birthday"
@@ -60,6 +61,9 @@
     },
     "person": {
       "title": "Person"
+    },
+    "profile": {
+      "title": "Profile"
     },
     "settings": {
       "title": "Settings"
@@ -112,6 +116,40 @@
     "signedOutDescription": "Sign in to keep your birthdays in your account, use them on any device, sync with Google Calendar, and get birthday notifications.",
     "signOut": "Sign out",
     "signIn": "Sign in with Google"
+  },
+  "profile": {
+    "edit": "Edit profile",
+    "dialog": {
+      "title": "Edit profile",
+      "subtitle": "Your name and birthday are visible only to you.",
+      "name": "Name",
+      "nameHint": "Leave empty to use your Google name: {{ name }}",
+      "birthday": "My birthday",
+      "notSet": "Not set",
+      "errors": {
+        "nameTooLong": "Name is too long",
+        "dayRequired": "Required"
+      }
+    },
+    "birthday": {
+      "title": "My birthday",
+      "today": "Today! Happy birthday!",
+      "notSet": "Not set",
+      "add": "Add"
+    },
+    "summary": {
+      "title": "Summary",
+      "googleCalendar": "Google Calendar",
+      "reminders": "Notifications on this device",
+      "memberSince": "Member since",
+      "connected": "Connected",
+      "notConnected": "Not connected",
+      "on": "On",
+      "off": "Off",
+      "unsupported": "Not supported",
+      "failed": "Couldn't load",
+      "loading": "Loading"
+    }
   },
   "common": {
     "showLess": "Show less",
@@ -200,7 +238,8 @@
     "auth": {
       "restoreFailed": "Couldn't restore your session",
       "signInFailed": "Couldn't sign in with Google",
-      "signOutFailed": "Couldn't sign out"
+      "signOutFailed": "Couldn't sign out",
+      "profileSaveFailed": "Couldn't save the profile"
     },
     "birthdays": {
       "loadFailed": "Couldn't load birthdays",

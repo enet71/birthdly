@@ -22,6 +22,7 @@
     "calendar": "Kalender",
     "people": "Personen",
     "celebrities": "Prominente",
+    "profile": "Profil",
     "settings": "Einstellungen",
     "feedback": "Feedback",
     "addBirthday": "Geburtstag hinzufügen"
@@ -60,6 +61,9 @@
     },
     "person": {
       "title": "Person"
+    },
+    "profile": {
+      "title": "Profil"
     },
     "settings": {
       "title": "Einstellungen"
@@ -112,6 +116,40 @@
     "signedOutDescription": "Melde dich an, um deine Geburtstage in deinem Konto zu speichern, sie auf jedem Gerät zu nutzen, mit Google Kalender zu synchronisieren und Geburtstagsbenachrichtigungen zu erhalten.",
     "signOut": "Abmelden",
     "signIn": "Mit Google anmelden"
+  },
+  "profile": {
+    "edit": "Profil bearbeiten",
+    "dialog": {
+      "title": "Profil bearbeiten",
+      "subtitle": "Deinen Namen und Geburtstag siehst nur du.",
+      "name": "Name",
+      "nameHint": "Leer lassen, um deinen Google-Namen zu verwenden: {{ name }}",
+      "birthday": "Mein Geburtstag",
+      "notSet": "Nicht angegeben",
+      "errors": {
+        "nameTooLong": "Der Name ist zu lang",
+        "dayRequired": "Pflicht"
+      }
+    },
+    "birthday": {
+      "title": "Mein Geburtstag",
+      "today": "Heute! Alles Gute zum Geburtstag!",
+      "notSet": "Nicht angegeben",
+      "add": "Hinzufügen"
+    },
+    "summary": {
+      "title": "Übersicht",
+      "googleCalendar": "Google Kalender",
+      "reminders": "Benachrichtigungen auf diesem Gerät",
+      "memberSince": "Mitglied seit",
+      "connected": "Verbunden",
+      "notConnected": "Nicht verbunden",
+      "on": "An",
+      "off": "Aus",
+      "unsupported": "Nicht unterstützt",
+      "failed": "Konnte nicht geladen werden",
+      "loading": "Wird geladen"
+    }
   },
   "common": {
     "showLess": "Weniger anzeigen",
@@ -200,7 +238,8 @@
     "auth": {
       "restoreFailed": "Deine Sitzung konnte nicht wiederhergestellt werden",
       "signInFailed": "Anmeldung mit Google fehlgeschlagen",
-      "signOutFailed": "Abmeldung fehlgeschlagen"
+      "signOutFailed": "Abmeldung fehlgeschlagen",
+      "profileSaveFailed": "Profil konnte nicht gespeichert werden"
     },
     "birthdays": {
       "loadFailed": "Geburtstage konnten nicht geladen werden",

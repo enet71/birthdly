@@ -71,6 +71,13 @@
       "when": 1795457760571,
       "tag": "0009_add-feedback",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1795508678193,
+      "tag": "0010_add-user-profile",
+      "breakpoints": true
     }
   ]
 }

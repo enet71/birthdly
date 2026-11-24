@@ -22,6 +22,7 @@
     "calendar": "Calendario",
     "people": "Personas",
     "celebrities": "Famosos",
+    "profile": "Perfil",
     "settings": "Ajustes",
     "feedback": "Comentarios",
     "addBirthday": "Añadir cumpleaños"
@@ -60,6 +61,9 @@
     },
     "person": {
       "title": "Persona"
+    },
+    "profile": {
+      "title": "Perfil"
     },
     "settings": {
       "title": "Ajustes"
@@ -112,6 +116,40 @@
     "signedOutDescription": "Inicia sesión para guardar tus cumpleaños en tu cuenta, usarlos en cualquier dispositivo, sincronizarlos con Google Calendar y recibir notificaciones de cumpleaños.",
     "signOut": "Cerrar sesión",
     "signIn": "Iniciar sesión con Google"
+  },
+  "profile": {
+    "edit": "Editar perfil",
+    "dialog": {
+      "title": "Editar perfil",
+      "subtitle": "Solo tú ves tu nombre y tu cumpleaños.",
+      "name": "Nombre",
+      "nameHint": "Déjalo vacío para usar tu nombre de Google: {{ name }}",
+      "birthday": "Mi cumpleaños",
+      "notSet": "Sin indicar",
+      "errors": {
+        "nameTooLong": "El nombre es demasiado largo",
+        "dayRequired": "Requerido"
+      }
+    },
+    "birthday": {
+      "title": "Mi cumpleaños",
+      "today": "¡Hoy! ¡Feliz cumpleaños!",
+      "notSet": "Sin indicar",
+      "add": "Añadir"
+    },
+    "summary": {
+      "title": "Resumen",
+      "googleCalendar": "Google Calendar",
+      "reminders": "Notificaciones en este dispositivo",
+      "memberSince": "Miembro desde",
+      "connected": "Conectado",
+      "notConnected": "No conectado",
+      "on": "Activadas",
+      "off": "Desactivadas",
+      "unsupported": "No compatibles",
+      "failed": "No se pudo cargar",
+      "loading": "Cargando"
+    }
   },
   "common": {
     "showLess": "Mostrar menos",
@@ -200,7 +238,8 @@
     "auth": {
       "restoreFailed": "No se pudo restaurar tu sesión",
       "signInFailed": "No se pudo iniciar sesión con Google",
-      "signOutFailed": "No se pudo cerrar sesión"
+      "signOutFailed": "No se pudo cerrar sesión",
+      "profileSaveFailed": "No se pudo guardar el perfil"
     },
     "birthdays": {
       "loadFailed": "No se pudieron cargar los cumpleaños",

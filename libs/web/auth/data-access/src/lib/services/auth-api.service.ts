@@ -2,7 +2,13 @@ import { isPlatformBrowser } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { catchError, map, merge, Observable, of, retry, Subject, switchMap, tap, throwError, timer } from 'rxjs';
-import { GoogleCodeSignInRequest, GoogleCredentialSignInRequest, GoogleSignInConfigDto, UserDto } from '@birthday/shared-models';
+import {
+  GoogleCodeSignInRequest,
+  GoogleCredentialSignInRequest,
+  GoogleSignInConfigDto,
+  UpdateProfileRequest,
+  UserDto,
+} from '@birthday/shared-models';
 import { ApiService } from '@birthday/web-shared-data-access';
 import { AuthUser } from '../types';
 
@@ -41,6 +47,14 @@ export class AuthApiService extends ApiService {
     return this.signIn(this.httpClient.post<void>(`${this.baseUrl}/auth/google/credential`, body));
   }
 
+  // Passes the updated user on, so every view of the user shows the change.
+  public updateProfile(changes: UpdateProfileRequest): Observable<AuthUser> {
+    return this.httpClient.patch<UserDto>(`${this.baseUrl}/me`, changes).pipe(
+      map(toAuthUser),
+      tap((user: AuthUser) => this.userChanged.next(user)),
+    );
+  }
+
   public signOut(): Observable<void> {
     return this.httpClient.post<void>(`${this.baseUrl}/auth/sign-out`, null).pipe(tap(() => this.userChanged.next(null)));
   }
@@ -61,7 +75,7 @@ export class AuthApiService extends ApiService {
         count: ME_RETRY_DELAYS_MS.length,
         delay: (error: unknown, attempt: number) => (isTransient(error) ? timer(ME_RETRY_DELAYS_MS[attempt - 1]) : throwError(() => error)),
       }),
-      map((user: UserDto): AuthUser => ({ id: user.id, email: user.email, name: user.name, picture: user.picture })),
+      map(toAuthUser),
       // 401: nobody is signed in in this browser.
       catchError((error: unknown) => (error instanceof HttpErrorResponse && error.status === 401 ? of(null) : throwError(() => error))),
     );
@@ -69,6 +83,18 @@ export class AuthApiService extends ApiService {
 }
 
 const ME_RETRY_DELAYS_MS = [1000, 3000, 10000];
+
+function toAuthUser(user: UserDto): AuthUser {
+  return {
+    id: user.id,
+    email: user.email,
+    name: user.name,
+    displayName: user.displayName,
+    picture: user.picture,
+    birthDate: user.birthDate,
+    createdAt: user.createdAt,
+  };
+}
 
 // No response (status 0) or a server error; a 4xx answer is final.
 function isTransient(error: unknown): boolean {

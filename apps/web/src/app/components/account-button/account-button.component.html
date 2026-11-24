@@ -10,10 +10,19 @@
 <mat-menu #menu="matMenu" xPosition="before">
   @if (view() === 'signedIn') {
     <div class="menu-header">
-      <span class="menu-header__caption">{{ 'account.signedInAs' | transloco }}</span>
-      <strong class="menu-header__email" [attr.title]="email()">{{ email() }}</strong>
+      @if (name(); as name) {
+        <strong class="menu-header__name" [attr.title]="name">{{ name }}</strong>
+        <span class="menu-header__caption" [attr.title]="email()">{{ email() }}</span>
+      } @else {
+        <span class="menu-header__caption">{{ 'account.signedInAs' | transloco }}</span>
+        <strong class="menu-header__email" [attr.title]="email()">{{ email() }}</strong>
+      }
     </div>
     <mat-divider />
+    <a mat-menu-item routerLink="/profile">
+      <mat-icon>person</mat-icon>
+      <span>{{ 'nav.profile' | transloco }}</span>
+    </a>
   }
   <a mat-menu-item routerLink="/settings">
     <mat-icon>settings</mat-icon>

@@ -17,6 +17,7 @@ export class AccountState extends State {
     return !this.platform.isRendered() || status === 'unknown' ? 'loading' : status;
   });
   public readonly email: Signal<string> = computed(() => this.authState.user()?.email ?? '');
+  public readonly name: Signal<string> = computed(() => this.authState.displayName());
 
   public override resetState(): void {
     this.isPending.set(false);

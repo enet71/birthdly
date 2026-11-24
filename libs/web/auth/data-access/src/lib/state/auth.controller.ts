@@ -20,13 +20,13 @@ import {
   tap,
   throwError,
 } from 'rxjs';
-import { GoogleSignInConfigDto } from '@birthday/shared-models';
+import { GoogleSignInConfigDto, UpdateProfileRequest } from '@birthday/shared-models';
 import { StateController } from '@birthday/web-shared-data-access';
 import { AppTranslateService } from '@birthday/web-shared-i18n';
 import { NotificationsService } from '@birthday/web-shared-util';
 import { GoogleConsentDeniedError } from '../errors';
 import { AuthApiService, GoogleIdentityService } from '../services';
-import { GoogleCodeRequestOptions } from '../types';
+import { AuthUser, GoogleCodeRequestOptions } from '../types';
 import { AuthState } from './auth.state';
 
 // Shorter than the API's 10-minute nonce cookie: asking again keeps the same nonce valid while One Tap stays open.
@@ -102,6 +102,16 @@ export class AuthController extends StateController {
       tap(() => this.googleIdentity.disableAutoSelect()),
       catchError(() => {
         this.notifications.createErrorNotification(this.translator.translate('notifications.auth.signOutFailed'));
+        return EMPTY;
+      }),
+    );
+  }
+
+  // Emits the updated user once; a failure is reported here and completes without emitting.
+  public updateProfile(changes: UpdateProfileRequest): Observable<AuthUser> {
+    return this.authApi.updateProfile(changes).pipe(
+      catchError(() => {
+        this.notifications.createErrorNotification(this.translator.translate('notifications.auth.profileSaveFailed'));
         return EMPTY;
       }),
     );

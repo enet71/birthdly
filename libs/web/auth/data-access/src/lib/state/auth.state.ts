@@ -26,6 +26,8 @@ export class AuthState extends State {
     return this.user() ? 'signedIn' : 'signedOut';
   });
   public readonly isAuthenticated: Signal<boolean> = computed(() => this.status() === 'signedIn');
+  // The name the user set, otherwise the name from Google; empty when neither is known.
+  public readonly displayName: Signal<string> = computed(() => this.user()?.displayName ?? this.user()?.name ?? '');
 
   // Loaded in advance once the session is known: the Google popups for signing in and for connecting Google Calendar
   // must open right in the click handler, or browsers block them.

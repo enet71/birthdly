@@ -2,8 +2,13 @@
   <app-account-avatar class="header__avatar" />
   <p class="header__text">
     @if (view() === 'signedIn') {
-      <span class="header__caption">{{ 'account.signedInAs' | transloco }}</span>
-      <strong class="header__email" [attr.title]="email()">{{ email() }}</strong>
+      @if (name(); as name) {
+        <strong class="header__name" [attr.title]="name">{{ name }}</strong>
+        <span class="header__caption" [attr.title]="email()">{{ email() }}</span>
+      } @else {
+        <span class="header__caption">{{ 'account.signedInAs' | transloco }}</span>
+        <strong class="header__email" [attr.title]="email()">{{ email() }}</strong>
+      }
     } @else {
       <strong class="header__title">{{ 'account.title' | transloco }}</strong>
     }
@@ -13,6 +18,12 @@
   </button>
 </header>
 <mat-nav-list class="items">
+  @if (view() === 'signedIn') {
+    <a mat-list-item routerLink="/profile" mat-dialog-close>
+      <mat-icon matListItemIcon>person</mat-icon>
+      <span matListItemTitle>{{ 'nav.profile' | transloco }}</span>
+    </a>
+  }
   <a mat-list-item routerLink="/settings" mat-dialog-close>
     <mat-icon matListItemIcon>settings</mat-icon>
     <span matListItemTitle>{{ 'nav.settings' | transloco }}</span>

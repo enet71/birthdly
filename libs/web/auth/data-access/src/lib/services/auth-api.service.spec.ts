@@ -10,8 +10,16 @@ import { AuthApiService } from './auth-api.service';
 
 const BASE_URL = 'https://birthdly.example';
 const ME_URL = `${BASE_URL}/api/me`;
-const USER_DTO: UserDto = { id: 'user-1', email: 'user@example.com', name: 'User', picture: null };
-const USER: AuthUser = { id: 'user-1', email: 'user@example.com', name: 'User', picture: null };
+const USER_DTO: UserDto = {
+  id: 'user-1',
+  email: 'user@example.com',
+  name: 'User',
+  displayName: null,
+  picture: null,
+  birthDate: null,
+  createdAt: '2026-01-01T00:00:00.000Z',
+};
+const USER: AuthUser = { ...USER_DTO };
 
 describe('AuthApiService', () => {
   let service: AuthApiService;

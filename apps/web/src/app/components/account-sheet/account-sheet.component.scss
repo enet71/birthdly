@@ -27,11 +27,15 @@
   }
 
   &__caption {
+    overflow: hidden;
     color: var(--mat-sys-on-surface-variant);
     font: var(--mat-sys-label-medium);
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   &__email,
+  &__name,
   &__title {
     overflow: hidden;
     color: var(--mat-sys-on-surface);

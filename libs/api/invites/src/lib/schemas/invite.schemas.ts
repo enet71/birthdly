@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { CreateInviteSubmissionRequest, SaveInviteLinkRequest } from '@birthday/shared-models';
-import { birthDateSchema, birthdayNameSchema } from '@birthday/api-birthdays';
+import { birthdayNameSchema } from '@birthday/api-birthdays';
+import { birthDateSchema } from '@birthday/api-shared-validation';
 
 // The same limit as the database check. Lengths count characters as Postgres does, not UTF-16 code units.
 const DISPLAY_NAME_MAX = 100;

@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, Signal } from '@angular/core';
 import { AuthState } from '@birthday/web-auth-data-access';
-import { AccountSectionComponent } from '@birthday/web-auth-feature-account';
 import { GoogleCalendarSectionComponent } from '@birthday/web-google-calendar-feature-sync';
 import { ReminderSectionComponent } from '@birthday/web-reminders-feature-settings';
 import { injectState, ReadonlyState } from '@birthday/web-shared-data-access';
@@ -9,7 +8,7 @@ import { ThemeSectionComponent } from '../../components/theme-section';
 
 @Component({
   selector: 'app-settings',
-  imports: [AccountSectionComponent, GoogleCalendarSectionComponent, LanguageSectionComponent, ReminderSectionComponent, ThemeSectionComponent],
+  imports: [GoogleCalendarSectionComponent, LanguageSectionComponent, ReminderSectionComponent, ThemeSectionComponent],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

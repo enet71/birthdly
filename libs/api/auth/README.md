@@ -36,6 +36,8 @@ The web app signs in with Google Identity Services in the browser and hands the 
 - `@OptionalAuth()` opens an endpoint to everyone but still resolves a valid session; `@OptionalCurrentUser()` gives the
   `AuthUser` or null there.
 - `GET /api/me` returns the signed-in user.
+- `PATCH /api/me` changes the profile fields the user sets (`UpdateProfileRequest`: `displayName`, `birthDate`) and
+  returns the user. An empty name clears it; sign-in never changes these fields.
 
 ```ts
 AuthModule.forRootAsync({

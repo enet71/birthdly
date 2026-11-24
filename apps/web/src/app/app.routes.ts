@@ -22,6 +22,12 @@ export const appRoutes: Route[] = [
     loadChildren: () => import('@birthday/web-birthdays-feature-people').then((m) => m.PEOPLE_ROUTES),
   },
   {
+    path: 'profile',
+    title: 'routes.profile.title',
+    data: { [APP_NOINDEX_DATA_KEY]: true },
+    loadChildren: () => import('./pages/profile/profile.routes').then((m) => m.PROFILE_ROUTES),
+  },
+  {
     path: 'settings',
     title: 'routes.settings.title',
     data: { [APP_NOINDEX_DATA_KEY]: true },

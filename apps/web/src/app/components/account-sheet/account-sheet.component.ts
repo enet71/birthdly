@@ -38,6 +38,10 @@ export class AccountSheetComponent {
     return this.accountState.view;
   }
 
+  protected get name(): Signal<string> {
+    return this.accountState.name;
+  }
+
   protected get email(): Signal<string> {
     return this.accountState.email;
   }

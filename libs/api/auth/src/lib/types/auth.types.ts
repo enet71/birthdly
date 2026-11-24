@@ -38,3 +38,8 @@ export interface ActiveSession {
   // The end moved forward, so the cookie must be sent again with the new expiry.
   extended: boolean;
 }
+
+// `AuthUser` as the database returns it, before `toAuthUser`.
+export interface AuthUserRow extends Omit<AuthUser, 'createdAt'> {
+  createdAt: Date;
+}

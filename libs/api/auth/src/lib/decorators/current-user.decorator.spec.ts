@@ -26,7 +26,15 @@ describe('CurrentUser', () => {
   const factory = getParamDecoratorFactory(CurrentUser);
 
   it('returns the user of the request', () => {
-    const user: AuthUser = { id: 'user-1', email: 'user@example.com', name: null, picture: null };
+    const user: AuthUser = {
+      id: 'user-1',
+      email: 'user@example.com',
+      name: null,
+      displayName: null,
+      picture: null,
+      birthDate: null,
+      createdAt: '2026-01-01T00:00:00.000Z',
+    };
 
     expect(factory(undefined, createContext({ user }))).toBe(user);
   });

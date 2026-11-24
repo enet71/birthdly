@@ -27,11 +27,15 @@
   padding: 0.5rem 1rem 0.75rem;
 
   &__caption {
+    overflow: hidden;
     color: var(--mat-sys-on-surface-variant);
     font: var(--mat-sys-label-medium);
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
-  &__email {
+  &__email,
+  &__name {
     overflow: hidden;
     color: var(--mat-sys-on-surface);
     font: var(--mat-sys-title-small);

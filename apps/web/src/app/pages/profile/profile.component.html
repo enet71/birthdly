@@ -1,0 +1,121 @@
+<section class="card">
+  @if (view() === 'loading') {
+    <mat-progress-spinner mode="indeterminate" diameter="40" [attr.aria-label]="'account.loading' | transloco" />
+  } @else {
+    <app-account-avatar class="avatar" />
+    <div class="identity" aria-live="polite">
+      @if (view() === 'signedIn') {
+        @if (name(); as name) {
+          <h2 class="name">{{ name }}</h2>
+        }
+        <p class="email" [attr.title]="email()">{{ email() }}</p>
+      } @else {
+        <p class="description">{{ 'account.signedOutDescription' | transloco }}</p>
+      }
+    </div>
+    <div class="actions">
+      @if (view() === 'signedIn') {
+        <button matButton="tonal" type="button" (click)="openProfileDialog()">
+          <mat-icon>edit</mat-icon>
+          {{ 'profile.edit' | transloco }}
+        </button>
+      }
+      <!-- One button for both views keeps keyboard focus in place when signing in or out switches the view. -->
+      <button matButton="outlined" type="button" disabledInteractive [disabled]="isPending()" (click)="runAccountAction()">
+        <!-- A single root element per branch, so Material projects the icon into its icon slot. -->
+        @if (view() === 'signedIn') {
+          <mat-icon>logout</mat-icon>
+        } @else {
+          <img class="google-logo" src="/assets/images/google-logo.svg" alt="" width="18" height="18" />
+        }
+        {{ (view() === 'signedIn' ? 'account.signOut' : 'account.signIn') | transloco }}
+      </button>
+    </div>
+  }
+</section>
+
+@if (view() === 'signedIn') {
+  <section class="panel" aria-labelledby="profile-birthday-heading">
+    <h2 class="panel__heading" id="profile-birthday-heading">
+      <mat-icon aria-hidden="true">cake</mat-icon>
+      {{ 'profile.birthday.title' | transloco }}
+    </h2>
+    @if (birthday(); as birthday) {
+      <div class="birthday">
+        <p class="birthday__date">
+          {{ birthday.date | localeDate: ((birthday.hasYear ? 'dates.monthDayYear' : 'dates.monthDay') | transloco) }}
+        </p>
+        <p class="birthday__countdown" [class.birthday__countdown_today]="birthday.daysUntil === 0">{{ countdown(birthday.daysUntil) }}</p>
+      </div>
+    } @else {
+      <div class="birthday">
+        <p class="birthday__empty">{{ 'profile.birthday.notSet' | transloco }}</p>
+        <button matButton type="button" (click)="openProfileDialog()">
+          <mat-icon>add</mat-icon>
+          {{ 'profile.birthday.add' | transloco }}
+        </button>
+      </div>
+    }
+  </section>
+
+  <section class="panel" aria-labelledby="profile-summary-heading">
+    <h2 class="panel__heading" id="profile-summary-heading">
+      <mat-icon aria-hidden="true">insights</mat-icon>
+      {{ 'profile.summary.title' | transloco }}
+    </h2>
+    <dl class="summary">
+      <div class="summary__row">
+        <dt class="summary__label">
+          <mat-icon aria-hidden="true">calendar_month</mat-icon>
+          {{ 'profile.summary.googleCalendar' | transloco }}
+        </dt>
+        <dd class="summary__value">
+          @switch (googleCalendarStatus()) {
+            @case ('loading') {
+              <span class="summary__placeholder" role="status" [attr.aria-label]="'profile.summary.loading' | transloco"></span>
+            }
+            @case ('failed') {
+              <span class="summary__muted">{{ 'profile.summary.failed' | transloco }}</span>
+            }
+            @default {
+              <a class="summary__link" routerLink="/settings">
+                {{ (googleCalendarStatus() === 'connected' ? 'profile.summary.connected' : 'profile.summary.notConnected') | transloco }}
+              </a>
+            }
+          }
+        </dd>
+      </div>
+      <div class="summary__row">
+        <dt class="summary__label">
+          <mat-icon aria-hidden="true">notifications</mat-icon>
+          {{ 'profile.summary.reminders' | transloco }}
+        </dt>
+        <dd class="summary__value">
+          @switch (remindersStatus()) {
+            @case ('loading') {
+              <span class="summary__placeholder" role="status" [attr.aria-label]="'profile.summary.loading' | transloco"></span>
+            }
+            @case ('failed') {
+              <span class="summary__muted">{{ 'profile.summary.failed' | transloco }}</span>
+            }
+            @case ('unsupported') {
+              <span class="summary__muted">{{ 'profile.summary.unsupported' | transloco }}</span>
+            }
+            @default {
+              <a class="summary__link" routerLink="/settings">
+                {{ (remindersStatus() === 'on' ? 'profile.summary.on' : 'profile.summary.off') | transloco }}
+              </a>
+            }
+          }
+        </dd>
+      </div>
+      <div class="summary__row">
+        <dt class="summary__label">
+          <mat-icon aria-hidden="true">event_available</mat-icon>
+          {{ 'profile.summary.memberSince' | transloco }}
+        </dt>
+        <dd class="summary__value">{{ memberSince() | localeDate: ('dates.monthDayYear' | transloco) }}</dd>
+      </div>
+    </dl>
+  </section>
+}

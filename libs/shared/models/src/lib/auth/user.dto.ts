@@ -2,7 +2,14 @@
 export interface UserDto {
   id: string;
   email: string;
+  // The name from the Google account.
   name: string | null;
+  // The name the user set in the profile; shown instead of `name` when set.
+  displayName: string | null;
   // The address of the Google profile picture.
   picture: string | null;
+  // The user's own birthday, `yyyy-MM-dd`; the year 0004 marks an unknown birth year.
+  birthDate: string | null;
+  // When the account was created, an ISO 8601 date and time.
+  createdAt: string;
 }

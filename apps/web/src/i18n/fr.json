@@ -22,6 +22,7 @@
     "calendar": "Calendrier",
     "people": "Personnes",
     "celebrities": "Célébrités",
+    "profile": "Profil",
     "settings": "Paramètres",
     "feedback": "Avis",
     "addBirthday": "Ajouter un anniversaire"
@@ -60,6 +61,9 @@
     },
     "person": {
       "title": "Personne"
+    },
+    "profile": {
+      "title": "Profil"
     },
     "settings": {
       "title": "Paramètres"
@@ -112,6 +116,40 @@
     "signedOutDescription": "Connectez-vous pour garder vos anniversaires dans votre compte, les utiliser sur tous vos appareils, les synchroniser avec Google Agenda et recevoir des notifications d'anniversaire.",
     "signOut": "Se déconnecter",
     "signIn": "Se connecter avec Google"
+  },
+  "profile": {
+    "edit": "Modifier le profil",
+    "dialog": {
+      "title": "Modifier le profil",
+      "subtitle": "Vous seul voyez votre nom et votre anniversaire.",
+      "name": "Nom",
+      "nameHint": "Laissez vide pour utiliser votre nom Google : {{ name }}",
+      "birthday": "Mon anniversaire",
+      "notSet": "Non renseigné",
+      "errors": {
+        "nameTooLong": "Le nom est trop long",
+        "dayRequired": "Requis"
+      }
+    },
+    "birthday": {
+      "title": "Mon anniversaire",
+      "today": "C'est aujourd'hui ! Joyeux anniversaire !",
+      "notSet": "Non renseigné",
+      "add": "Ajouter"
+    },
+    "summary": {
+      "title": "Résumé",
+      "googleCalendar": "Google Agenda",
+      "reminders": "Notifications sur cet appareil",
+      "memberSince": "Membre depuis le",
+      "connected": "Connecté",
+      "notConnected": "Non connecté",
+      "on": "Activées",
+      "off": "Désactivées",
+      "unsupported": "Non prises en charge",
+      "failed": "Chargement impossible",
+      "loading": "Chargement"
+    }
   },
   "common": {
     "showLess": "Afficher moins",
@@ -200,7 +238,8 @@
     "auth": {
       "restoreFailed": "Impossible de restaurer votre session",
       "signInFailed": "Impossible de se connecter avec Google",
-      "signOutFailed": "Impossible de se déconnecter"
+      "signOutFailed": "Impossible de se déconnecter",
+      "profileSaveFailed": "Impossible d'enregistrer le profil"
     },
     "birthdays": {
       "loadFailed": "Impossible de charger les anniversaires",

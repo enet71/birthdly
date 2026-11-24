@@ -3,7 +3,7 @@ import { and, eq, gt, lte, sql } from 'drizzle-orm';
 import { DATABASE, Database, sessions, users } from '@birthday/api-database';
 import { SESSION_EXTEND_AFTER_MS, SESSION_IDLE_MS, SESSION_MAX_MS } from '../constants';
 import { ActiveSession, CreatedSession } from '../types';
-import { createSessionToken, hashSessionToken } from '../utils';
+import { AUTH_USER_COLUMNS, createSessionToken, hashSessionToken, toAuthUser } from '../utils';
 
 // Times come from the database clock, so expiry does not depend on the API host's clock.
 @Injectable()
@@ -37,7 +37,7 @@ export class SessionsService {
         sessionId: sessions.id,
         expiresAt: sessions.expiresAt,
         stale: sql<boolean>`${sessions.lastUsedAt} <= now() - ${interval(SESSION_EXTEND_AFTER_MS)}`,
-        user: { id: users.id, email: users.email, name: users.name, picture: users.picture },
+        user: AUTH_USER_COLUMNS,
       })
       .from(sessions)
       .innerJoin(users, eq(users.id, sessions.userId))
@@ -47,7 +47,7 @@ export class SessionsService {
       return null;
     }
     if (!row.stale) {
-      return { user: row.user, expiresAt: row.expiresAt, extended: false };
+      return { user: toAuthUser(row.user), expiresAt: row.expiresAt, extended: false };
     }
 
     const [extended] = await this.db
@@ -60,7 +60,7 @@ export class SessionsService {
       .returning({ expiresAt: sessions.expiresAt });
 
     // A sign-out on another request may have removed it in between.
-    return extended ? { user: row.user, expiresAt: extended.expiresAt, extended: true } : null;
+    return extended ? { user: toAuthUser(row.user), expiresAt: extended.expiresAt, extended: true } : null;
   }
 
   public async delete(token: string): Promise<void> {
