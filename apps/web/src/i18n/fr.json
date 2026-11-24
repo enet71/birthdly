@@ -796,6 +796,12 @@
       "science": "Science",
       "art": "Art",
       "business": "Affaires"
+    },
+    "historicalCountries": {
+      "CS": "Tchécoslovaquie ou Serbie-et-Monténégro",
+      "DD": "RDA",
+      "SU": "Union soviétique",
+      "YU": "Yougoslavie"
     }
   }
 }

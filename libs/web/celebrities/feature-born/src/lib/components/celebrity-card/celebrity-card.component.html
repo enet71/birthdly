@@ -18,7 +18,26 @@
       <span>{{ person.birthYear }}–{{ person.deathYear }}</span>
     }
   </p>
-  @if (person.countries) {
-    <p class="countries">{{ person.countries }}</p>
+  @if (person.countries.length) {
+    <p class="flags">
+      @for (country of person.countries; track country.code) {
+        @let name = country.name ?? ('born.historicalCountries.' + country.code | transloco);
+        <!-- Codes without a flag, and any flag that fails to load, fall back to the code. -->
+        @if (country.flagUrl && !missingFlags().has(country.code)) {
+          <img
+            class="flags__flag"
+            width="20"
+            height="15"
+            loading="lazy"
+            [src]="country.flagUrl"
+            [alt]="name"
+            [title]="name"
+            (error)="markFlagMissing(country.code)"
+          />
+        } @else {
+          <abbr class="flags__code" [title]="name">{{ country.code }}</abbr>
+        }
+      }
+    </p>
   }
 </div>

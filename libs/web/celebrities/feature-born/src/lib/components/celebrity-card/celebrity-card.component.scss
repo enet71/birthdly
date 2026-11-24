@@ -45,8 +45,7 @@
   }
 }
 
-.details,
-.countries {
+.details {
   overflow: hidden;
   margin: 0.125rem 0 0;
   text-overflow: ellipsis;
@@ -60,5 +59,31 @@
     content: '·';
     margin-inline: 0.5rem;
     color: var(--mat-sys-outline);
+  }
+}
+
+// Wraps when a person has more citizenships than fit in one line.
+.flags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+  margin: 0.25rem 0 0;
+  line-height: 0.9375rem;
+  color: var(--mat-sys-on-surface-variant);
+
+  &__flag {
+    display: block;
+    width: 1.25rem;
+    height: 0.9375rem;
+    border-radius: 0.125rem;
+    box-shadow: 0 0 0 0.0625rem color-mix(in srgb, var(--mat-sys-outline-variant) 60%, transparent);
+    object-fit: cover;
+  }
+
+  &__code {
+    font-size: 0.625rem;
+    font-weight: 700;
+    text-decoration: none;
   }
 }

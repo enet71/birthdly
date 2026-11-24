@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, InputSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, InputSignal, signal, WritableSignal } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { BirthdayAvatarComponent } from '@birthday/web-birthdays-ui';
 import { CelebrityCard } from '../../types';
@@ -12,4 +12,11 @@ import { CelebrityCard } from '../../types';
 })
 export class CelebrityCardComponent {
   public readonly celebrity: InputSignal<CelebrityCard> = input.required();
+
+  // Country codes whose flag image failed to load.
+  protected readonly missingFlags: WritableSignal<ReadonlySet<string>> = signal(new Set());
+
+  protected markFlagMissing(code: string): void {
+    this.missingFlags.update((codes: ReadonlySet<string>) => new Set(codes).add(code));
+  }
 }

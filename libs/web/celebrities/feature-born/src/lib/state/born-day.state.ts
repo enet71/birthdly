@@ -3,7 +3,8 @@ import { AppLocale, CELEBRITY_COUNTRIES, CelebrityDto } from '@birthday/shared-m
 import { injectState, ReadonlyState, State } from '@birthday/web-shared-data-access';
 import { LocaleState } from '@birthday/web-shared-i18n';
 import { BORN_DEFAULT_FILTERS, countActiveBornFilters, getBornDayPath, isSameBornDate, shiftBornDate, toBornDate, toReferenceDate } from '../helpers';
-import { BornCountryOption, BornDate, BornFilters, CelebrityCard } from '../types';
+import { BORN_CODES_WITHOUT_FLAG, BORN_HISTORICAL_COUNTRY_CODES, BORN_HISTORICAL_FLAG_CODES } from '../constants';
+import { BornCountryOption, BornDate, BornFilters, CelebrityCard, CelebrityCountry } from '../types';
 
 @Injectable()
 export class BornDayState extends State {
@@ -80,6 +81,16 @@ export class BornDayState extends State {
     return this.countryNames().of(code) ?? code;
   }
 
+  private toCountry(code: string): CelebrityCountry {
+    const file = `${code.toLowerCase()}.svg`;
+
+    if (BORN_HISTORICAL_COUNTRY_CODES.has(code)) {
+      return { code, name: null, flagUrl: BORN_HISTORICAL_FLAG_CODES.has(code) ? `assets/images/flags/${file}` : null };
+    }
+
+    return { code, name: this.getCountryName(code), flagUrl: BORN_CODES_WITHOUT_FLAG.has(code) ? null : `assets/flags/${file}` };
+  }
+
   private toCard(celebrity: CelebrityDto): CelebrityCard {
     const birthYear = Number(celebrity.birthDate.slice(0, 4));
     const deathYear: number | null = celebrity.deathDate ? Number(celebrity.deathDate.slice(0, 4)) : null;
@@ -88,7 +99,7 @@ export class BornDayState extends State {
       id: celebrity.id,
       name: celebrity.name,
       occupation: celebrity.occupation,
-      countries: celebrity.countries.map((code: string) => this.getCountryName(code)).join(', '),
+      countries: celebrity.countries.map((code: string) => this.toCountry(code)),
       birthYear,
       deathYear,
       age: deathYear === null ? this.currentYear - birthYear : null,

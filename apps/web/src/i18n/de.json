@@ -796,6 +796,12 @@
       "science": "Wissenschaft",
       "art": "Kunst",
       "business": "Wirtschaft"
+    },
+    "historicalCountries": {
+      "CS": "Tschechoslowakei oder Serbien und Montenegro",
+      "DD": "DDR",
+      "SU": "Sowjetunion",
+      "YU": "Jugoslawien"
     }
   }
 }

@@ -28,12 +28,20 @@ export interface BornCountryOption {
   name: string;
 }
 
+export interface CelebrityCountry {
+  code: string;
+  // In the current language; `null` for historical countries, whose names come from translations.
+  name: string | null;
+  // `null` when there is no flag image; the card shows the code instead.
+  flagUrl: string | null;
+}
+
 export interface CelebrityCard {
   id: string;
   name: string;
   occupation: CelebrityOccupation | null;
-  // Country names in the current language, comma-separated; empty when unknown.
-  countries: string;
+  // Every citizenship, with names in the current language; empty when unknown.
+  countries: CelebrityCountry[];
   birthYear: number;
   // `null` while the person is alive.
   deathYear: number | null;
