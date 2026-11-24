@@ -140,7 +140,7 @@ export const QLEVER_SPARQL_URL = 'https://qlever.dev/api/wikidata';
 export const WDQS_SPARQL_URL = 'https://query.wikidata.org/sparql';
 export const WIKIDATA_API_URL = 'https://www.wikidata.org/w/api.php';
 export const COMMONS_API_URL = 'https://commons.wikimedia.org/w/api.php';
-// A standard Wikimedia thumbnail width, enough for the 2.75rem avatar on dense screens; other widths are throttled.
+// A standard Wikimedia thumbnail width, enough for the 4.5rem avatar on dense screens; other widths are throttled.
 export const CELEBRITY_PHOTO_WIDTH = 120;
 export const PAGEVIEWS_API_URL = 'https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia/all-access/user';
 // `wbgetentities` returns at most 50 items per request.

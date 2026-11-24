@@ -11,7 +11,7 @@
     [title]="'born.card.photoCredit' | transloco: { credit }"
     [attr.aria-label]="'born.card.photoLink' | transloco: { name: person.name, credit }"
   >
-    <img class="avatar__image" alt="" width="44" height="44" loading="lazy" [src]="photo.url" (error)="markPhotoMissing()" />
+    <img class="avatar__image" alt="" width="72" height="72" loading="lazy" [src]="photo.url" (error)="markPhotoMissing()" />
   </a>
 } @else {
   <ui-birthday-avatar class="avatar" [name]="person.name"></ui-birthday-avatar>
