@@ -49,6 +49,7 @@ const TABLES = [
   'notification_deliveries',
   'notification_settings',
   'push_subscriptions',
+  'roadmap_items',
   'sessions',
   'users',
 ];

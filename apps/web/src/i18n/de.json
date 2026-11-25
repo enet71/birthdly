@@ -25,6 +25,7 @@
     "profile": "Profil",
     "settings": "Einstellungen",
     "feedback": "Feedback",
+    "roadmap": "Roadmap",
     "addBirthday": "Geburtstag hinzufügen"
   },
   "footer": {
@@ -32,6 +33,7 @@
     "about": "Über uns",
     "guides": "Anleitungen",
     "feedback": "Feedback",
+    "roadmap": "Roadmap",
     "privacy": "Datenschutzerklärung",
     "terms": "Nutzungsbedingungen"
   },
@@ -79,6 +81,12 @@
       "documentTitle": "Feedback · Birthdly",
       "heading": "Feedback",
       "description": "Melde einen Fehler, schlage eine Idee vor oder stelle eine Frage zu Birthdly. Wir lesen jede Nachricht."
+    },
+    "roadmap": {
+      "title": "Roadmap",
+      "documentTitle": "Roadmap · Birthdly",
+      "heading": "Roadmap",
+      "description": "Sieh, woran Birthdly gerade arbeitet, was als Nächstes geplant ist und was schon veröffentlicht wurde."
     },
     "privacy": {
       "title": "Datenschutzerklärung",
@@ -573,6 +581,30 @@
       "messageRequired": "Schreib eine Nachricht",
       "messageTooLong": "Die Nachricht darf höchstens {{ max }} Zeichen lang sein",
       "emailInvalid": "Gib eine gültige E-Mail-Adresse ein"
+    }
+  },
+  "roadmap": {
+    "loading": "Roadmap wird geladen",
+    "loadError": "Die Roadmap konnte nicht geladen werden.",
+    "new": "Neu",
+    "statuses": {
+      "in_progress": "In Arbeit",
+      "planned": "Geplant",
+      "done": "Veröffentlicht"
+    },
+    "categories": {
+      "calendar": "Kalender",
+      "people": "Personen",
+      "reminders": "Erinnerungen",
+      "integrations": "Integrationen",
+      "celebrities": "Prominente",
+      "account": "Konto",
+      "app": "App"
+    },
+    "cta": {
+      "title": "Fehlt dir etwas?",
+      "text": "Erzähl uns, was Birthdly für dich nützlicher machen würde. Ideen von Nutzern prägen diese Roadmap.",
+      "action": "Idee vorschlagen"
     }
   },
   "guides": {

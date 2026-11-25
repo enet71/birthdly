@@ -25,6 +25,7 @@
     "profile": "Perfil",
     "settings": "Ajustes",
     "feedback": "Comentarios",
+    "roadmap": "Hoja de ruta",
     "addBirthday": "Añadir cumpleaños"
   },
   "footer": {
@@ -32,6 +33,7 @@
     "about": "Acerca de",
     "guides": "Guías",
     "feedback": "Comentarios",
+    "roadmap": "Hoja de ruta",
     "privacy": "Política de privacidad",
     "terms": "Términos del servicio"
   },
@@ -79,6 +81,12 @@
       "documentTitle": "Comentarios · Birthdly",
       "heading": "Comentarios",
       "description": "Informa de un error, sugiere una idea o haz una pregunta sobre Birthdly. Leemos todos los mensajes."
+    },
+    "roadmap": {
+      "title": "Hoja de ruta",
+      "documentTitle": "Hoja de ruta · Birthdly",
+      "heading": "Hoja de ruta",
+      "description": "Descubre en qué trabaja Birthdly, qué está planeado y qué se ha lanzado ya."
     },
     "privacy": {
       "title": "Política de privacidad",
@@ -573,6 +581,30 @@
       "messageRequired": "Escribe un mensaje",
       "messageTooLong": "El mensaje puede tener hasta {{ max }} caracteres",
       "emailInvalid": "Introduce un correo válido"
+    }
+  },
+  "roadmap": {
+    "loading": "Cargando la hoja de ruta",
+    "loadError": "No se pudo cargar la hoja de ruta.",
+    "new": "Nuevo",
+    "statuses": {
+      "in_progress": "En curso",
+      "planned": "Planeado",
+      "done": "Lanzado"
+    },
+    "categories": {
+      "calendar": "Calendario",
+      "people": "Personas",
+      "reminders": "Recordatorios",
+      "integrations": "Integraciones",
+      "celebrities": "Famosos",
+      "account": "Cuenta",
+      "app": "App"
+    },
+    "cta": {
+      "title": "¿Echas algo en falta?",
+      "text": "Cuéntanos qué haría Birthdly más útil para ti. Las ideas de los usuarios dan forma a esta hoja de ruta.",
+      "action": "Sugerir una idea"
     }
   },
   "guides": {

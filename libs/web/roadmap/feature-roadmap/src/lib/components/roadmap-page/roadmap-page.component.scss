@@ -1,0 +1,423 @@
+// The timeline's axis runs down the middle on wide screens: items in progress stand to its left, planned and released
+// items to its right, and the released months' names to its left. Narrow screens keep one column with the axis on the
+// left.
+
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  width: 100%;
+  max-width: 64rem;
+  margin-inline: auto;
+  padding-block: 1.5rem 2rem;
+}
+
+.state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 3rem 1rem;
+  text-align: center;
+
+  &__icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 2.5rem;
+    color: var(--mat-sys-outline);
+  }
+
+  &__text {
+    margin: 0;
+    font-size: 0.9375rem;
+    line-height: 1.375rem;
+    color: var(--mat-sys-on-surface-variant);
+  }
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  // Cards slide in from beyond its edges; `clip`, unlike `hidden`, keeps the page the scroll-driven animations follow.
+  overflow-x: clip;
+  // Room for the hover lift and the card shadows, which `clip` would cut.
+  padding: 0.25rem 1rem;
+  margin-inline: -1rem;
+}
+
+// Each status has its own tone; the marker, the line and the dots take it.
+.phase {
+  --phase-tone: var(--app-tone-violet);
+  --phase-ink: var(--app-tone-violet-ink);
+
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  &_in_progress {
+    --phase-tone: var(--app-tone-peach);
+    --phase-ink: var(--app-tone-peach-ink);
+  }
+
+  &_done {
+    --phase-tone: var(--app-tone-mint);
+    --phase-ink: var(--app-tone-mint-ink);
+  }
+
+  &_idea {
+    --phase-tone: var(--app-tone-rose);
+    --phase-ink: var(--app-tone-rose-ink);
+  }
+
+  &__title {
+    display: grid;
+    grid-template-columns: 1fr 2.5rem 1fr;
+    grid-template-areas: 'start axis end';
+    align-items: center;
+    column-gap: 1rem;
+    margin: 0;
+    font-size: 1.375rem;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    color: var(--mat-sys-on-surface);
+  }
+
+  &__marker {
+    display: flex;
+    grid-area: axis;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background: var(--phase-tone);
+    color: var(--phase-ink);
+  }
+
+  &_in_progress &__marker {
+    animation: pulse 2.4s ease-out infinite;
+  }
+
+  &__label {
+    display: flex;
+    grid-area: end;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  // Items in progress stand left of the axis, so their title does too.
+  &_in_progress &__label {
+    grid-area: start;
+    flex-direction: row-reverse;
+    justify-self: end;
+  }
+
+  &__count {
+    padding: 0.125rem 0.625rem;
+    border-radius: 1rem;
+    background: var(--phase-tone);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: normal;
+    color: var(--phase-ink);
+  }
+}
+
+.items {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0.25rem 0;
+  list-style: none;
+
+  // The axis line, under the marker's center.
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 0.125rem;
+    background: color-mix(in srgb, var(--phase-ink) 30%, transparent);
+    transform: translateX(-50%);
+  }
+}
+
+// A month of released items: its name left of a ring on the axis.
+.milestone {
+  display: grid;
+  grid-template-columns: 1fr 2.5rem 1fr;
+  grid-template-areas: 'label dot .';
+  align-items: center;
+  column-gap: 1rem;
+
+  &:not(:first-child) {
+    margin-top: 1rem;
+  }
+
+  &__label {
+    display: inline-block;
+    grid-area: label;
+    justify-self: end;
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.25rem;
+    color: var(--mat-sys-outline);
+
+    // Some languages write standalone month names in lower case ("ноябрь 2026").
+    &::first-letter {
+      text-transform: uppercase;
+    }
+  }
+
+  &__dot {
+    position: relative;
+    grid-area: dot;
+    justify-self: center;
+    width: 1rem;
+    height: 1rem;
+    border: 0.1875rem solid var(--phase-ink);
+    border-radius: 50%;
+    background: var(--mat-sys-surface);
+    box-sizing: border-box;
+  }
+}
+
+.item {
+  display: grid;
+  grid-template-columns: 1fr 2.5rem 1fr;
+  grid-template-areas: '. dot card';
+  align-items: start;
+  column-gap: 1rem;
+
+  .phase_in_progress & {
+    grid-template-areas: 'card dot .';
+  }
+
+  &__dot {
+    position: relative;
+    grid-area: dot;
+    justify-self: center;
+    width: 0.75rem;
+    height: 0.75rem;
+    margin-top: 1.375rem;
+    border: 0.125rem solid var(--mat-sys-surface-container-lowest);
+    border-radius: 50%;
+    background: var(--phase-ink);
+    box-sizing: border-box;
+  }
+
+  &__card {
+    display: flex;
+    grid-area: card;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    border: 0.0625rem solid transparent;
+    border-radius: 1rem;
+    background: var(--mat-sys-surface-container-lowest);
+    box-shadow: 0 0.25rem 1rem color-mix(in srgb, var(--app-shadow-tint) 8%, transparent);
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease,
+      border-color 0.2s ease;
+
+    &:hover {
+      border-color: color-mix(in srgb, var(--phase-ink) 35%, transparent);
+      box-shadow: 0 0.5rem 1.5rem color-mix(in srgb, var(--app-shadow-tint) 16%, transparent);
+      transform: translateY(-0.125rem);
+    }
+  }
+
+  &__icon {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.75rem;
+    background: var(--phase-tone);
+    color: var(--phase-ink);
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.375rem;
+    min-width: 0;
+  }
+
+  &__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem 0.5rem;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.5rem;
+    color: var(--mat-sys-on-surface);
+  }
+
+  &__new {
+    padding: 0 0.5rem;
+    border-radius: 1rem;
+    background: var(--mat-sys-primary);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    line-height: 1.25rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--mat-sys-on-primary);
+  }
+
+  &__text {
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--mat-sys-on-surface-variant);
+  }
+
+  &__category {
+    margin-top: 0.25rem;
+    padding: 0.125rem 0.625rem;
+    border: 0.0625rem solid var(--mat-sys-outline-variant);
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.25rem;
+    color: var(--mat-sys-on-surface-variant);
+  }
+
+  // The invitation to suggest an idea: the text and the button, tinted with its phase's tone.
+  &__card_idea {
+    flex-direction: column;
+    align-items: flex-start;
+    background: color-mix(in srgb, var(--phase-tone) 60%, var(--mat-sys-surface-container-lowest));
+
+    .item__text {
+      font-size: 0.9375rem;
+      color: var(--mat-sys-on-surface);
+    }
+  }
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--phase-ink) 35%, transparent);
+  }
+
+  70%,
+  100% {
+    box-shadow: 0 0 0 0.625rem transparent;
+  }
+}
+
+// Cards slide in from their side of the axis as they scroll into view. `translate`, not `transform`, so the hover lift
+// still works once a card is in place. Browsers without scroll-driven animations show the cards as they are.
+@keyframes reveal-from-start {
+  from {
+    opacity: 0;
+    translate: -1.5rem 0;
+  }
+}
+
+@keyframes reveal-from-end {
+  from {
+    opacity: 0;
+    translate: 1.5rem 0;
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .item__card {
+      animation: reveal-from-end linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 80%;
+    }
+
+    .phase_in_progress .item__card {
+      animation-name: reveal-from-start;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .phase_in_progress .phase__marker {
+    animation: none;
+  }
+
+  .item__card,
+  .item__card:hover {
+    transition: none;
+    transform: none;
+  }
+}
+
+@media (max-width: 48rem) {
+  :host {
+    gap: 2rem;
+  }
+
+  .phase__title,
+  .phase_in_progress .phase__title {
+    grid-template-columns: 2.5rem 1fr;
+    grid-template-areas: 'axis end';
+  }
+
+  .phase_in_progress .phase__label {
+    grid-area: end;
+    flex-direction: row;
+    justify-self: start;
+  }
+
+  .items::before {
+    left: 1.25rem;
+  }
+
+  .milestone {
+    grid-template-columns: 2.5rem 1fr;
+    grid-template-areas: 'dot label';
+    column-gap: 0.75rem;
+
+    &__label {
+      justify-self: start;
+    }
+  }
+
+  .item,
+  .phase_in_progress .item {
+    grid-template-columns: 2.5rem 1fr;
+    grid-template-areas: 'dot card';
+    column-gap: 0.75rem;
+  }
+
+  // On one column every card is right of the axis.
+  .phase_in_progress .item__card {
+    animation-name: reveal-from-end;
+  }
+
+  .item {
+    &__dot {
+      margin-top: 1.25rem;
+    }
+
+    &__card {
+      gap: 0.75rem;
+      padding: 0.875rem 1rem;
+    }
+
+    &__icon {
+      width: 2rem;
+      height: 2rem;
+    }
+  }
+}

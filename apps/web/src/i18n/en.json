@@ -25,6 +25,7 @@
     "profile": "Profile",
     "settings": "Settings",
     "feedback": "Feedback",
+    "roadmap": "Roadmap",
     "addBirthday": "Add birthday"
   },
   "footer": {
@@ -32,6 +33,7 @@
     "about": "About",
     "guides": "Guides",
     "feedback": "Feedback",
+    "roadmap": "Roadmap",
     "privacy": "Privacy Policy",
     "terms": "Terms of Service"
   },
@@ -79,6 +81,12 @@
       "documentTitle": "Feedback · Birthdly",
       "heading": "Feedback",
       "description": "Report a bug, suggest an idea, or ask a question about Birthdly. We read every message."
+    },
+    "roadmap": {
+      "title": "Roadmap",
+      "documentTitle": "Roadmap · Birthdly",
+      "heading": "Roadmap",
+      "description": "See what Birthdly is working on, what is planned next, and what has already been released."
     },
     "privacy": {
       "title": "Privacy Policy",
@@ -573,6 +581,30 @@
       "messageRequired": "Write a message",
       "messageTooLong": "The message can be up to {{ max }} characters",
       "emailInvalid": "Enter a valid email"
+    }
+  },
+  "roadmap": {
+    "loading": "Loading the roadmap",
+    "loadError": "Could not load the roadmap.",
+    "new": "New",
+    "statuses": {
+      "in_progress": "In progress",
+      "planned": "Planned",
+      "done": "Released"
+    },
+    "categories": {
+      "calendar": "Calendar",
+      "people": "People",
+      "reminders": "Reminders",
+      "integrations": "Integrations",
+      "celebrities": "Celebrities",
+      "account": "Account",
+      "app": "App"
+    },
+    "cta": {
+      "title": "Missing something?",
+      "text": "Tell us what would make Birthdly more useful for you. Ideas from users shape this roadmap.",
+      "action": "Suggest an idea"
     }
   },
   "guides": {

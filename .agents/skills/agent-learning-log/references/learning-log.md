@@ -68,6 +68,16 @@ Add new entries under the category that best matches their purpose, keeping newe
 
 ### Workflow and Tooling
 
+## 2026-11-25 - Fill a custom migration before the dev API applies it
+
+- Type: error
+- Context: Adding a seed with `npx drizzle-kit generate --config libs/api/database/drizzle.config.ts --custom --name <name>` while the developer's API dev server (`nx serve api`, watch mode) was running.
+- Incorrect behavior: drizzle-kit created the custom migration as an empty placeholder. The watching API rebuilt, copied it next to `main.js`, applied it on restart and recorded it in `drizzle.__drizzle_migrations`. The SQL written into the file afterwards never ran locally, and the local database had to be fixed by hand (rerunning the SQL and updating the recorded hash).
+- Preferred behavior: Before generating a custom migration, ask the developer to stop the API dev server, or write the migration's SQL in the same step that creates the file, before the watcher rebuilds. After any migration change, check the local database (`select count(*) from drizzle.__drizzle_migrations`, the affected table) rather than assuming the API applied the final content.
+- Generalized rule: A running API applies every new migration file on restart, including empty or half-written ones; never leave a migration file incomplete while the dev API watches.
+- Trigger cues: drizzle-kit generate --custom, custom migration, seed migration, empty migration, nx serve api, watch mode, migration applied locally, \_\_drizzle_migrations
+- Status: active
+
 ## 2026-11-20 - Do not run e2e tests for now
 
 - Type: preference

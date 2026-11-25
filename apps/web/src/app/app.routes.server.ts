@@ -21,6 +21,7 @@ export const serverRoutes: ServerRoute[] = [
   { path: 'privacy', renderMode: RenderMode.Server },
   { path: 'terms', renderMode: RenderMode.Server },
   { path: 'feedback', renderMode: RenderMode.Server },
+  { path: 'roadmap', renderMode: RenderMode.Server },
   { path: 'admin/imports', renderMode: RenderMode.Server },
   { path: 'admin/feedback', renderMode: RenderMode.Server },
   // Unknown dates under `born` render the not-found page, which sets the 404 status itself.

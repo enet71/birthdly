@@ -25,6 +25,7 @@
     "profile": "Profil",
     "settings": "Paramètres",
     "feedback": "Avis",
+    "roadmap": "Feuille de route",
     "addBirthday": "Ajouter un anniversaire"
   },
   "footer": {
@@ -32,6 +33,7 @@
     "about": "À propos",
     "guides": "Guides",
     "feedback": "Avis",
+    "roadmap": "Feuille de route",
     "privacy": "Politique de confidentialité",
     "terms": "Conditions d'utilisation"
   },
@@ -79,6 +81,12 @@
       "documentTitle": "Avis · Birthdly",
       "heading": "Avis",
       "description": "Signalez un bug, proposez une idée ou posez une question sur Birthdly. Nous lisons chaque message."
+    },
+    "roadmap": {
+      "title": "Feuille de route",
+      "documentTitle": "Feuille de route · Birthdly",
+      "heading": "Feuille de route",
+      "description": "Découvrez ce sur quoi Birthdly travaille, ce qui est prévu et ce qui est déjà disponible."
     },
     "privacy": {
       "title": "Politique de confidentialité",
@@ -573,6 +581,30 @@
       "messageRequired": "Écrivez un message",
       "messageTooLong": "Le message peut contenir jusqu'à {{ max }} caractères",
       "emailInvalid": "Saisissez un e-mail valide"
+    }
+  },
+  "roadmap": {
+    "loading": "Chargement de la feuille de route",
+    "loadError": "Impossible de charger la feuille de route.",
+    "new": "Nouveau",
+    "statuses": {
+      "in_progress": "En cours",
+      "planned": "Prévu",
+      "done": "Disponible"
+    },
+    "categories": {
+      "calendar": "Calendrier",
+      "people": "Personnes",
+      "reminders": "Rappels",
+      "integrations": "Intégrations",
+      "celebrities": "Célébrités",
+      "account": "Compte",
+      "app": "Application"
+    },
+    "cta": {
+      "title": "Il vous manque quelque chose ?",
+      "text": "Dites-nous ce qui rendrait Birthdly plus utile pour vous. Les idées des utilisateurs façonnent cette feuille de route.",
+      "action": "Proposer une idée"
     }
   },
   "guides": {

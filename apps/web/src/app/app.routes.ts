@@ -75,6 +75,16 @@ export const appRoutes: Route[] = [
     },
     loadChildren: () => import('@birthday/web-feedback-feature-feedback').then((m) => m.FEEDBACK_ROUTES),
   },
+  {
+    path: 'roadmap',
+    title: 'routes.roadmap.title',
+    data: {
+      [APP_DOCUMENT_TITLE_DATA_KEY]: 'routes.roadmap.documentTitle',
+      [APP_LAYOUT_HEADING_DATA_KEY]: 'routes.roadmap.heading',
+      [APP_DESCRIPTION_DATA_KEY]: 'routes.roadmap.description',
+    },
+    loadChildren: () => import('@birthday/web-roadmap-feature-roadmap').then((m) => m.ROADMAP_ROUTES),
+  },
   { path: 'calendar', redirectTo: '' },
   {
     // Only for the admins listed in the API's `ADMIN_EMAILS`; everyone else sees "Page not found". Not in the menu; the

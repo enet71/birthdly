@@ -1,0 +1,81 @@
+<div class="timeline" [attr.aria-busy]="isLoading()">
+  <!-- The ideas users send are where the roadmap starts, so the invitation opens the timeline. -->
+  <section class="phase phase_idea" aria-labelledby="roadmap-idea">
+    <h2 class="phase__title" id="roadmap-idea">
+      <span class="phase__marker">
+        <mat-icon aria-hidden="true">lightbulb</mat-icon>
+      </span>
+      <span class="phase__label">{{ 'roadmap.cta.title' | transloco }}</span>
+    </h2>
+    <div class="items">
+      <div class="item">
+        <span class="item__dot" aria-hidden="true"></span>
+        <div class="item__card item__card_idea">
+          <p class="item__text">{{ 'roadmap.cta.text' | transloco }}</p>
+          <a matButton="filled" routerLink="/feedback">
+            <mat-icon>edit</mat-icon>
+            {{ 'roadmap.cta.action' | transloco }}
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  @if (hasLoadError()) {
+    <div class="state" role="alert">
+      <mat-icon class="state__icon" aria-hidden="true">cloud_off</mat-icon>
+      <p class="state__text">{{ 'roadmap.loadError' | transloco }}</p>
+      <button matButton="outlined" type="button" (click)="retry()">
+        {{ 'common.tryAgain' | transloco }}
+      </button>
+    </div>
+  } @else if (isFirstLoad()) {
+    <div class="state">
+      <mat-progress-spinner mode="indeterminate" diameter="40" [attr.aria-label]="'roadmap.loading' | transloco"></mat-progress-spinner>
+    </div>
+  } @else {
+    @for (section of sections(); track section.status) {
+      <section class="phase" [class]="'phase_' + section.status" [attr.aria-labelledby]="'roadmap-' + section.status">
+        <h2 class="phase__title" [id]="'roadmap-' + section.status">
+          <span class="phase__marker">
+            <mat-icon aria-hidden="true">{{ statusIcons[section.status] }}</mat-icon>
+          </span>
+          <span class="phase__label">
+            {{ 'roadmap.statuses.' + section.status | transloco }}
+            <span class="phase__count">{{ section.count }}</span>
+          </span>
+        </h2>
+        <ol class="items" role="list">
+          @for (group of section.groups; track group.releasedOn) {
+            @if (group.releasedOn; as releasedOn) {
+              <li class="milestone">
+                <time class="milestone__label" [attr.datetime]="releasedOn.slice(0, 7)">{{ releasedOn | localeDate: releaseDateFormat }}</time>
+                <span class="milestone__dot" aria-hidden="true"></span>
+              </li>
+            }
+            @for (item of group.items; track item.id) {
+              <li class="item">
+                <span class="item__dot" aria-hidden="true"></span>
+                <div class="item__card">
+                  <span class="item__icon">
+                    <mat-icon aria-hidden="true">{{ item.icon }}</mat-icon>
+                  </span>
+                  <div class="item__body">
+                    <div class="item__head">
+                      <h3 class="item__title">{{ item.title }}</h3>
+                      @if (item.isNew) {
+                        <span class="item__new">{{ 'roadmap.new' | transloco }}</span>
+                      }
+                    </div>
+                    <p class="item__text">{{ item.description }}</p>
+                    <span class="item__category">{{ 'roadmap.categories.' + item.category | transloco }}</span>
+                  </div>
+                </div>
+              </li>
+            }
+          }
+        </ol>
+      </section>
+    }
+  }
+</div>

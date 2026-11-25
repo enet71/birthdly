@@ -10,6 +10,7 @@ import { InvitesModule } from '@birthday/api-invites';
 import { JobsModule } from '@birthday/api-jobs';
 import { NotificationsModule } from '@birthday/api-notifications';
 import { RemindersModule } from '@birthday/api-reminders';
+import { RoadmapModule } from '@birthday/api-roadmap';
 import { StorageModule } from '@birthday/api-storage';
 import { DatabaseModule } from '@birthday/api-database';
 import type { Request } from 'express';
@@ -100,6 +101,7 @@ import { HealthModule } from './health/health.module';
     BirthdaysModule,
     InvitesModule,
     RemindersModule,
+    RoadmapModule,
   ],
   providers: [{ provide: APP_FILTER, useClass: ZodExceptionFilter }],
 })

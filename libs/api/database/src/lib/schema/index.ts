@@ -7,5 +7,6 @@ export * from './invite-submissions';
 export * from './notification-deliveries';
 export * from './notification-settings';
 export * from './push-subscriptions';
+export * from './roadmap-items';
 export * from './sessions';
 export * from './users';
