@@ -1,0 +1,76 @@
+@let relationships = relationshipFilters();
+@let count = activeFilterCount();
+<div class="filters" role="group" [attr.aria-label]="'people.filters.label' | transloco">
+  <mat-form-field class="field field_search" appearance="outline" subscriptSizing="dynamic">
+    <mat-icon matPrefix aria-hidden="true">search</mat-icon>
+    <input
+      #searchInput
+      matInput
+      type="search"
+      [placeholder]="'people.searchPlaceholder' | transloco"
+      [attr.aria-label]="'people.search' | transloco"
+      [value]="searchQuery()"
+      (input)="searchPeople($event)"
+      (keydown.escape)="clearSearch()"
+    />
+    @if (searchQuery()) {
+      <button matSuffix matIconButton type="button" [attr.aria-label]="'people.clearSearch' | transloco" (click)="clearSearch(); searchInput.focus()">
+        <mat-icon>close</mat-icon>
+      </button>
+    }
+  </mat-form-field>
+
+  <button
+    class="toggle"
+    matButton="tonal"
+    type="button"
+    aria-controls="people-filters-panel"
+    [attr.aria-expanded]="isPanelOpen()"
+    (click)="togglePanel()"
+  >
+    <mat-icon>tune</mat-icon>
+    {{ 'people.filters.toggle' | transloco }}
+    @if (count) {
+      ({{ count }})
+    }
+  </button>
+
+  <div id="people-filters-panel" class="panel" [class.panel_open]="isPanelOpen()">
+    <mat-form-field class="field field_relationship" appearance="outline" subscriptSizing="dynamic">
+      <mat-select
+        multiple
+        [placeholder]="'people.columns.relationship' | transloco"
+        [aria-label]="'people.relationshipFilter' | transloco"
+        [value]="relationships"
+        (selectionChange)="changeRelationships($event)"
+      >
+        <mat-select-trigger>
+          @if (relationships.length) {
+            {{ getRelationshipLabel(relationships[0]) | transloco }}
+            @if (relationships.length > 1) {
+              +{{ relationships.length - 1 }}
+            }
+          }
+        </mat-select-trigger>
+        @for (option of relationshipOptions; track option.value) {
+          <mat-option [value]="option.value">
+            <span class="relationship">
+              <ui-relationship-dot [relationship]="option.value"></ui-relationship-dot>
+              {{ option.label | transloco }}
+            </span>
+          </mat-option>
+        }
+        <mat-option value="none">{{ 'people.noRelationship' | transloco }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  @if (hasActiveFilters()) {
+    <button class="reset" matButton type="button" (click)="resetFilters(); searchInput.focus()">
+      <mat-icon>close</mat-icon>
+      {{ 'people.filters.reset' | transloco }}
+    </button>
+  }
+
+  <ng-content></ng-content>
+</div>

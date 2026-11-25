@@ -22,10 +22,10 @@ export function toPersonRow(birthday: Birthday, today: Date): PersonRow {
   };
 }
 
-export function filterPersonRows(rows: PersonRow[], query: string, relationship: RelationshipFilter): PersonRow[] {
+export function filterPersonRows(rows: PersonRow[], query: string, relationships: RelationshipFilter[]): PersonRow[] {
   const normalizedQuery: string = query.trim().toLocaleLowerCase();
 
-  return rows.filter((row: PersonRow) => row.birthday.name.toLocaleLowerCase().includes(normalizedQuery) && matchesRelationship(row, relationship));
+  return rows.filter((row: PersonRow) => row.birthday.name.toLocaleLowerCase().includes(normalizedQuery) && matchesRelationships(row, relationships));
 }
 
 // Without a sort direction the rows keep the default order: the nearest birthday first. Rows without a relationship
@@ -59,15 +59,9 @@ function compareByColumn(a: PersonRow, b: PersonRow, column: PeopleSortColumn): 
   }
 }
 
-function matchesRelationship({ birthday }: PersonRow, relationship: RelationshipFilter): boolean {
-  switch (relationship) {
-    case 'all':
-      return true;
-    case 'none':
-      return birthday.relationship === null;
-    default:
-      return birthday.relationship === relationship;
-  }
+// No selected relationship keeps everyone.
+function matchesRelationships({ birthday }: PersonRow, relationships: RelationshipFilter[]): boolean {
+  return !relationships.length || relationships.includes(birthday.relationship ?? 'none');
 }
 
 function isValueMissing(row: PersonRow, column: PeopleSortColumn): boolean {

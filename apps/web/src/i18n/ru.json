@@ -324,8 +324,12 @@
     "search": "Поиск людей",
     "clearSearch": "Очистить поиск",
     "relationshipFilter": "Фильтр «Кем приходится»",
-    "allRelationships": "Все",
     "noRelationship": "Не указано",
+    "filters": {
+      "label": "Фильтры",
+      "toggle": "Фильтры",
+      "reset": "Сбросить фильтры"
+    },
     "columns": {
       "name": "Имя",
       "relationship": "Кем приходится",

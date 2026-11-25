@@ -21,42 +21,9 @@
   }
 }
 
-.toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.75rem;
-
-  &__invite {
-    margin-left: auto;
-  }
-}
-
-.field {
-  @include mat.form-field-overrides(
-    (
-      container-height: 2.5rem,
-      container-vertical-padding: 0.5rem,
-      // Half the height makes a pill; a larger radius stretches the outline far past the field.
-      outlined-container-shape: 1.25rem,
-      outlined-outline-color: transparent,
-      outlined-hover-outline-color: var(--mat-sys-outline-variant),
-      leading-icon-color: var(--mat-sys-on-surface-variant),
-    )
-  );
-
-  max-width: 100%;
-  border-radius: 1.25rem;
-  background: color-mix(in srgb, var(--mat-sys-surface-container-lowest) 75%, transparent);
-  box-shadow: 0 0.25rem 1rem color-mix(in srgb, var(--app-shadow-tint) 8%, transparent);
-
-  &_search {
-    width: 20rem;
-  }
-
-  &_relationship {
-    width: 14rem;
-  }
+// Projected into the filters row, at its end.
+.invite {
+  margin-left: auto;
 }
 
 .relationship {
@@ -146,9 +113,16 @@
 }
 
 .message {
-  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
   padding: 1rem 0;
-  color: var(--mat-sys-on-surface-variant);
+
+  &__text {
+    margin: 0;
+    color: var(--mat-sys-on-surface-variant);
+  }
 }
 
 .empty {
@@ -186,6 +160,11 @@
 
 // On phones only the name and the next birthday fit without scrolling sideways.
 @media (max-width: 48rem) {
+  // Next to the search, so the filters toggle and the reset button share the row below.
+  .invite {
+    order: -1;
+  }
+
   .table__secondary {
     display: none;
   }

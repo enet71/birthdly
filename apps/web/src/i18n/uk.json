@@ -324,8 +324,12 @@
     "search": "Пошук людей",
     "clearSearch": "Очистити пошук",
     "relationshipFilter": "Фільтр «Ким доводиться»",
-    "allRelationships": "Усі",
     "noRelationship": "Не вказано",
+    "filters": {
+      "label": "Фільтри",
+      "toggle": "Фільтри",
+      "reset": "Скинути фільтри"
+    },
     "columns": {
       "name": "Ім'я",
       "relationship": "Ким доводиться",

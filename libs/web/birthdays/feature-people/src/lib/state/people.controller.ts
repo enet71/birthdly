@@ -24,8 +24,13 @@ export class PeopleController extends StateController {
     this.peopleState.searchQuery.set(query);
   }
 
-  public filterPeopleByRelationship(relationship: RelationshipFilter): void {
-    this.peopleState.relationshipFilter.set(relationship);
+  public filterPeopleByRelationships(relationships: RelationshipFilter[]): void {
+    this.peopleState.relationshipFilters.set(relationships);
+  }
+
+  public resetFilters(): void {
+    this.peopleState.searchQuery.set('');
+    this.peopleState.relationshipFilters.set([]);
   }
 
   public sortPeople(sort: Sort): void {

@@ -312,8 +312,12 @@
     "search": "Buscar personas",
     "clearSearch": "Borrar búsqueda",
     "relationshipFilter": "Filtrar por relación",
-    "allRelationships": "Todas las relaciones",
     "noRelationship": "Sin relación",
+    "filters": {
+      "label": "Filtros",
+      "toggle": "Filtros",
+      "reset": "Restablecer filtros"
+    },
     "columns": {
       "name": "Nombre",
       "relationship": "Relación",

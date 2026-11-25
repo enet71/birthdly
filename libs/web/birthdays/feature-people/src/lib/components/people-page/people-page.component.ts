@@ -1,9 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, Signal } from '@angular/core';
-import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatFormField, MatPrefix, MatSuffix } from '@angular/material/form-field';
+import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatInput } from '@angular/material/input';
-import { MatOption, MatSelect } from '@angular/material/select';
 import { MatSort, MatSortHeader, Sort } from '@angular/material/sort';
 import {
   MatCell,
@@ -18,12 +15,14 @@ import {
   MatTable,
 } from '@angular/material/table';
 import { RouterLink } from '@angular/router';
-import { CALENDAR_ADD_BIRTHDAY_QUERY_PARAM, RELATIONSHIP_OPTIONS, RelationshipOption } from '@birthday/web-birthdays-util';
+import { CALENDAR_ADD_BIRTHDAY_QUERY_PARAM } from '@birthday/web-birthdays-util';
 import { BirthdayAvatarComponent, RelationshipDotComponent } from '@birthday/web-birthdays-ui';
 import { injectState, ReadonlyState } from '@birthday/web-shared-data-access';
 import { AppTranslateService, LocaleDatePipe } from '@birthday/web-shared-i18n';
+import { StickyPanelComponent } from '@birthday/web-shared-ui';
 import { InvitesController, PeopleController, PeopleState } from '../../state';
 import { InviteSubmissionsComponent } from '../invite-submissions';
+import { PeopleFiltersComponent } from '../people-filters';
 import { PeopleSortColumn, PersonRow, RelationshipFilter } from '../../types';
 import { TranslocoPipe } from '@jsverse/transloco';
 
@@ -36,27 +35,22 @@ import { TranslocoPipe } from '@jsverse/transloco';
     MatCell,
     MatCellDef,
     MatColumnDef,
-    MatFormField,
     MatHeaderCell,
     MatHeaderCellDef,
     MatHeaderRow,
     MatHeaderRowDef,
     MatIcon,
-    MatIconButton,
-    MatInput,
-    MatOption,
-    MatPrefix,
     MatRow,
     MatRowDef,
-    MatSelect,
     MatSort,
     MatSortHeader,
-    MatSuffix,
     MatTable,
     RouterLink,
     BirthdayAvatarComponent,
     InviteSubmissionsComponent,
+    PeopleFiltersComponent,
     RelationshipDotComponent,
+    StickyPanelComponent,
   ],
   templateUrl: './people-page.component.html',
   styleUrl: './people-page.component.scss',
@@ -64,7 +58,6 @@ import { TranslocoPipe } from '@jsverse/transloco';
 })
 export class PeoplePageComponent {
   protected readonly columns: PeopleSortColumn[] = ['name', 'relationship', 'birthday', 'nextBirthday'];
-  protected readonly relationshipOptions: RelationshipOption[] = RELATIONSHIP_OPTIONS;
   protected readonly addBirthdayQueryParams: Record<string, string> = { [CALENDAR_ADD_BIRTHDAY_QUERY_PARAM]: '1' };
 
   private readonly peopleState: ReadonlyState<PeopleState> = injectState(PeopleState);
@@ -84,8 +77,12 @@ export class PeoplePageComponent {
     return this.peopleState.searchQuery;
   }
 
-  protected get relationshipFilter(): Signal<RelationshipFilter> {
-    return this.peopleState.relationshipFilter;
+  protected get relationshipFilters(): Signal<RelationshipFilter[]> {
+    return this.peopleState.relationshipFilters;
+  }
+
+  protected get hasActiveFilters(): Signal<boolean> {
+    return this.peopleState.hasActiveFilters;
   }
 
   protected get sort(): Signal<Sort> {
@@ -96,16 +93,8 @@ export class PeoplePageComponent {
     return this.peopleState.isLoading;
   }
 
-  protected searchPeople(event: Event): void {
-    this.peopleController.searchPeople((event.target as HTMLInputElement).value);
-  }
-
-  protected clearSearch(): void {
-    this.peopleController.searchPeople('');
-  }
-
-  protected filterPeopleByRelationship(relationship: RelationshipFilter): void {
-    this.peopleController.filterPeopleByRelationship(relationship);
+  protected resetFilters(): void {
+    this.peopleController.resetFilters();
   }
 
   protected sortPeople(sort: Sort): void {

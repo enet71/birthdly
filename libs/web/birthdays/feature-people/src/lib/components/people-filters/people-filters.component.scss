@@ -1,0 +1,70 @@
+@use 'libs/web/styles/mixins';
+
+:host {
+  display: block;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+// On wide screens the fields sit in the row of the filters, without the toggle.
+.toggle {
+  display: none;
+}
+
+.panel {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.field {
+  @include mixins.pill-field;
+
+  max-width: 100%;
+
+  &_search {
+    flex: 1 1 20rem;
+  }
+
+  &_relationship {
+    width: 14rem;
+  }
+}
+
+.relationship {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+@media (max-width: 48rem) {
+  // Leaves room for the projected invite button only, so the toggle and the reset button share the next row.
+  .field_search {
+    flex: 1 1 calc(100% - 8rem);
+    order: -2;
+  }
+
+  .toggle {
+    display: inline-flex;
+  }
+
+  // Below the toggle and the reset button, once the toggle opens it.
+  .panel {
+    display: none;
+    flex-basis: 100%;
+    order: 1;
+
+    &_open {
+      display: flex;
+    }
+  }
+
+  .field_relationship {
+    flex: 1;
+  }
+}

@@ -6,6 +6,7 @@ import { MatIcon } from '@angular/material/icon';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { injectState, ReadonlyState } from '@birthday/web-shared-data-access';
 import { AppTranslateService, LocaleDatePipe } from '@birthday/web-shared-i18n';
+import { StickyPanelComponent } from '@birthday/web-shared-ui';
 import { BornDayController, BornDayState } from '../../state';
 import { splitBornTitle } from '../../helpers';
 import { BornTitlePart, CelebrityCard } from '../../types';
@@ -25,6 +26,7 @@ import { CelebrityCardComponent } from '../celebrity-card/celebrity-card.compone
     MatIcon,
     BornFiltersComponent,
     CelebrityCardComponent,
+    StickyPanelComponent,
   ],
   templateUrl: './born-day-page.component.html',
   styleUrl: './born-day-page.component.scss',

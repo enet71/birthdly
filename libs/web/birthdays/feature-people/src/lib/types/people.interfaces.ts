@@ -16,8 +16,8 @@ export interface PersonRow {
 
 export type PeopleSortColumn = 'name' | 'relationship' | 'birthday' | 'nextBirthday';
 
-// `none` keeps only people without a relationship.
-export type RelationshipFilter = 'all' | 'none' | BirthdayRelationship;
+// `none` stands for people without a relationship.
+export type RelationshipFilter = 'none' | BirthdayRelationship;
 
 export interface InviteSubmissionRow {
   submission: InviteSubmissionDto;

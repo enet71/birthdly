@@ -38,28 +38,28 @@ describe('filterPersonRows', () => {
   ];
 
   it('keeps every row for an empty query and all relationships', () => {
-    expect(filterPersonRows(rows, '', 'all')).toEqual(rows);
+    expect(filterPersonRows(rows, '', [])).toEqual(rows);
   });
 
   it('keeps only rows with the selected relationship', () => {
-    expect(getNames(filterPersonRows(rows, '', 'family'))).toEqual(['Anna Smith', 'Carl']);
+    expect(getNames(filterPersonRows(rows, '', ['family']))).toEqual(['Anna Smith', 'Carl']);
   });
 
   it('keeps only rows without a relationship for the none filter', () => {
-    expect(getNames(filterPersonRows(rows, '', 'none'))).toEqual(['Annette']);
+    expect(getNames(filterPersonRows(rows, '', ['none']))).toEqual(['Annette']);
   });
 
   it('matches the name case-insensitively and ignores surrounding spaces', () => {
-    expect(getNames(filterPersonRows(rows, '  ANN ', 'all'))).toEqual(['Anna Smith', 'Annette']);
+    expect(getNames(filterPersonRows(rows, '  ANN ', []))).toEqual(['Anna Smith', 'Annette']);
   });
 
   it('keeps only rows that match both the query and the relationship', () => {
-    expect(getNames(filterPersonRows(rows, 'ann', 'family'))).toEqual(['Anna Smith']);
-    expect(getNames(filterPersonRows(rows, 'ann', 'none'))).toEqual(['Annette']);
+    expect(getNames(filterPersonRows(rows, 'ann', ['family']))).toEqual(['Anna Smith']);
+    expect(getNames(filterPersonRows(rows, 'ann', ['none']))).toEqual(['Annette']);
   });
 
   it('returns no rows when nothing matches both conditions', () => {
-    expect(filterPersonRows(rows, 'boris', 'family')).toEqual([]);
+    expect(filterPersonRows(rows, 'boris', ['family'])).toEqual([]);
   });
 });
 

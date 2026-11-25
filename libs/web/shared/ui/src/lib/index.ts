@@ -5,3 +5,4 @@ export * from './expandable-text';
 export * from './form';
 export * from './list';
 export * from './settings';
+export * from './sticky-panel';

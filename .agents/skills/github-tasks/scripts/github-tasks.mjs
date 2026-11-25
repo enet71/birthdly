@@ -7,6 +7,12 @@ const command = process.argv[2];
 const args = parseArgs(process.argv.slice(3));
 const write = Boolean(args.write);
 const agentLabel = 'agent-task';
+// The GitHub Project that tracks task status. New issues land in Backlog and closed ones in Done through the
+// project's own workflows; `start` moves an issue to In progress.
+const projectOwner = process.env.GH_PROJECT_OWNER || 'enet71';
+const projectNumber = process.env.GH_PROJECT_NUMBER || '2';
+const statusFieldName = 'Status';
+const inProgressStatus = 'In progress';
 const typeLabels = new Map([
   ['bug', 'type:bug'],
   ['tech-debt', 'type:tech-debt'],
@@ -27,6 +33,8 @@ if (command === 'create') {
   listIssues();
 } else if (command === 'close') {
   closeIssue();
+} else if (command === 'start') {
+  startIssue();
 } else if (command === 'labels') {
   ensureTaskLabels();
 } else {
@@ -141,6 +149,39 @@ function closeIssue() {
 
   gh(['issue', 'close', issue, '--reason', reason]);
   console.log(`Closed GitHub task #${issue} with reason "${reason}".`);
+}
+
+// Sets the issue's Status in the project to In progress, adding the issue to the project when it is not there yet.
+function startIssue() {
+  const issue = stringArg('issue');
+
+  if (!issue) {
+    fail('Missing required --issue number.');
+  }
+
+  if (!write) {
+    console.log('GitHub task start dry-run.');
+    console.log(`issue: #${issue}`);
+    console.log(`project: ${projectOwner}/${projectNumber}, ${statusFieldName} = ${inProgressStatus}`);
+    return;
+  }
+
+  const issueUrl = ghJson(['issue', 'view', issue, '--json', 'url']).url;
+  const projectId = ghJson(['project', 'view', projectNumber, '--owner', projectOwner, '--format', 'json']).id;
+  const statusField = ghJson(['project', 'field-list', projectNumber, '--owner', projectOwner, '--format', 'json']).fields.find(
+    (field) => field.name === statusFieldName,
+  );
+  const option = statusField?.options?.find((candidate) => candidate.name === inProgressStatus);
+
+  if (!option) {
+    fail(`The project has no "${statusFieldName}" field with the "${inProgressStatus}" option.`);
+  }
+
+  // Adding an issue that is already in the project returns its existing item.
+  const item = ghJson(['project', 'item-add', projectNumber, '--owner', projectOwner, '--url', issueUrl, '--format', 'json']);
+
+  gh(['project', 'item-edit', '--id', item.id, '--project-id', projectId, '--field-id', statusField.id, '--single-select-option-id', option.id]);
+  console.log(`Moved GitHub task #${issue} to "${inProgressStatus}".`);
 }
 
 function ensureTaskLabels() {
@@ -290,6 +331,7 @@ function printHelp() {
   console.log(`Usage:
   node .agents/skills/github-tasks/scripts/github-tasks.mjs create --type bug --title "..." --body "..." [--label extra] [--write]
   node .agents/skills/github-tasks/scripts/github-tasks.mjs list [--state open|closed|all] [--type bug|tech-debt|task|cleanup]
+  node .agents/skills/github-tasks/scripts/github-tasks.mjs start --issue 123 [--write]
   node .agents/skills/github-tasks/scripts/github-tasks.mjs close --issue 123 [--reason completed|"not planned"] [--write]
   node .agents/skills/github-tasks/scripts/github-tasks.mjs labels [--write]
 

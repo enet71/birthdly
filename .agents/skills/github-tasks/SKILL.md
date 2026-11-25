@@ -1,6 +1,6 @@
 ---
 name: github-tasks
-description: Create, validate, list, inspect, and close GitHub Issues through the agent for tasks, bugs, tech debt, cleanup work, and deferred follow-ups in this repository. Use when the user asks to create a task, record tech debt, file a bug, list open tasks, show GitHub task details, close or complete a task, or manage repository issues through GitHub.
+description: Create, validate, list, inspect, start, and close GitHub Issues through the agent for tasks, bugs, tech debt, cleanup work, and deferred follow-ups in this repository. Use when the user asks to create a task, record tech debt, file a bug, list open tasks, show GitHub task details, close or complete a task, or manage repository issues through GitHub.
 ---
 
 # GitHub Tasks
@@ -59,6 +59,16 @@ When the user asks what tasks exist, what is open, or asks to list tech debt/bug
 - Filter by type when the user asks for a specific category.
 - Summarize issue number, title, state, labels, and URL.
 
+## Starting Work On An Issue
+
+Task status lives in the `Status` field of the GitHub Project "Birthdly" (`enet71`, project 2): Backlog → Ready → In progress → In review → Done. The project's workflows put new issues in Backlog and closed ones in Done.
+
+When you start working on an issue (the user asks to do, implement, or fix it, including through `task-execution`):
+
+1. Before the first change, move it to In progress with `scripts/github-tasks.mjs start --issue <number> --write`. This is the one status change that does not need a separate request; do not change other statuses unless the user asks.
+2. Report the move in one line.
+3. If the command fails (for example the token lacks the `project` scope), tell the user and suggest `gh auth refresh -h github.com -s project` in their own terminal; continue the task meanwhile.
+
 ## Closing Issues
 
 When the user asks to finish, close, drop, or mark a task done:
@@ -83,6 +93,12 @@ List:
 
 ```powershell
 node .agents/skills/github-tasks/scripts/github-tasks.mjs list --state open
+```
+
+Start (move to In progress):
+
+```powershell
+node .agents/skills/github-tasks/scripts/github-tasks.mjs start --issue 123 --write
 ```
 
 Close:

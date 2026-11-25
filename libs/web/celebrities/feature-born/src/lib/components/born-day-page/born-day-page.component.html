@@ -1,7 +1,7 @@
 @let dateFormat = 'dates.longMonthDay' | transloco;
 <section class="day" [attr.aria-busy]="isLoading()">
   <!-- The date, its navigation and the filters stay in view while the cards scroll. -->
-  <div class="sticky">
+  <ui-sticky-panel>
     <header class="toolbar">
       @if (titleParts().length) {
         <h2 class="title">
@@ -57,7 +57,7 @@
     @if (!hasLoadError()) {
       <ui-born-filters></ui-born-filters>
     }
-  </div>
+  </ui-sticky-panel>
 
   @if (hasLoadError()) {
     <div class="state" role="alert">

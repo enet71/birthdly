@@ -1,56 +1,16 @@
 <section class="people" [attr.aria-label]="'people.label' | transloco">
   <ui-invite-submissions></ui-invite-submissions>
   <!-- Kept while a query or filter is set, so it stays visible and can be cleared. -->
-  @if (people().length || searchQuery() || relationshipFilter() !== 'all') {
-    <div class="toolbar">
-      <mat-form-field class="field field_search" appearance="outline" subscriptSizing="dynamic">
-        <mat-icon matPrefix aria-hidden="true">search</mat-icon>
-        <input
-          #searchInput
-          matInput
-          type="search"
-          [placeholder]="'people.searchPlaceholder' | transloco"
-          [attr.aria-label]="'people.search' | transloco"
-          [value]="searchQuery()"
-          (input)="searchPeople($event)"
-          (keydown.escape)="clearSearch()"
-        />
-        @if (searchQuery()) {
-          <button
-            matSuffix
-            matIconButton
-            type="button"
-            [attr.aria-label]="'people.clearSearch' | transloco"
-            (click)="clearSearch(); searchInput.focus()"
-          >
-            <mat-icon>close</mat-icon>
-          </button>
-        }
-      </mat-form-field>
-      <mat-form-field class="field field_relationship" appearance="outline" subscriptSizing="dynamic">
-        <mat-icon matPrefix aria-hidden="true">filter_list</mat-icon>
-        <mat-select
-          [attr.aria-label]="'people.relationshipFilter' | transloco"
-          [value]="relationshipFilter()"
-          (selectionChange)="filterPeopleByRelationship($event.value)"
-        >
-          <mat-option value="all">{{ 'people.allRelationships' | transloco }}</mat-option>
-          @for (option of relationshipOptions; track option.value) {
-            <mat-option [value]="option.value">
-              <span class="relationship">
-                <ui-relationship-dot [relationship]="option.value"></ui-relationship-dot>
-                {{ option.label | transloco }}
-              </span>
-            </mat-option>
-          }
-          <mat-option value="none">{{ 'people.noRelationship' | transloco }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <button class="toolbar__invite" matButton="tonal" type="button" (click)="openInviteDialog()">
-        <mat-icon>group_add</mat-icon>
-        {{ 'invites.invite' | transloco }}
-      </button>
-    </div>
+  @if (people().length || hasActiveFilters()) {
+    <!-- The filters stay in view while the table scrolls. -->
+    <ui-sticky-panel>
+      <ui-people-filters>
+        <button class="invite" matButton="tonal" type="button" (click)="openInviteDialog()">
+          <mat-icon>group_add</mat-icon>
+          {{ 'invites.invite' | transloco }}
+        </button>
+      </ui-people-filters>
+    </ui-sticky-panel>
   }
   <div class="people__content" [attr.aria-busy]="isLoading()">
     @if (visiblePeople().length) {
@@ -110,15 +70,18 @@
         <tr *matRowDef="let row; columns: columns" class="table__row" mat-row></tr>
       </table>
     } @else if (people().length) {
-      <p class="message">
-        @if (searchQuery().trim() && relationshipFilter() !== 'all') {
-          {{ 'people.noRelationshipQueryMatches' | transloco: { query: searchQuery().trim() } }}
-        } @else if (searchQuery().trim()) {
-          {{ 'people.noMatches' | transloco: { query: searchQuery().trim() } }}
-        } @else {
-          {{ 'people.noRelationshipMatches' | transloco }}
-        }
-      </p>
+      <div class="message">
+        <p class="message__text">
+          @if (searchQuery().trim() && relationshipFilters().length) {
+            {{ 'people.noRelationshipQueryMatches' | transloco: { query: searchQuery().trim() } }}
+          } @else if (searchQuery().trim()) {
+            {{ 'people.noMatches' | transloco: { query: searchQuery().trim() } }}
+          } @else {
+            {{ 'people.noRelationshipMatches' | transloco }}
+          }
+        </p>
+        <button matButton="outlined" type="button" (click)="resetFilters()">{{ 'people.filters.reset' | transloco }}</button>
+      </div>
     } @else if (!isLoading()) {
       <div class="empty">
         <h2 class="empty__title">{{ 'people.emptyTitle' | transloco }}</h2>
