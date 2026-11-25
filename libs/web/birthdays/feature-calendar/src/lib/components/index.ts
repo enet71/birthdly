@@ -7,3 +7,4 @@ export * from './google-calendar-prompt';
 export * from './next-birthdays';
 export * from './next-celebration';
 export * from './sign-in-prompt';
+export * from './today-birthday';

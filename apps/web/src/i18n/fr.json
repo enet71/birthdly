@@ -196,6 +196,8 @@
     "upcoming": "À venir",
     "viewAll": "Tout voir",
     "turns": "Fête ses {{ age }}",
+    "turnsToday": "Fête ses {{ age }} aujourd'hui",
+    "happyBirthday": "Joyeux anniversaire !",
     "welcomeTitle": "Ne manquez plus aucun anniversaire",
     "welcomeText": "Birthdly réunit tous les anniversaires dans un seul calendrier. Ajoutez vos amis et votre famille pour voir à qui est le prochain anniversaire, parcourez par mois ou par année et connectez-vous avec Google pour synchroniser vos appareils.",
     "inDays": {

@@ -6,21 +6,27 @@
   @if (nextBirthdays().length) {
     <ul class="list">
       @for (item of nextBirthdays(); track item.birthday.id) {
-        <li [style]="getToneStyles(item.birthday.name)">
-          <a class="item" [class.item_soon]="item.daysUntil <= soonDays" [routerLink]="['/people', item.birthday.id]">
-            <ui-birthday-avatar class="item__avatar" [name]="item.birthday.name" [photoUrl]="item.birthday.photoUrl"></ui-birthday-avatar>
-            <span class="item__body">
-              <span class="item__title">
-                <span class="item__name">{{ item.birthday.name }}</span>
-                @if ((item.age ?? 0) > 0) {
-                  <span class="item__age">{{ 'calendar.turns' | transloco: { age: item.age } }}</span>
-                }
+        @if (item.daysUntil === 0) {
+          <li class="list__today">
+            <ui-today-birthday [celebration]="item"></ui-today-birthday>
+          </li>
+        } @else {
+          <li [style]="getToneStyles(item.birthday.name)">
+            <a class="item" [class.item_soon]="item.daysUntil <= soonDays" [routerLink]="['/people', item.birthday.id]">
+              <ui-birthday-avatar class="item__avatar" [name]="item.birthday.name" [photoUrl]="item.birthday.photoUrl"></ui-birthday-avatar>
+              <span class="item__body">
+                <span class="item__title">
+                  <span class="item__name">{{ item.birthday.name }}</span>
+                  @if ((item.age ?? 0) > 0) {
+                    <span class="item__age">{{ 'calendar.turns' | transloco: { age: item.age } }}</span>
+                  }
+                </span>
+                <span class="item__date">{{ item.date | localeDate: ('dates.monthDay' | transloco) }} · {{ getDaysUntilLabel(item.daysUntil) }}</span>
               </span>
-              <span class="item__date">{{ item.date | localeDate: ('dates.monthDay' | transloco) }} · {{ getDaysUntilLabel(item.daysUntil) }}</span>
-            </span>
-            <mat-icon class="item__chevron" aria-hidden="true">chevron_right</mat-icon>
-          </a>
-        </li>
+              <mat-icon class="item__chevron" aria-hidden="true">chevron_right</mat-icon>
+            </a>
+          </li>
+        }
       }
     </ul>
   } @else if (!isLoading()) {

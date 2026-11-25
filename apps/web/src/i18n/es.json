@@ -196,6 +196,8 @@
     "upcoming": "Próximos",
     "viewAll": "Ver todos",
     "turns": "Cumple {{ age }}",
+    "turnsToday": "Cumple {{ age }} hoy",
+    "happyBirthday": "¡Feliz cumpleaños!",
     "welcomeTitle": "No te pierdas ningún cumpleaños",
     "welcomeText": "Birthdly guarda todos los cumpleaños en un solo calendario. Añade a tus amigos y familia para ver quién es el próximo en cumplir años, navega por mes o por año e inicia sesión con Google para sincronizar tus dispositivos.",
     "inDays": {

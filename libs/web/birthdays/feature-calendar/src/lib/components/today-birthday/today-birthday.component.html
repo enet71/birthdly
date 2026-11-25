@@ -1,0 +1,71 @@
+@let item = celebration();
+<a class="card" [routerLink]="['/people', item.birthday.id]">
+  <span class="aurora" aria-hidden="true"></span>
+  <span class="confetti" aria-hidden="true">
+    @for (piece of confetti; track piece) {
+      <span class="confetti__piece"></span>
+    }
+  </span>
+  <svg class="balloons" viewBox="0 0 72 120" aria-hidden="true">
+    <path class="balloons__string" d="M18 44C20 58 12 66 22 76S34 86 36 92" />
+    <path class="balloons__string" d="M38 33C35 50 43 60 37 72S35 86 36 92" />
+    <path class="balloons__string" d="M57 48.5C58 60 64 68 54 78S40 86 36 92" />
+    <g class="gift gift_small gift_mint">
+      <rect class="gift__box" x="5" y="107" width="15" height="12" rx="1.5" />
+      <rect class="gift__lid" x="4" y="103.5" width="17" height="4.5" rx="1.2" />
+      <rect class="gift__ribbon" x="11.25" y="103.5" width="2.5" height="15.5" />
+      <path class="gift__bow" d="M12.5 103.5c-3-4-6.5-2.5-4.5 0zM12.5 103.5c3-4 6.5-2.5 4.5 0z" />
+    </g>
+    <g class="gift gift_big gift_violet">
+      <rect class="gift__box" x="22" y="98.5" width="28" height="20.5" rx="2" />
+      <rect class="gift__lid" x="20" y="92.5" width="32" height="7" rx="1.6" />
+      <rect class="gift__ribbon" x="34" y="92.5" width="4" height="26.5" />
+      <rect class="gift__ribbon" x="22" y="106.5" width="28" height="3.5" />
+      <path class="gift__bow" d="M36 92.5c-5-7-11-4.5-7.5 0zM36 92.5c5-7 11-4.5 7.5 0z" />
+    </g>
+    <g class="gift gift_small gift_rose">
+      <rect class="gift__box" x="53" y="104" width="14" height="15" rx="1.5" />
+      <rect class="gift__lid" x="52" y="100.5" width="16" height="4.5" rx="1.2" />
+      <rect class="gift__ribbon" x="58.75" y="100.5" width="2.5" height="18.5" />
+      <path class="gift__bow" d="M60 100.5c-3-4-6.5-2.5-4.5 0zM60 100.5c3-4 6.5-2.5 4.5 0z" />
+    </g>
+    <g class="balloons__balloon balloons__balloon_secondary">
+      <ellipse cx="18" cy="27" rx="12" ry="14.5" />
+      <path d="M15.5 41h5l-2.5 3.5z" />
+      <ellipse class="balloons__gloss" cx="13.5" cy="21" rx="3" ry="5" />
+    </g>
+    <g class="balloons__balloon balloons__balloon_tertiary">
+      <ellipse cx="57" cy="31" rx="12" ry="14.5" />
+      <path d="M54.5 45h5L57 48.5z" />
+      <ellipse class="balloons__gloss" cx="52.5" cy="25" rx="3" ry="5" />
+    </g>
+    <g class="balloons__balloon balloons__balloon_primary">
+      <ellipse cx="38" cy="15" rx="12.5" ry="15" />
+      <path d="M35.5 29.5h5L38 33z" />
+      <ellipse class="balloons__gloss" cx="33.5" cy="9" rx="3" ry="5" />
+    </g>
+  </svg>
+  <span class="shine" aria-hidden="true"></span>
+
+  <span class="content">
+    <span class="label">
+      <span class="label__dot" aria-hidden="true"></span>
+      {{ 'calendar.today' | transloco }} · {{ item.date | localeDate: ('dates.monthDay' | transloco) }}
+    </span>
+    <span class="person">
+      <span class="person__avatar-ring">
+        <ui-birthday-avatar class="person__avatar" [name]="item.birthday.name" [photoUrl]="item.birthday.photoUrl"></ui-birthday-avatar>
+      </span>
+      <span class="person__body">
+        <span class="person__name">{{ item.birthday.name }}</span>
+        <span class="person__wish">
+          @if ((item.age ?? 0) > 0) {
+            {{ 'calendar.turnsToday' | transloco: { age: item.age } }}
+          } @else {
+            {{ 'calendar.happyBirthday' | transloco }}
+          }
+        </span>
+      </span>
+    </span>
+  </span>
+</a>

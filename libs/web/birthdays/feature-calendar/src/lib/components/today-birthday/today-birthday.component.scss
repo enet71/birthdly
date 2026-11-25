@@ -1,0 +1,373 @@
+@use 'sass:list';
+
+// Pastel fills that stay light on the accent gradient in both themes.
+$confetti-colors: (
+  var(--app-on-accent),
+  light-dark(var(--app-tone-rose), var(--app-tone-rose-ink)),
+  light-dark(var(--app-tone-peach), var(--app-tone-peach-ink)),
+  light-dark(var(--app-tone-mint), var(--app-tone-mint-ink)),
+  light-dark(var(--app-tone-sky), var(--app-tone-sky-ink))
+);
+$confetti-lefts: (4, 61, 23, 88, 45, 12, 72, 34, 95, 53, 18, 80, 39, 66);
+
+:host {
+  display: block;
+}
+
+.card {
+  position: relative;
+  display: block;
+  min-height: 8rem;
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: 1.25rem;
+  background: linear-gradient(135deg, var(--app-accent), color-mix(in srgb, var(--app-accent) 50%, var(--mat-sys-tertiary)));
+  box-shadow: 0 0.75rem 2rem color-mix(in srgb, var(--app-accent) 35%, transparent);
+  color: var(--app-on-accent);
+  text-decoration: none;
+  animation: card-enter 700ms cubic-bezier(0.2, 0.9, 0.3, 1.25) both;
+  transition:
+    transform 200ms ease,
+    box-shadow 200ms ease;
+
+  &:hover {
+    transform: translateY(-0.125rem);
+    box-shadow: 0 1rem 2.5rem color-mix(in srgb, var(--app-accent) 45%, transparent);
+  }
+
+  &:focus-visible {
+    outline: 0.125rem solid var(--mat-sys-on-surface);
+    outline-offset: 0.1875rem;
+  }
+}
+
+// A slowly turning layer of soft color blobs behind everything.
+.aurora {
+  position: absolute;
+  inset: -60%;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 30% 35%, color-mix(in srgb, var(--mat-sys-tertiary) 55%, transparent), transparent 30%),
+    radial-gradient(circle at 70% 65%, color-mix(in srgb, var(--app-tone-rose-ink) 45%, transparent), transparent 28%),
+    radial-gradient(circle at 65% 30%, color-mix(in srgb, var(--app-on-accent) 18%, transparent), transparent 22%);
+  animation: aurora-turn 16s linear infinite;
+}
+
+.confetti {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+
+  &__piece {
+    position: absolute;
+    top: -1rem;
+    width: 0.3125rem;
+    height: 0.625rem;
+    border-radius: 0.0625rem;
+    opacity: 0;
+    animation: confetti-fall linear infinite;
+
+    @for $i from 1 through list.length($confetti-lefts) {
+      &:nth-child(#{$i}) {
+        --drift: #{($i % 2) * -2.25rem + 1.25rem};
+
+        left: list.nth($confetti-lefts, $i) * 1%;
+        background: list.nth($confetti-colors, ($i % list.length($confetti-colors)) + 1);
+        animation-duration: 3.2s + ($i % 4) * 0.6s;
+        animation-delay: -0.47s * $i;
+
+        @if $i % 3 == 0 {
+          width: 0.375rem;
+          height: 0.375rem;
+          border-radius: 50%;
+        }
+      }
+    }
+  }
+}
+
+.balloons {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 4.25rem;
+  height: auto;
+  overflow: visible;
+  pointer-events: none;
+
+  &__string {
+    fill: none;
+    stroke: color-mix(in srgb, var(--app-on-accent) 55%, transparent);
+    stroke-width: 0.8;
+    stroke-linecap: round;
+  }
+
+  &__balloon {
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    animation: balloon-bob 3.2s ease-in-out infinite alternate;
+
+    &_primary {
+      fill: light-dark(color-mix(in srgb, var(--app-tone-rose) 65%, var(--app-tone-rose-ink)), var(--app-tone-rose-ink));
+      animation-delay: -1.2s;
+    }
+
+    &_secondary {
+      fill: light-dark(color-mix(in srgb, var(--app-tone-sky) 65%, var(--app-tone-sky-ink)), var(--app-tone-sky-ink));
+    }
+
+    &_tertiary {
+      fill: light-dark(color-mix(in srgb, var(--app-tone-peach) 65%, var(--app-tone-peach-ink)), var(--app-tone-peach-ink));
+      animation-delay: -2.1s;
+      animation-duration: 3.8s;
+    }
+  }
+
+  &__gloss {
+    fill: color-mix(in srgb, var(--app-on-accent) 60%, transparent);
+  }
+}
+
+// Gifts the balloons are tied to; the small ones hop now and then.
+.gift {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+
+  &_small {
+    animation: gift-hop 3.6s ease-in-out infinite;
+  }
+
+  &_rose {
+    --gift-tone: var(--app-tone-rose);
+    --gift-ink: var(--app-tone-rose-ink);
+
+    animation-delay: -1.8s;
+  }
+
+  &_mint {
+    --gift-tone: var(--app-tone-mint);
+    --gift-ink: var(--app-tone-mint-ink);
+  }
+
+  &_violet {
+    --gift-tone: var(--app-tone-violet);
+    --gift-ink: var(--app-tone-violet-ink);
+  }
+
+  &__box {
+    fill: light-dark(color-mix(in srgb, var(--gift-tone) 70%, var(--gift-ink)), var(--gift-ink));
+  }
+
+  &__lid {
+    fill: light-dark(color-mix(in srgb, var(--gift-tone) 50%, var(--gift-ink)), color-mix(in srgb, var(--gift-ink) 80%, var(--gift-tone)));
+  }
+
+  &__ribbon,
+  &__bow {
+    fill: color-mix(in srgb, var(--app-on-accent) 90%, transparent);
+  }
+}
+
+// A light sweep that crosses the card every few seconds.
+.shine {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 40%, color-mix(in srgb, var(--app-on-accent) 22%, transparent) 50%, transparent 60%);
+  background-size: 300% 100%;
+  pointer-events: none;
+  animation: shine-sweep 5s ease-in-out infinite;
+}
+
+.content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem 5.25rem 1.125rem 1rem;
+}
+
+.label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  line-height: 1rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--app-on-accent) 85%, transparent);
+
+  &__dot {
+    flex-shrink: 0;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--app-on-accent);
+    animation: dot-pulse 1.8s ease-out infinite;
+  }
+}
+
+.person {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  min-width: 0;
+
+  // A light arc runs around the avatar.
+  &__avatar-ring {
+    position: relative;
+    flex-shrink: 0;
+    padding: 0.1875rem;
+    overflow: hidden;
+    border-radius: 1.125rem;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: -50%;
+      background: conic-gradient(
+        var(--app-on-accent),
+        transparent 25%,
+        color-mix(in srgb, var(--app-on-accent) 40%, transparent) 50%,
+        transparent 75%,
+        var(--app-on-accent)
+      );
+      animation: ring-spin 4s linear infinite;
+    }
+  }
+
+  &__avatar {
+    position: relative;
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: 0.9375rem;
+    font-size: 1.25rem;
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    min-width: 0;
+  }
+
+  &__name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 1.25rem;
+    font-weight: 800;
+    line-height: 1.625rem;
+    letter-spacing: -0.015em;
+  }
+
+  &__wish {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1.125rem;
+    color: color-mix(in srgb, var(--app-on-accent) 85%, transparent);
+  }
+}
+
+@keyframes card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem) scale(0.96);
+  }
+}
+
+@keyframes aurora-turn {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+@keyframes confetti-fall {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(0deg);
+  }
+
+  10%,
+  80% {
+    opacity: 0.9;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(var(--drift), 9.5rem) rotate(540deg);
+  }
+}
+
+@keyframes balloon-bob {
+  from {
+    transform: translateY(0) rotate(-3deg);
+  }
+
+  to {
+    transform: translateY(-0.25rem) rotate(3deg);
+  }
+}
+
+@keyframes gift-hop {
+  0%,
+  70%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+
+  76% {
+    transform: translateY(0) scale(1.08, 0.9);
+  }
+
+  84% {
+    transform: translateY(-0.25rem) scale(0.95, 1.06);
+  }
+
+  92% {
+    transform: translateY(0) scale(1.04, 0.96);
+  }
+}
+
+@keyframes shine-sweep {
+  0% {
+    background-position: 100% 0;
+  }
+
+  40%,
+  100% {
+    background-position: 0% 0;
+  }
+}
+
+@keyframes dot-pulse {
+  from {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--app-on-accent) 70%, transparent);
+  }
+
+  to {
+    box-shadow: 0 0 0 0.5rem transparent;
+  }
+}
+
+@keyframes ring-spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .aurora,
+  .balloons__balloon,
+  .gift,
+  .shine,
+  .label__dot,
+  .person__avatar-ring::before {
+    animation: none;
+  }
+
+  .confetti {
+    display: none;
+  }
+}

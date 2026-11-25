@@ -8,12 +8,13 @@ import { BirthdayTone, getBirthdayTone } from '@birthday/web-birthdays-util';
 import { BirthdayAvatarComponent } from '@birthday/web-birthdays-ui';
 import { SOON_BIRTHDAY_DAYS } from '../../constants';
 import { CalendarController, CalendarState } from '../../state';
+import { TodayBirthdayComponent } from '../today-birthday';
 import { UpcomingCelebration } from '../../types';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 @Component({
   selector: 'ui-next-birthdays',
-  imports: [TranslocoPipe, LocaleDatePipe, MatButton, MatIcon, RouterLink, BirthdayAvatarComponent],
+  imports: [TranslocoPipe, LocaleDatePipe, MatButton, MatIcon, RouterLink, BirthdayAvatarComponent, TodayBirthdayComponent],
   templateUrl: './next-birthdays.component.html',
   styleUrl: './next-birthdays.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

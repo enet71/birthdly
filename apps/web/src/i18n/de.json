@@ -196,6 +196,8 @@
     "upcoming": "Demnächst",
     "viewAll": "Alle anzeigen",
     "turns": "Wird {{ age }}",
+    "turnsToday": "Wird heute {{ age }}",
+    "happyBirthday": "Alles Gute zum Geburtstag!",
     "welcomeTitle": "Verpasse keinen Geburtstag",
     "welcomeText": "Birthdly hält alle Geburtstage in einem Kalender fest. Füge Freunde und Familie hinzu, um zu sehen, wer als Nächstes feiert, blättere nach Monat oder Jahr und melde dich mit Google an, um deine Geräte zu synchronisieren.",
     "inDays": {
