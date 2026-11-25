@@ -59,6 +59,11 @@
     min-width: 0;
     border-radius: 50%;
   }
+
+  // Its text does not fit the rail; the calendar page shows it in the upcoming panel instead.
+  .footer {
+    display: none;
+  }
 }
 
 // A frosted glass panel that blends into the page canvas.
@@ -111,7 +116,8 @@
   }
 }
 
-// A small round tab that sits on the panel's right edge, level with the logo.
+// A small round tab on the panel's right edge, centered on the top bar's bottom border
+// (top at the header height minus half the button height).
 .toggle {
   @include mat.icon-button-overrides(
     (
@@ -122,7 +128,7 @@
   );
 
   position: absolute;
-  top: 2.25rem;
+  top: 4.5rem;
   right: -0.875rem;
   display: flex;
   align-items: center;
@@ -228,6 +234,13 @@
   &:hover mat-icon {
     transform: rotate(90deg);
   }
+}
+
+// Inset like the menu items, so the text starts under their icons.
+.footer {
+  flex-shrink: 0;
+  padding: 1rem 1rem 0;
+  border-top: 0.0625rem solid color-mix(in srgb, var(--mat-sys-outline-variant) 20%, transparent);
 }
 
 @media (prefers-reduced-motion: reduce) {

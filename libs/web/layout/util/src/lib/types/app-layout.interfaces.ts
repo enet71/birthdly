@@ -26,6 +26,8 @@ export interface AppLayoutPrimaryAction {
 
 export interface AppLayoutLink {
   label: string;
+  // Used where space is tight, such as the sidenav footer; falls back to `label`.
+  shortLabel?: string;
   path: string;
 }
 

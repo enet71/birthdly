@@ -8,6 +8,28 @@
   color: var(--mat-sys-on-surface-variant);
 }
 
+// The links on top as one dotted line, the quieter copyright line last.
+:host(.compact) {
+  flex-direction: column;
+  gap: 0.5rem;
+
+  .brand {
+    order: 1;
+    color: var(--mat-sys-outline);
+  }
+
+  .links {
+    gap: 0.25rem 0;
+  }
+
+  .link:not(:last-child)::after {
+    content: '·';
+    display: inline-block;
+    margin-inline: 0.375rem;
+    color: var(--mat-sys-outline);
+  }
+}
+
 .brand {
   margin: 0;
 }

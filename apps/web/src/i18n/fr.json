@@ -35,7 +35,9 @@
     "feedback": "Avis",
     "roadmap": "Feuille de route",
     "privacy": "Politique de confidentialité",
-    "terms": "Conditions d'utilisation"
+    "terms": "Conditions d'utilisation",
+    "privacyShort": "Confidentialité",
+    "termsShort": "Conditions"
   },
   "layout": {
     "mainNavigation": "Navigation principale",

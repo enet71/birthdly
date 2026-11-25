@@ -71,8 +71,8 @@ export const APP_LAYOUT: AppLayoutConfig = {
       { label: 'footer.guides', path: '/guides' },
       { label: 'footer.feedback', path: '/feedback' },
       { label: 'footer.roadmap', path: '/roadmap' },
-      { label: 'footer.privacy', path: '/privacy' },
-      { label: 'footer.terms', path: '/terms' },
+      { label: 'footer.privacy', shortLabel: 'footer.privacyShort', path: '/privacy' },
+      { label: 'footer.terms', shortLabel: 'footer.termsShort', path: '/terms' },
     ],
   },
 };

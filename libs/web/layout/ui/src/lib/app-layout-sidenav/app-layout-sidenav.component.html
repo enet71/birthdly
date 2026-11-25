@@ -64,3 +64,9 @@
     <span class="primary-action__label">{{ action.label | transloco }}</span>
   </a>
 }
+@if (config.footer) {
+  <!-- Google OAuth branding requires the app name and the legal links on the home page. -->
+  <footer class="footer">
+    <ui-app-layout-footer [compact]="true" />
+  </footer>
+}

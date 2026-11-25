@@ -35,7 +35,9 @@
     "feedback": "Feedback",
     "roadmap": "Roadmap",
     "privacy": "Datenschutzerklärung",
-    "terms": "Nutzungsbedingungen"
+    "terms": "Nutzungsbedingungen",
+    "privacyShort": "Datenschutz",
+    "termsShort": "Bedingungen"
   },
   "layout": {
     "mainNavigation": "Hauptnavigation",

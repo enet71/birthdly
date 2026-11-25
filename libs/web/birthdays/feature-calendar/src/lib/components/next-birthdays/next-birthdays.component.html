@@ -7,7 +7,7 @@
     <ul class="list">
       @for (item of nextBirthdays(); track item.birthday.id) {
         <li [style]="getToneStyles(item.birthday.name)">
-          <button class="item" type="button" [class.item_soon]="item.daysUntil <= soonDays" (click)="openEditBirthdayDialog(item)">
+          <a class="item" [class.item_soon]="item.daysUntil <= soonDays" [routerLink]="['/people', item.birthday.id]">
             <ui-birthday-avatar class="item__avatar" [name]="item.birthday.name" [photoUrl]="item.birthday.photoUrl"></ui-birthday-avatar>
             <span class="item__body">
               <span class="item__title">
@@ -19,7 +19,7 @@
               <span class="item__date">{{ item.date | localeDate: ('dates.monthDay' | transloco) }} · {{ getDaysUntilLabel(item.daysUntil) }}</span>
             </span>
             <mat-icon class="item__chevron" aria-hidden="true">chevron_right</mat-icon>
-          </button>
+          </a>
         </li>
       }
     </ul>

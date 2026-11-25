@@ -37,10 +37,6 @@ export class NextBirthdaysComponent {
     this.calendarController.openAddBirthdayDialog();
   }
 
-  protected openEditBirthdayDialog({ birthday }: UpcomingCelebration): void {
-    this.calendarController.openEditBirthdayDialog(birthday);
-  }
-
   // The row's tone colors its age pill to match the avatar.
   protected getToneStyles(name: string): Record<string, string> {
     const tone: BirthdayTone = getBirthdayTone(name);

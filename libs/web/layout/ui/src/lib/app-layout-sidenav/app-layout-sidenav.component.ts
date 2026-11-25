@@ -8,6 +8,7 @@ import { AppLayoutController, AppLayoutState } from '@birthday/web-layout-data-a
 import { APP_LAYOUT_CONFIG, AppLayoutConfig } from '@birthday/web-layout-util';
 import { ReadonlyState, injectState } from '@birthday/web-shared-data-access';
 import { TranslocoPipe } from '@jsverse/transloco';
+import { AppLayoutFooterComponent } from '../app-layout-footer';
 
 @Component({
   selector: 'ui-app-layout-sidenav',
@@ -23,6 +24,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
     MatListItem,
     MatListItemIcon,
     MatListItemTitle,
+    AppLayoutFooterComponent,
   ],
   templateUrl: './app-layout-sidenav.component.html',
   styleUrl: './app-layout-sidenav.component.scss',

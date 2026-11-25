@@ -35,7 +35,9 @@
     "feedback": "Feedback",
     "roadmap": "Roadmap",
     "privacy": "Privacy Policy",
-    "terms": "Terms of Service"
+    "terms": "Terms of Service",
+    "privacyShort": "Privacy",
+    "termsShort": "Terms"
   },
   "layout": {
     "mainNavigation": "Main navigation",

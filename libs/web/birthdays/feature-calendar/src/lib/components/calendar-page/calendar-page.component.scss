@@ -49,7 +49,9 @@
     margin-top: auto;
   }
 
+  // Hidden on desktop, where the expanded sidenav shows the footer; below the breakpoint the sidenav is a rail or gone.
   &__footer {
+    display: none;
     padding: 1rem;
     border-top: 0.0625rem solid color-mix(in srgb, var(--mat-sys-outline-variant) 20%, transparent);
   }
@@ -96,6 +98,10 @@
     &__content,
     &__bottom {
       position: static;
+    }
+
+    &__footer {
+      display: block;
     }
   }
 }

@@ -35,7 +35,9 @@
     "feedback": "Comentarios",
     "roadmap": "Hoja de ruta",
     "privacy": "Política de privacidad",
-    "terms": "Términos del servicio"
+    "terms": "Términos del servicio",
+    "privacyShort": "Privacidad",
+    "termsShort": "Términos"
   },
   "layout": {
     "mainNavigation": "Navegación principal",

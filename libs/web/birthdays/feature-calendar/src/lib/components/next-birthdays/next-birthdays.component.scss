@@ -59,8 +59,10 @@
   border: 0.0625rem solid color-mix(in srgb, var(--mat-sys-surface-container-lowest) 30%, transparent);
   border-radius: 0.75rem;
   background: color-mix(in srgb, var(--mat-sys-surface-container-lowest) 25%, transparent);
+  color: inherit;
   font: inherit;
   text-align: left;
+  text-decoration: none;
   cursor: pointer;
   transition: background-color 150ms ease;
 
