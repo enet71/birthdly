@@ -1,4 +1,3 @@
-import { CALENDAR_ADD_BIRTHDAY_QUERY_PARAM } from '@birthday/web-birthdays-util';
 import { AppLayoutConfig } from '@birthday/web-layout-util';
 import { AppLocale } from '@birthday/web-shared-i18n';
 import { AppTheme, AppThemePreference } from './app.interfaces';
@@ -60,8 +59,6 @@ export const APP_LAYOUT: AppLayoutConfig = {
   primaryAction: {
     label: 'nav.addBirthday',
     icon: 'add',
-    path: '/',
-    queryParams: { [CALENDAR_ADD_BIRTHDAY_QUERY_PARAM]: '1' },
   },
   // Google OAuth branding requires the app name and the legal links on the home page.
   footer: {

@@ -8,7 +8,7 @@ import { PlatformService } from '@birthday/web-shared-util';
 import { BirthdaysState } from '@birthday/web-birthdays-data-access';
 import { Birthday, getAgeOnDate, getMonthGridDays, isBirthdayOn, UpcomingBirthday } from '@birthday/web-birthdays-util';
 import { NEXT_BIRTHDAYS_LIMIT } from '../constants';
-import { BirthdayDialogData, CalendarDay, CalendarMonth, CalendarView, GoogleCalendarPrompt, UpcomingCelebration } from '../types';
+import { CalendarDay, CalendarMonth, CalendarView, GoogleCalendarPrompt, UpcomingCelebration } from '../types';
 
 @Injectable()
 export class CalendarState extends State {
@@ -22,7 +22,6 @@ export class CalendarState extends State {
   public readonly isLoading: Signal<boolean> = this.birthdaysState.isLoading;
   public readonly view: WritableSignal<CalendarView> = signal('month');
   public readonly viewMonth: WritableSignal<Date> = signal(startOfMonth(this.today));
-  public readonly birthdayDialog: WritableSignal<BirthdayDialogData | null> = signal(null);
   public readonly isSigningIn: WritableSignal<boolean> = signal(false);
   // The session is known only in the browser, so the server and the first client render leave the prompt out.
   public readonly isSignInPromptVisible: Signal<boolean> = computed(() => this.platform.isRendered() && this.authState.status() === 'signedOut');
@@ -61,7 +60,6 @@ export class CalendarState extends State {
   public override resetState(): void {
     this.view.set('month');
     this.viewMonth.set(startOfMonth(this.today));
-    this.birthdayDialog.set(null);
     this.isSigningIn.set(false);
     this.isConnectingGoogleCalendar.set(false);
   }

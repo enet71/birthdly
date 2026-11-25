@@ -58,7 +58,8 @@
       "@birthday/api-storage": ["./libs/api/storage/src/index.ts"],
       "@birthday/api-roadmap": ["./libs/api/roadmap/src/index.ts"],
       "@birthday/web-roadmap-data-access": ["./libs/web/roadmap/data-access/src/index.ts"],
-      "@birthday/web-roadmap-feature-roadmap": ["./libs/web/roadmap/feature-roadmap/src/index.ts"]
+      "@birthday/web-roadmap-feature-roadmap": ["./libs/web/roadmap/feature-roadmap/src/index.ts"],
+      "@birthday/web-birthdays-feature-birthday-dialog": ["./libs/web/birthdays/feature-birthday-dialog/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -10,12 +10,11 @@ import { MatOption, MatSelect } from '@angular/material/select';
 import { getDaysInMonth, parseISO } from 'date-fns';
 import { BirthdayRelationship } from '@birthday/shared-models';
 import { RelationshipDotComponent } from '@birthday/web-birthdays-ui';
-import { hasBirthYear, RELATIONSHIP_OPTIONS, RelationshipOption } from '@birthday/web-birthdays-util';
+import { BirthdayDialogData, BirthdayFormModel } from '@birthday/web-birthdays-data-access';
+import { BIRTHDAY_NOTES_MAX_LENGTH, hasBirthYear, RELATIONSHIP_OPTIONS, RelationshipOption } from '@birthday/web-birthdays-util';
 import { LocaleDatePipe } from '@birthday/web-shared-i18n';
 import { DialogHeaderComponent } from '@birthday/web-shared-ui';
-import { BIRTHDAY_NOTES_MAX_LENGTH } from '../../constants';
-import { CalendarController } from '../../state';
-import { BirthdayDialogData, BirthdayFormModel } from '../../types';
+import { BirthdayFormController } from '../../state';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 // A leap year, so Feb 29 can be chosen while the birth year is empty.
@@ -53,7 +52,7 @@ const ANY_LEAP_YEAR = 2000;
 })
 export class BirthdayDialogComponent {
   private readonly data: BirthdayDialogData = inject(MAT_DIALOG_DATA);
-  private readonly calendarController: CalendarController = inject(CalendarController);
+  private readonly birthdayFormController: BirthdayFormController = inject(BirthdayFormController);
 
   protected readonly isEdit: boolean = !!this.data.birthday;
   protected readonly relationshipOptions: RelationshipOption[] = RELATIONSHIP_OPTIONS;
@@ -86,7 +85,7 @@ export class BirthdayDialogComponent {
   protected save(event: Event): void {
     event.preventDefault();
     // `submit` requires a Promise-returning action; saving itself stays an Observable.
-    submit(this.birthdayForm, async () => this.calendarController.saveBirthday(this.model()));
+    submit(this.birthdayForm, async () => this.birthdayFormController.saveBirthday(this.model()));
   }
 
   // The listbox emits `undefined` when the selected chip is clicked again.
@@ -95,7 +94,7 @@ export class BirthdayDialogComponent {
   }
 
   protected delete(): void {
-    this.calendarController.deleteBirthday();
+    this.birthdayFormController.deleteBirthday();
   }
 
   private createModel(): BirthdayFormModel {

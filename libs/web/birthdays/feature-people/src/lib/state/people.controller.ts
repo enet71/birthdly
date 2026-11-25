@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { Sort } from '@angular/material/sort';
-import { BirthdaysController } from '@birthday/web-birthdays-data-access';
+import { BirthdayDialogController, BirthdaysController } from '@birthday/web-birthdays-data-access';
 import { AppLayoutController } from '@birthday/web-layout-data-access';
 import { StateController } from '@birthday/web-shared-data-access';
 import { RelationshipFilter } from '../types';
@@ -10,6 +10,7 @@ import { PeopleState } from './people.state';
 export class PeopleController extends StateController {
   private readonly peopleState: PeopleState = inject(PeopleState);
   private readonly birthdaysController: BirthdaysController = inject(BirthdaysController);
+  private readonly birthdayDialogController: BirthdayDialogController = inject(BirthdayDialogController);
   private readonly appLayoutController: AppLayoutController = inject(AppLayoutController);
 
   // The route injector is created on every visit, so only the shared birthdays list needs a refresh, which also
@@ -26,6 +27,10 @@ export class PeopleController extends StateController {
 
   public filterPeopleByRelationships(relationships: RelationshipFilter[]): void {
     this.peopleState.relationshipFilters.set(relationships);
+  }
+
+  public openAddBirthdayDialog(): void {
+    this.birthdayDialogController.openAddBirthdayDialog();
   }
 
   public resetFilters(): void {

@@ -15,7 +15,6 @@ import {
   MatTable,
 } from '@angular/material/table';
 import { RouterLink } from '@angular/router';
-import { CALENDAR_ADD_BIRTHDAY_QUERY_PARAM } from '@birthday/web-birthdays-util';
 import { BirthdayAvatarComponent, RelationshipDotComponent } from '@birthday/web-birthdays-ui';
 import { injectState, ReadonlyState } from '@birthday/web-shared-data-access';
 import { AppTranslateService, LocaleDatePipe } from '@birthday/web-shared-i18n';
@@ -58,7 +57,6 @@ import { TranslocoPipe } from '@jsverse/transloco';
 })
 export class PeoplePageComponent {
   protected readonly columns: PeopleSortColumn[] = ['name', 'relationship', 'birthday', 'nextBirthday'];
-  protected readonly addBirthdayQueryParams: Record<string, string> = { [CALENDAR_ADD_BIRTHDAY_QUERY_PARAM]: '1' };
 
   private readonly peopleState: ReadonlyState<PeopleState> = injectState(PeopleState);
   private readonly peopleController: PeopleController = inject(PeopleController);
@@ -91,6 +89,10 @@ export class PeoplePageComponent {
 
   protected get isLoading(): Signal<boolean> {
     return this.peopleState.isLoading;
+  }
+
+  protected openAddBirthdayDialog(): void {
+    this.peopleController.openAddBirthdayDialog();
   }
 
   protected resetFilters(): void {

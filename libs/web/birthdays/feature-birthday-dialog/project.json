@@ -1,0 +1,11 @@
+{
+  "name": "web-birthdays-feature-birthday-dialog",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/web/birthdays/feature-birthday-dialog/src",
+  "prefix": "ui",
+  "projectType": "library",
+  "tags": ["platform:web", "type:feature"],
+  "targets": {
+    "typecheck": {}
+  }
+}

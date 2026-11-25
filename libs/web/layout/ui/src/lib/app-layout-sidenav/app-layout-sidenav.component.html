@@ -58,11 +58,11 @@
     }
   </mat-nav-list>
 }
-@if (config.primaryAction; as action) {
-  <a class="primary-action" matButton="filled" [routerLink]="action.path" [queryParams]="action.queryParams" [attr.title]="action.label | transloco">
+@if (primaryActionHandler && config.primaryAction; as action) {
+  <button class="primary-action" matButton="filled" type="button" [attr.title]="action.label | transloco" (click)="runPrimaryAction()">
     <mat-icon>{{ action.icon }}</mat-icon>
     <span class="primary-action__label">{{ action.label | transloco }}</span>
-  </a>
+  </button>
 }
 @if (config.footer) {
   <!-- Google OAuth branding requires the app name and the legal links on the home page. -->

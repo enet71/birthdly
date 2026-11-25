@@ -5,7 +5,9 @@ import { provideRouter, TitleStrategy, withAutoCleanupInjectors } from '@angular
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { provideServiceWorker } from '@angular/service-worker';
 import { provideAuth } from '@birthday/web-auth-data-access';
-import { APP_LAYOUT_CONFIG } from '@birthday/web-layout-util';
+import { BirthdayDialogController } from '@birthday/web-birthdays-data-access';
+import { provideBirthdayDialog } from '@birthday/web-birthdays-feature-birthday-dialog';
+import { APP_LAYOUT_CONFIG, APP_LAYOUT_PRIMARY_ACTION_HANDLER } from '@birthday/web-layout-util';
 import { provideReminders } from '@birthday/web-reminders-data-access';
 import { provideI18n } from '@birthday/web-shared-i18n';
 import { AnalyticsService, ENVIRONMENT_TOKEN } from '@birthday/web-shared-util';
@@ -38,6 +40,16 @@ export const appConfig: ApplicationConfig = {
       useValue: { fontSet: 'material-symbols-outlined' },
     },
     { provide: APP_LAYOUT_CONFIG, useValue: APP_LAYOUT },
+    // The Add birthday dialog opens over the current page.
+    provideBirthdayDialog(),
+    {
+      provide: APP_LAYOUT_PRIMARY_ACTION_HANDLER,
+      useFactory: () => {
+        const birthdayDialogController: BirthdayDialogController = inject(BirthdayDialogController);
+
+        return () => birthdayDialogController.openAddBirthdayDialog();
+      },
+    },
     {
       provide: ENVIRONMENT_TOKEN,
       useValue: {

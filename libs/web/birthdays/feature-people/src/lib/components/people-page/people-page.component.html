@@ -87,10 +87,10 @@
         <h2 class="empty__title">{{ 'people.emptyTitle' | transloco }}</h2>
         <p class="empty__text">{{ 'people.emptyText' | transloco }}</p>
         <div class="empty__actions">
-          <a matButton="filled" routerLink="/" [queryParams]="addBirthdayQueryParams">
+          <button matButton="filled" type="button" (click)="openAddBirthdayDialog()">
             <mat-icon>add</mat-icon>
             {{ 'calendar.addBirthday' | transloco }}
-          </a>
+          </button>
           <button matButton="outlined" type="button" (click)="openInviteDialog()">
             <mat-icon>group_add</mat-icon>
             {{ 'invites.invite' | transloco }}

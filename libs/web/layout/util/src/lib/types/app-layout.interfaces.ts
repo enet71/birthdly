@@ -15,13 +15,12 @@ export interface AppLayoutLogo {
   height: number;
 }
 
-// The main call to action at the bottom of the sidenav; a link, so the layout stays independent of features.
+// The main call to action at the bottom of the sidenav. A click runs `APP_LAYOUT_PRIMARY_ACTION_HANDLER`, so the layout
+// stays independent of features.
 export interface AppLayoutPrimaryAction {
   label: string;
   // Material Symbols icon name.
   icon: string;
-  path: string;
-  queryParams?: Record<string, string>;
 }
 
 export interface AppLayoutLink {
