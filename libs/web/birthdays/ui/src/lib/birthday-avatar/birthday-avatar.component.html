@@ -1,1 +1,5 @@
-{{ initials() }}
+@if (photoUrl() && !hasPhotoFailed()) {
+  <img class="photo" [src]="photoUrl()" alt="" (error)="hasPhotoFailed.set(true)" />
+} @else {
+  {{ initials() }}
+}

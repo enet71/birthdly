@@ -161,6 +161,11 @@ Birthday push notifications need the VAPID pair whose public key is `vapidPublic
 `VAPID_SUBJECT` such as `mailto:hello@birthdly.com`. Check that `VAPID_PUBLIC_KEY` equals `vapidPublicKey` before
 deploying: with another public key push services reject every message, and the first run deletes every subscription.
 
+People's photos live in a private Cloudflare R2 bucket: create it (Cloudflare dashboard → R2), then an API token with
+Object Read & Write on that bucket only, and keep the account ID, the token's access key ID and secret, and the bucket
+name for `.env` (`R2_*`, see `libs/api/storage`). The bucket needs no public access and no CORS: uploads go through the
+API, and browsers read photos through presigned URLs.
+
 ### 6. Server files
 
 ```bash

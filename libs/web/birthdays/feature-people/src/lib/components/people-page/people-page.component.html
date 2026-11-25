@@ -68,7 +68,7 @@
           <td *matCellDef="let row" mat-cell>
             <!-- The link covers the whole row, so a click anywhere on the row opens the person. -->
             <a class="person" [routerLink]="row.birthday.id">
-              <ui-birthday-avatar class="person__avatar" [name]="row.birthday.name"></ui-birthday-avatar>
+              <ui-birthday-avatar class="person__avatar" [name]="row.birthday.name" [photoUrl]="row.birthday.photoUrl"></ui-birthday-avatar>
               <span class="person__name">{{ row.birthday.name }}</span>
             </a>
           </td>

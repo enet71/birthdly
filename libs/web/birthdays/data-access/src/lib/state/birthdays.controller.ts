@@ -1,11 +1,18 @@
 import { effect, inject, Injectable, untracked } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
-import { catchError, concatMap, EMPTY, filter, from, map, Observable, of, switchMap, take, tap, toArray } from 'rxjs';
+import { catchError, concatMap, defer, EMPTY, filter, from, map, Observable, of, switchMap, take, tap, toArray } from 'rxjs';
 import { BirthdayDto, CreateBirthdayRequest } from '@birthday/shared-models';
 import { AuthState } from '@birthday/web-auth-data-access';
 import { injectState, ReadonlyState, StateController } from '@birthday/web-shared-data-access';
 import { AnalyticsService, NotificationsService } from '@birthday/web-shared-util';
-import { Birthday, toBirthDate } from '@birthday/web-birthdays-util';
+import {
+  Birthday,
+  BIRTHDAY_PHOTO_SOURCE_MAX_MB,
+  PhotoTooLargeError,
+  toBirthDate,
+  toBirthdayPhoto,
+  WebpNotSupportedError,
+} from '@birthday/web-birthdays-util';
 import { BirthdaysDataService, BirthdaysApiService, BirthdaysLocalStorageService } from '../services';
 import { BirthdayInput } from '../types';
 import { BirthdaysState } from './birthdays.state';
@@ -71,9 +78,7 @@ export class BirthdaysController extends StateController {
 
   public updateBirthday(id: string, input: BirthdayInput): Observable<Birthday> {
     return this.birthdaysData.update(id, this.toRequest(input)).pipe(
-      tap((updated: Birthday) =>
-        this.updateBirthdays((birthdays: Birthday[]) => birthdays.map((birthday: Birthday) => (birthday.id === id ? updated : birthday))),
-      ),
+      tap((updated: Birthday) => this.replaceBirthday(updated)),
       catchError(() => {
         this.notifications.createErrorNotification(this.translator.translate('notifications.birthdays.saveFailed'));
         return EMPTY;
@@ -97,6 +102,35 @@ export class BirthdaysController extends StateController {
     );
   }
 
+  // Cuts and compresses the image in the browser before uploading it; the old photo stays when anything fails.
+  public setPhoto(id: string, image: Blob): Observable<Birthday> {
+    return defer(() => toBirthdayPhoto(image)).pipe(
+      catchError((error: unknown) => {
+        this.notifications.createErrorNotification(this.getPhotoErrorMessage(error));
+        return EMPTY;
+      }),
+      switchMap((photo: Blob) =>
+        this.birthdaysApi.setPhoto(id, photo).pipe(
+          catchError(() => {
+            this.notifications.createErrorNotification(this.translator.translate('notifications.birthdays.photoSaveFailed'));
+            return EMPTY;
+          }),
+        ),
+      ),
+      tap((updated: Birthday) => this.replaceBirthday(updated)),
+    );
+  }
+
+  public removePhoto(id: string): Observable<Birthday> {
+    return this.birthdaysApi.removePhoto(id).pipe(
+      tap((updated: Birthday) => this.replaceBirthday(updated)),
+      catchError(() => {
+        this.notifications.createErrorNotification(this.translator.translate('notifications.birthdays.photoRemoveFailed'));
+        return EMPTY;
+      }),
+    );
+  }
+
   // Moves the birthdays a user added while signed out into their account. Each one leaves local storage only after it
   // is saved, and a failed one does not stop the rest, so the failed ones stay local for the next sign-in.
   private importLocalBirthdays(): void {
@@ -106,8 +140,8 @@ export class BirthdaysController extends StateController {
         filter((birthdays: BirthdayDto[]) => birthdays.length > 0),
         switchMap((birthdays: BirthdayDto[]) =>
           from(birthdays).pipe(
-            concatMap(({ id, ...request }: BirthdayDto) =>
-              this.birthdaysApi.create(request).pipe(
+            concatMap(({ id, name, birthDate, relationship, notes }: BirthdayDto) =>
+              this.birthdaysApi.create({ name, birthDate, relationship, notes }).pipe(
                 concatMap(() => this.localStorage.delete(id)),
                 map(() => true),
                 catchError(() => of(false)),
@@ -139,6 +173,19 @@ export class BirthdaysController extends StateController {
     const trimmedNotes: string = notes.trim();
 
     return { name: name.trim(), birthDate: toBirthDate(date, isYearKnown), relationship, notes: trimmedNotes || null };
+  }
+
+  private getPhotoErrorMessage(error: unknown): string {
+    if (error instanceof PhotoTooLargeError) {
+      return this.translator.translate('notifications.birthdays.photoTooLarge', { maxMb: BIRTHDAY_PHOTO_SOURCE_MAX_MB });
+    }
+    return this.translator.translate(
+      error instanceof WebpNotSupportedError ? 'notifications.birthdays.photoNotSupported' : 'notifications.birthdays.photoUnreadable',
+    );
+  }
+
+  private replaceBirthday(updated: Birthday): void {
+    this.updateBirthdays((birthdays: Birthday[]) => birthdays.map((birthday: Birthday) => (birthday.id === updated.id ? updated : birthday)));
   }
 
   // Writes through `birthdays()` so a failed load is updated from an empty list.

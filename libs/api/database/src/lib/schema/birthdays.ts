@@ -17,6 +17,8 @@ export const birthdays = pgTable(
     googleContactId: text('google_contact_id'),
     googleContactSnapshot: text('google_contact_snapshot'),
     googleEventId: text('google_event_id'),
+    // The object key of the person's photo in the photo storage (`api-storage`).
+    photoKey: text('photo_key'),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     // Drizzle sets it to the database time on every update through the schema, unless the update sets it itself; raw
     // SQL must set it. The Google sync compares it with the time of changes in Google.

@@ -57,7 +57,9 @@ describe('BirthdaysController', () => {
     it('appends a birthday with a trimmed name and a yyyy-MM-dd birth date', () => {
       controller.addBirthday({ ...LIAM, name: '  Liam  ', date: new Date(1999, 9, 25, 18, 45) }).subscribe();
 
-      expect(state.birthdays()).toEqual([{ id: expect.any(String), name: 'Liam', birthDate: '1999-10-25', relationship: null, notes: null }]);
+      expect(state.birthdays()).toEqual([
+        { id: expect.any(String), name: 'Liam', birthDate: '1999-10-25', relationship: null, notes: null, photoUrl: null },
+      ]);
     });
 
     it('gives every added birthday a unique id', () => {

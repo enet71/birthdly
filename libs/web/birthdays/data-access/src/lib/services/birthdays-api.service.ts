@@ -23,4 +23,16 @@ export class BirthdaysApiService extends ApiService implements BirthdaysStorage 
   public delete(id: string): Observable<void> {
     return this.httpClient.delete<void>(`${this.birthdaysUrl}/${id}`);
   }
+
+  // Only a signed-in user's birthdays have photos, so these are not part of `BirthdaysStorage`.
+  public setPhoto(id: string, photo: Blob): Observable<BirthdayDto> {
+    const body: FormData = new FormData();
+
+    body.append('photo', photo, 'photo.webp');
+    return this.httpClient.put<BirthdayDto>(`${this.birthdaysUrl}/${id}/photo`, body);
+  }
+
+  public removePhoto(id: string): Observable<BirthdayDto> {
+    return this.httpClient.delete<BirthdayDto>(`${this.birthdaysUrl}/${id}/photo`);
+  }
 }

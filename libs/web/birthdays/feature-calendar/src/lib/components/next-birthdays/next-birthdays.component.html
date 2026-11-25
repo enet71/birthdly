@@ -8,7 +8,7 @@
       @for (item of nextBirthdays(); track item.birthday.id) {
         <li [style]="getToneStyles(item.birthday.name)">
           <button class="item" type="button" [class.item_soon]="item.daysUntil <= soonDays" (click)="openEditBirthdayDialog(item)">
-            <ui-birthday-avatar class="item__avatar" [name]="item.birthday.name"></ui-birthday-avatar>
+            <ui-birthday-avatar class="item__avatar" [name]="item.birthday.name" [photoUrl]="item.birthday.photoUrl"></ui-birthday-avatar>
             <span class="item__body">
               <span class="item__title">
                 <span class="item__name">{{ item.birthday.name }}</span>

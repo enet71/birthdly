@@ -6,6 +6,7 @@ import { eq } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
 import { join } from 'node:path';
 import { birthdays, DATABASE, Database, DatabaseModule, googleCalendarConnections, users } from '@birthday/api-database';
+import { PhotoStorageService } from '@birthday/api-storage';
 import { GoogleApiClient } from './google-api.client';
 import { GoogleCalendarEventsService } from './google-calendar-events.service';
 import { GoogleCalendarPushQueue } from './google-calendar-push.queue';
@@ -80,6 +81,7 @@ describe('GoogleImportService with a real Postgres', () => {
         { provide: GoogleConnectionsService, useValue: connections },
         { provide: GoogleCalendarEventsService, useValue: events },
         { provide: GoogleCalendarPushQueue, useValue: pushQueue },
+        { provide: PhotoStorageService, useValue: { delete: vi.fn() } },
       ],
     }).compile();
     await moduleRef.init();

@@ -1,5 +1,10 @@
 import { z } from 'zod';
 
+// An empty value, such as `R2_BUCKET=` in `.env`, counts as unset.
+function optionalSetting<T extends z.ZodType>(schema: T) {
+  return z.preprocess((value: unknown) => (value === '' ? undefined : value), schema.optional());
+}
+
 export const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   PORT: z.coerce.number().int().min(1).max(65535).default(3000),
@@ -39,6 +44,12 @@ export const envSchema = z.object({
         .filter(Boolean),
     )
     .pipe(z.array(z.email())),
+  // The Cloudflare R2 bucket for people's photos and an API token with Object Read & Write on it. Either all four or
+  // none (`hasAllOrNoR2Settings`): without them, or with them empty, the API turns photos off.
+  R2_ACCOUNT_ID: optionalSetting(z.string().regex(/^[0-9a-f]{32}$/, { message: 'Must be the 32-character Cloudflare account ID' })),
+  R2_ACCESS_KEY_ID: optionalSetting(z.string()),
+  R2_SECRET_ACCESS_KEY: optionalSetting(z.string()),
+  R2_BUCKET: optionalSetting(z.string()),
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace']).default('info'),
 });
 
@@ -46,11 +57,22 @@ export type Env = z.infer<typeof envSchema>;
 
 // Used by `ConfigModule`, so the app stops at startup instead of failing on the first request that needs a setting.
 export function validateEnv(config: Record<string, unknown>): Env {
-  const result = envSchema.safeParse(config);
+  const result = envSchema
+    .refine(hasAllOrNoR2Settings, {
+      message: 'Set all of R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY and R2_BUCKET, or none of them',
+      path: ['R2_BUCKET'],
+    })
+    .safeParse(config);
 
   if (!result.success) {
     throw new Error(`Invalid environment variables:\n${z.prettifyError(result.error)}`);
   }
 
   return result.data;
+}
+
+function hasAllOrNoR2Settings(env: Env): boolean {
+  const settings = [env.R2_ACCOUNT_ID, env.R2_ACCESS_KEY_ID, env.R2_SECRET_ACCESS_KEY, env.R2_BUCKET];
+
+  return settings.every((value?: string) => value !== undefined) || settings.every((value?: string) => value === undefined);
 }

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, InputSignal, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, InputSignal, linkedSignal, Signal, WritableSignal } from '@angular/core';
 import { BirthdayTone, getBirthdayTone } from '@birthday/web-birthdays-util';
 
 @Component({
@@ -14,6 +14,7 @@ import { BirthdayTone, getBirthdayTone } from '@birthday/web-birthdays-util';
 })
 export class BirthdayAvatarComponent {
   public readonly name: InputSignal<string> = input.required();
+  public readonly photoUrl: InputSignal<string | null> = input<string | null>(null);
 
   protected readonly initials: Signal<string> = computed(() =>
     this.name()
@@ -24,4 +25,6 @@ export class BirthdayAvatarComponent {
       .join(''),
   );
   protected readonly tone: Signal<BirthdayTone> = computed(() => getBirthdayTone(this.name()));
+  // A photo that fails to load, for example after its link expired, falls back to the initials until the link changes.
+  protected readonly hasPhotoFailed: WritableSignal<boolean> = linkedSignal({ source: this.photoUrl, computation: () => false });
 }

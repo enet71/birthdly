@@ -248,7 +248,12 @@
       "moveFailed": {
         "one": "Impossible de transférer {{ count }} anniversaire local vers votre compte",
         "other": "Impossible de transférer {{ count }} anniversaires locaux vers votre compte"
-      }
+      },
+      "photoUnreadable": "Impossible de lire cette image. Choisissez un fichier JPEG, PNG ou WebP",
+      "photoTooLarge": "La photo est trop volumineuse. Choisissez un fichier de {{ maxMb }} Mo maximum",
+      "photoNotSupported": "Ce navigateur ne peut pas préparer les photos. Essayez Chrome, Edge ou Firefox",
+      "photoSaveFailed": "Impossible d'enregistrer la photo",
+      "photoRemoveFailed": "Impossible de supprimer la photo"
     },
     "googleCalendar": {
       "statusFailed": "Impossible de charger l'état de Google Agenda",
@@ -397,6 +402,13 @@
     "years": {
       "one": "{{ count }} an",
       "other": "{{ count }} ans"
+    },
+    "photo": {
+      "edit": "Modifier la photo",
+      "upload": "Ajouter une photo",
+      "replace": "Remplacer la photo",
+      "remove": "Supprimer la photo",
+      "saving": "Enregistrement de la photo"
     }
   },
   "googleCalendar": {

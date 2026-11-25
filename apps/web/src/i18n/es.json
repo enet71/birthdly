@@ -248,7 +248,12 @@
       "moveFailed": {
         "one": "No se pudo mover {{ count }} cumpleaños local a tu cuenta",
         "other": "No se pudieron mover {{ count }} cumpleaños locales a tu cuenta"
-      }
+      },
+      "photoUnreadable": "No se pudo leer la imagen. Elige un archivo JPEG, PNG o WebP",
+      "photoTooLarge": "La foto es demasiado grande. Elige un archivo de hasta {{ maxMb }} MB",
+      "photoNotSupported": "Este navegador no puede preparar fotos. Prueba con Chrome, Edge o Firefox",
+      "photoSaveFailed": "No se pudo guardar la foto",
+      "photoRemoveFailed": "No se pudo quitar la foto"
     },
     "googleCalendar": {
       "statusFailed": "No se pudo cargar el estado de Google Calendar",
@@ -397,6 +402,13 @@
     "years": {
       "one": "{{ count }} año",
       "other": "{{ count }} años"
+    },
+    "photo": {
+      "edit": "Cambiar foto",
+      "upload": "Subir foto",
+      "replace": "Reemplazar foto",
+      "remove": "Quitar foto",
+      "saving": "Guardando la foto"
     }
   },
   "googleCalendar": {

@@ -9,4 +9,6 @@ export interface BirthdayDto {
   birthDate: string;
   relationship: BirthdayRelationship | null;
   notes: string | null;
+  // A temporary link to the person's photo; only a signed-in user's birthdays can have one.
+  photoUrl: string | null;
 }

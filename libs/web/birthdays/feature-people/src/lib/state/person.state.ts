@@ -1,5 +1,6 @@
-import { computed, inject, Injectable, Signal } from '@angular/core';
+import { computed, inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
+import { AuthState } from '@birthday/web-auth-data-access';
 import { BirthdaysState } from '@birthday/web-birthdays-data-access';
 import { Birthday } from '@birthday/web-birthdays-util';
 import { injectState, ReadonlyState, State } from '@birthday/web-shared-data-access';
@@ -11,6 +12,7 @@ import { PersonRow } from '../types';
 @Injectable()
 export class PersonState extends State {
   private readonly birthdaysState: ReadonlyState<BirthdaysState> = injectState(BirthdaysState);
+  private readonly authState: ReadonlyState<AuthState> = injectState(AuthState);
   private readonly platform: PlatformService = inject(PlatformService);
 
   // A route-provided State gets the root `ActivatedRoute`, so the id is read from the whole router state.
@@ -21,6 +23,9 @@ export class PersonState extends State {
   // the "not found" message.
   public readonly isLoading: Signal<boolean> = computed(() => !this.platform.isRendered() || this.birthdaysState.isLoading());
   public readonly person: Signal<PersonRow | null> = computed(() => this.findPerson());
+  // Only a signed-in user's birthdays are stored where photos can be kept.
+  public readonly canEditPhoto: Signal<boolean> = computed(() => this.authState.isAuthenticated());
+  public readonly isPhotoSaving: WritableSignal<boolean> = signal(false);
 
   private findPerson(): PersonRow | null {
     const birthday: Birthday | undefined = this.birthdaysState.birthdays().find((item: Birthday) => item.id === this.personId());

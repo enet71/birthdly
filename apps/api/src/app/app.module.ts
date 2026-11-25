@@ -10,6 +10,7 @@ import { InvitesModule } from '@birthday/api-invites';
 import { JobsModule } from '@birthday/api-jobs';
 import { NotificationsModule } from '@birthday/api-notifications';
 import { RemindersModule } from '@birthday/api-reminders';
+import { StorageModule } from '@birthday/api-storage';
 import { DatabaseModule } from '@birthday/api-database';
 import type { Request } from 'express';
 import { join } from 'node:path';
@@ -80,6 +81,18 @@ import { HealthModule } from './health/health.module';
         vapidPrivateKey: config.get('VAPID_PRIVATE_KEY', { infer: true }),
         vapidSubject: config.get('VAPID_SUBJECT', { infer: true }),
       }),
+    }),
+    StorageModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService<Env, true>) => {
+        const accountId = config.get('R2_ACCOUNT_ID', { infer: true });
+        const accessKeyId = config.get('R2_ACCESS_KEY_ID', { infer: true });
+        const secretAccessKey = config.get('R2_SECRET_ACCESS_KEY', { infer: true });
+        const bucket = config.get('R2_BUCKET', { infer: true });
+
+        // The env validation guarantees all four or none.
+        return { r2: accountId && accessKeyId && secretAccessKey && bucket ? { accountId, accessKeyId, secretAccessKey, bucket } : null };
+      },
     }),
     CelebritiesModule,
     FeedbackModule,

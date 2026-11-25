@@ -1,3 +1,3 @@
 import { BirthdayDto } from './birthday.dto';
 
-export type CreateBirthdayRequest = Omit<BirthdayDto, 'id'>;
+export type CreateBirthdayRequest = Omit<BirthdayDto, 'id' | 'photoUrl'>;

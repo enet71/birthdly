@@ -54,7 +54,8 @@
       "@birthday/web-feedback-data-access": ["./libs/web/feedback/data-access/src/index.ts"],
       "@birthday/web-feedback-feature-feedback": ["./libs/web/feedback/feature-feedback/src/index.ts"],
       "@birthday/web-admin-feature-feedback": ["./libs/web/admin/feature-feedback/src/index.ts"],
-      "@birthday/api-shared-validation": ["./libs/api/shared/validation/src/index.ts"]
+      "@birthday/api-shared-validation": ["./libs/api/shared/validation/src/index.ts"],
+      "@birthday/api-storage": ["./libs/api/storage/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

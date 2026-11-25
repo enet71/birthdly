@@ -1,6 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { and, eq, lt, lte } from 'drizzle-orm';
 import { birthdays, DATABASE, Database, googleCalendarConnections } from '@birthday/api-database';
+import { PhotoStorageService } from '@birthday/api-storage';
 import { UNKNOWN_BIRTH_YEAR } from '../constants';
 import { BirthdayRecord, ContactBirthday, GoogleEvent, ImportSummary } from '../types';
 import { isUnchangedSince, readBirthdayRecords } from './birthday-records';
@@ -67,6 +68,7 @@ export class GoogleImportService {
     private readonly connections: GoogleConnectionsService,
     private readonly events: GoogleCalendarEventsService,
     private readonly pushQueue: GoogleCalendarPushQueue,
+    private readonly photoStorage: PhotoStorageService,
   ) {}
 
   // Imports from Google. `full` reads every contact instead of the changes since the last read, and then makes
@@ -357,8 +359,11 @@ export class GoogleImportService {
     const deleted = await this.db
       .delete(birthdays)
       .where(and(eq(birthdays.id, id), isUnchangedSince(expectedUpdatedAt)))
-      .returning({ id: birthdays.id });
+      .returning({ photoKey: birthdays.photoKey });
 
+    if (deleted[0]?.photoKey) {
+      await this.photoStorage.delete(deleted[0].photoKey);
+    }
     return deleted.length > 0;
   }
 

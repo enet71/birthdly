@@ -1,0 +1,1 @@
+ALTER TABLE "birthdays" ADD COLUMN "photo_key" text;

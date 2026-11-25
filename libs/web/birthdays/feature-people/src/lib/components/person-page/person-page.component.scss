@@ -89,6 +89,34 @@
   }
 }
 
+.photo {
+  position: relative;
+  flex-shrink: 0;
+
+  &__progress {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 1.25rem;
+    background: color-mix(in srgb, var(--mat-sys-surface) 60%, transparent);
+  }
+
+  &__edit {
+    position: absolute;
+    right: -0.75rem;
+    bottom: -0.75rem;
+    border-radius: 50%;
+    background: var(--mat-sys-surface-container-high);
+    box-shadow: var(--mat-sys-level1);
+  }
+
+  &__input {
+    display: none;
+  }
+}
+
 .facts {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));

@@ -7,7 +7,50 @@
     @if (person(); as person) {
       <article class="card">
         <header class="card__header">
-          <ui-birthday-avatar class="card__avatar" [name]="person.birthday.name"></ui-birthday-avatar>
+          <div class="photo" [attr.aria-busy]="isPhotoSaving()">
+            <ui-birthday-avatar class="card__avatar" [name]="person.birthday.name" [photoUrl]="person.birthday.photoUrl"></ui-birthday-avatar>
+            @if (isPhotoSaving()) {
+              <div class="photo__progress">
+                <mat-progress-spinner mode="indeterminate" diameter="28" [attr.aria-label]="'person.photo.saving' | transloco"></mat-progress-spinner>
+              </div>
+            }
+            @if (canEditPhoto()) {
+              <!-- Stays focusable while saving, so focus returned from the menu is not lost. -->
+              <div class="photo__edit">
+                <button
+                  matIconButton
+                  type="button"
+                  disabledInteractive
+                  [matMenuTriggerFor]="photoMenu"
+                  [disabled]="isPhotoSaving()"
+                  [attr.aria-label]="'person.photo.edit' | transloco"
+                >
+                  <mat-icon>photo_camera</mat-icon>
+                </button>
+              </div>
+              <mat-menu #photoMenu="matMenu">
+                <button mat-menu-item type="button" (click)="photoInput.click()">
+                  <mat-icon>upload</mat-icon>
+                  {{ (person.birthday.photoUrl ? 'person.photo.replace' : 'person.photo.upload') | transloco }}
+                </button>
+                @if (person.birthday.photoUrl) {
+                  <button mat-menu-item type="button" (click)="removePhoto()">
+                    <mat-icon>delete</mat-icon>
+                    {{ 'person.photo.remove' | transloco }}
+                  </button>
+                }
+              </mat-menu>
+              <input
+                #photoInput
+                class="photo__input"
+                type="file"
+                accept="image/*"
+                tabindex="-1"
+                aria-hidden="true"
+                (change)="onPhotoSelected(photoInput)"
+              />
+            }
+          </div>
           <div class="card__title">
             <h2 class="card__name">{{ person.birthday.name }}</h2>
             @if (person.birthday.relationship) {

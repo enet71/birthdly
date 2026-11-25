@@ -15,7 +15,7 @@ export class BirthdaysLocalStorageService implements BirthdaysStorage {
 
   public create(request: CreateBirthdayRequest): Observable<BirthdayDto> {
     return defer(() => {
-      const birthday: BirthdayDto = { ...request, id: this.createId() };
+      const birthday: BirthdayDto = { ...request, id: this.createId(), photoUrl: null };
 
       this.write([...this.read(), birthday]);
       return of(birthday);
@@ -73,7 +73,7 @@ export class BirthdaysLocalStorageService implements BirthdaysStorage {
     );
   }
 
-  // Birthdays saved by an older version have no relationship or notes.
+  // Birthdays saved by an older version have no relationship or notes. A signed-out user's birthdays have no photo.
   private normalize(birthday: BirthdayDto): BirthdayDto {
     return {
       id: birthday.id,
@@ -81,6 +81,7 @@ export class BirthdaysLocalStorageService implements BirthdaysStorage {
       birthDate: birthday.birthDate,
       relationship: BIRTHDAY_RELATIONSHIPS.includes(birthday.relationship as BirthdayRelationship) ? birthday.relationship : null,
       notes: typeof birthday.notes === 'string' ? birthday.notes : null,
+      photoUrl: null,
     };
   }
 
