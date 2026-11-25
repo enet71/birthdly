@@ -47,10 +47,38 @@
             [value]="pickerDate()"
             (dateChange)="openDate($event)"
           />
-          <mat-datepicker #picker></mat-datepicker>
+          <mat-datepicker #picker panelClass="datepicker_no-month-label" [calendarHeaderComponent]="calendarHeader"></mat-datepicker>
           <button class="segment__icon" matIconButton type="button" [attr.aria-label]="'born.day.pickDate' | transloco" (click)="picker.open()">
             <mat-icon>calendar_month</mat-icon>
           </button>
+        </div>
+        <div class="segment picker">
+          <input
+            class="picker__input"
+            tabindex="-1"
+            aria-hidden="true"
+            [matDatepicker]="yearPicker"
+            [value]="yearPickerValue()"
+            [min]="yearPickerMin"
+            [max]="yearPickerMax"
+            [matDatepickerFilter]="yearFilter()"
+          />
+          <mat-datepicker
+            #yearPicker
+            startView="multi-year"
+            [calendarHeaderComponent]="calendarHeader"
+            (yearSelected)="selectYear($event, yearPicker)"
+          ></mat-datepicker>
+          <button class="segment__year" matButton type="button" (click)="yearPicker.open()">
+            <span class="visually-hidden">{{ 'born.day.pickYear' | transloco }}</span>
+            {{ year() ?? ('born.day.year' | transloco) }}
+            <mat-icon iconPositionEnd aria-hidden="true">arrow_drop_down</mat-icon>
+          </button>
+          @if (year() !== null) {
+            <button class="segment__icon" matIconButton type="button" [attr.aria-label]="'born.day.clearYear' | transloco" (click)="clearYear()">
+              <mat-icon>close</mat-icon>
+            </button>
+          }
         </div>
       </nav>
     </header>
@@ -90,8 +118,11 @@
     } @else if (!isLoading()) {
       <div class="state">
         <mat-icon class="state__icon" aria-hidden="true">person_search</mat-icon>
-        <p class="state__text">{{ (activeFilterCount() ? 'born.day.emptyFiltered' : 'born.day.empty') | transloco }}</p>
-        @if (activeFilterCount()) {
+        <p class="state__text">{{ (activeFilterCount() || year() !== null ? 'born.day.emptyFiltered' : 'born.day.empty') | transloco }}</p>
+        <!-- A year leaves few people, so its removal comes first. -->
+        @if (year() !== null) {
+          <button matButton="outlined" type="button" (click)="clearYear()">{{ 'born.day.showWithoutYear' | transloco }}</button>
+        } @else if (activeFilterCount()) {
           <button matButton="outlined" type="button" (click)="resetFilters()">{{ 'born.filters.reset' | transloco }}</button>
         }
       </div>

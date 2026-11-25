@@ -801,7 +801,17 @@
         "one": "{{ count }} célébrité est née ce jour-là",
         "other": "{{ count }} célébrités sont nées ce jour-là"
       },
-      "showMore": "Afficher plus"
+      "showMore": "Afficher plus",
+      "showWithoutYear": "Afficher sans l'année",
+      "year": "Année",
+      "pickYear": "Année de naissance :",
+      "clearYear": "Retirer l'année"
+    },
+    "calendar": {
+      "previousMonth": "Mois précédent",
+      "nextMonth": "Mois suivant",
+      "previousYears": "24 années précédentes",
+      "nextYears": "24 années suivantes"
     },
     "filters": {
       "label": "Filtres",
@@ -809,25 +819,8 @@
       "reset": "Réinitialiser les filtres",
       "country": "Pays",
       "occupation": "Domaine",
-      "decade": "Décennie",
       "status": "Statut",
       "sort": "Tri",
-      "decades": {
-        "1900": "Années 1900",
-        "1910": "Années 1910",
-        "1920": "Années 1920",
-        "1930": "Années 1930",
-        "1940": "Années 1940",
-        "1950": "Années 1950",
-        "1960": "Années 1960",
-        "1970": "Années 1970",
-        "1980": "Années 1980",
-        "1990": "Années 1990",
-        "2000": "Années 2000",
-        "2010": "Années 2010",
-        "2020": "Années 2020",
-        "before-1900": "Avant 1900"
-      },
       "statuses": {
         "all": "Tous les statuts",
         "living": "Vivants",

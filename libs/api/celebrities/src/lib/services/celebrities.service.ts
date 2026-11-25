@@ -1,12 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { and, arrayOverlaps, asc, desc, eq, inArray, isNotNull, isNull, or, SQL, sql } from 'drizzle-orm';
+import { and, arrayOverlaps, asc, desc, eq, inArray, isNotNull, isNull, SQL, sql } from 'drizzle-orm';
 import { celebrities, CelebrityTexts, Database, DATABASE } from '@birthday/api-database';
 import {
   AppLocale,
   CELEBRITIES_PAGE_SIZE,
   CelebritiesRequest,
   CelebritiesResponse,
-  CelebrityDecade,
   CelebrityDto,
   CelebrityOccupation,
   CelebrityPhotoDto,
@@ -45,7 +44,7 @@ export class CelebritiesService {
       isNotNull(celebrities.occupation),
       request.countries.length ? arrayOverlaps(celebrities.countries, request.countries) : undefined,
       request.occupations.length ? inArray(celebrities.occupation, request.occupations) : undefined,
-      request.decades.length ? or(...request.decades.map(toDecadeCondition)) : undefined,
+      request.year === null ? undefined : sql`${BIRTH_YEAR} = ${request.year}`,
       request.status === 'living' ? isNull(celebrities.deathDate) : undefined,
       request.status === 'deceased' ? isNotNull(celebrities.deathDate) : undefined,
     );
@@ -75,16 +74,6 @@ export class CelebritiesService {
 
     return { celebrities: rows.map((row: CelebrityRow) => toDto(row, request.locale)), total };
   }
-}
-
-function toDecadeCondition(decade: CelebrityDecade): SQL {
-  if (decade === 'before-1900') {
-    return sql`${BIRTH_YEAR} < 1900`;
-  }
-
-  const start = Number(decade);
-
-  return sql`${BIRTH_YEAR} between ${start} and ${start + 9}`;
 }
 
 // Popularity: page views of the English article; people without one follow, by their number of sitelinks. The id keeps

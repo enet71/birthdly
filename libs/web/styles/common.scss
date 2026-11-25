@@ -5,3 +5,16 @@
 .required-marker {
   color: var(--mat-sys-error);
 }
+
+// A datepicker whose own header names the month: Material repeats the month in the day grid, so the label is hidden.
+// Its separate row (when the first week leaves no room for it) goes away; the empty cells before the 1st stay, so the
+// days keep their columns.
+.datepicker_no-month-label {
+  .mat-calendar-body tr[aria-hidden='true'] {
+    display: none;
+  }
+
+  .mat-calendar-body-label {
+    visibility: hidden;
+  }
+}

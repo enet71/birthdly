@@ -22,7 +22,7 @@ export const BORN_DAY_PARAM = 'day';
 // Filter query parameters; list filters keep their values comma-separated, for example `?country=us,ua`.
 export const BORN_COUNTRY_QUERY_PARAM = 'country';
 export const BORN_OCCUPATION_QUERY_PARAM = 'occupation';
-export const BORN_DECADE_QUERY_PARAM = 'decade';
+export const BORN_YEAR_QUERY_PARAM = 'year';
 export const BORN_STATUS_QUERY_PARAM = 'status';
 export const BORN_SORT_QUERY_PARAM = 'sort';
 

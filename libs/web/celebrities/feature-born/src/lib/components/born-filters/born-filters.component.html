@@ -58,26 +58,6 @@
     </mat-form-field>
 
     <mat-form-field class="field" appearance="outline" subscriptSizing="dynamic">
-      <mat-select
-        multiple
-        [placeholder]="'born.filters.decade' | transloco"
-        [aria-label]="'born.filters.decade' | transloco"
-        [value]="current.decades"
-        (selectionChange)="changeDecades($event)"
-      >
-        <mat-select-trigger>
-          {{ 'born.filters.decades.' + current.decades[0] | transloco }}
-          @if (current.decades.length > 1) {
-            +{{ current.decades.length - 1 }}
-          }
-        </mat-select-trigger>
-        @for (decade of decades; track decade) {
-          <mat-option [value]="decade">{{ 'born.filters.decades.' + decade | transloco }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-
-    <mat-form-field class="field" appearance="outline" subscriptSizing="dynamic">
       <mat-select [aria-label]="'born.filters.status' | transloco" [value]="current.status" (selectionChange)="changeStatus($event)">
         @for (status of statuses; track status) {
           <mat-option [value]="status">{{ 'born.filters.statuses.' + status | transloco }}</mat-option>
@@ -85,7 +65,7 @@
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field class="field field_sort" appearance="outline" subscriptSizing="dynamic">
+    <mat-form-field class="field" appearance="outline" subscriptSizing="dynamic">
       <mat-select [aria-label]="'born.filters.sort' | transloco" [value]="current.sort" (selectionChange)="changeSort($event)">
         @for (sort of sorts; track sort) {
           <mat-option [value]="sort">{{ 'born.filters.sorts.' + sort | transloco }}</mat-option>

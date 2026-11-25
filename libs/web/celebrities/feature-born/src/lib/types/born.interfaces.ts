@@ -1,4 +1,4 @@
-import { CelebrityDecade, CelebrityOccupation, CelebrityPhotoDto, CelebritySort, CelebrityStatus } from '@birthday/shared-models';
+import { CelebrityOccupation, CelebrityPhotoDto, CelebritySort, CelebrityStatus } from '@birthday/shared-models';
 
 // A birthday without a year; `month` is 1–12.
 export interface BornDate {
@@ -11,7 +11,9 @@ export interface BornFilters {
   // ISO 3166-1 alpha-2 codes.
   countries: string[];
   occupations: CelebrityOccupation[];
-  decades: CelebrityDecade[];
+  // The year of birth; `null` shows every year. It travels in the query with the filters but is picked next to the date,
+  // so it is not counted or reset with them.
+  year: number | null;
   status: CelebrityStatus;
   sort: CelebritySort;
 }

@@ -801,7 +801,17 @@
         "one": "{{ count }} berühmte Person wurde an diesem Tag geboren",
         "other": "{{ count }} berühmte Personen wurden an diesem Tag geboren"
       },
-      "showMore": "Mehr anzeigen"
+      "showMore": "Mehr anzeigen",
+      "showWithoutYear": "Ohne Jahr anzeigen",
+      "year": "Jahr",
+      "pickYear": "Geburtsjahr:",
+      "clearYear": "Jahr entfernen"
+    },
+    "calendar": {
+      "previousMonth": "Vorheriger Monat",
+      "nextMonth": "Nächster Monat",
+      "previousYears": "Vorherige 24 Jahre",
+      "nextYears": "Nächste 24 Jahre"
     },
     "filters": {
       "label": "Filter",
@@ -809,25 +819,8 @@
       "reset": "Filter zurücksetzen",
       "country": "Land",
       "occupation": "Bereich",
-      "decade": "Jahrzehnt",
       "status": "Status",
       "sort": "Sortierung",
-      "decades": {
-        "1900": "1900er",
-        "1910": "1910er",
-        "1920": "1920er",
-        "1930": "1930er",
-        "1940": "1940er",
-        "1950": "1950er",
-        "1960": "1960er",
-        "1970": "1970er",
-        "1980": "1980er",
-        "1990": "1990er",
-        "2000": "2000er",
-        "2010": "2010er",
-        "2020": "2020er",
-        "before-1900": "Vor 1900"
-      },
       "statuses": {
         "all": "Jeder Status",
         "living": "Lebend",

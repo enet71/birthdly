@@ -3,7 +3,7 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 import { APP_DESCRIPTION_DATA_KEY, APP_DOCUMENT_TITLE_DATA_KEY, APP_STRUCTURED_DATA_DATA_KEY } from '@birthday/web-shared-util';
 import { BornDayPageComponent } from './components';
 import { BORN_CELEBRITIES_DATA_KEY, BORN_DAY_PARAM, BORN_MONTH_PARAM } from './constants';
-import { bornDateGuard } from './guards';
+import { bornDateGuard, bornYearGuard } from './guards';
 import { buildBornDayDescription, buildBornDayDocumentTitle, buildBornDayStructuredData, getBornDayPath, toBornDate } from './helpers';
 import { bornDayResolver } from './resolvers';
 import { BornDayController, BornDayState } from './state';
@@ -18,9 +18,10 @@ export const BORN_ROUTES: Route[] = [
   {
     path: `:${BORN_MONTH_PARAM}/:${BORN_DAY_PARAM}`,
     canMatch: [bornDateGuard],
+    canActivate: [bornYearGuard],
     component: BornDayPageComponent,
     providers: [BornDayState, BornDayController, provideNativeDateAdapter()],
-    // The filters live in the query, so the resolver also passes them to the State.
+    // The filters live in the query, so the year guard checks them and the resolver passes them to the State.
     runGuardsAndResolvers: 'paramsOrQueryParamsChange',
     resolve: { [BORN_CELEBRITIES_DATA_KEY]: bornDayResolver },
     title: 'routes.born.title',

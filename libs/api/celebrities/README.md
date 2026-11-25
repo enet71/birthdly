@@ -2,9 +2,9 @@
 
 Famous people from Wikidata for the public date pages (`/born/<month>/<day>` in the web app).
 
-| Request                | Query                                                                                                                 | Answer                                  |
-| ---------------------- | --------------------------------------------------------------------------------------------------------------------- | --------------------------------------- |
-| `GET /api/celebrities` | `month`, `day`; optional `locale`, `countries=US,UA`, `occupations=film,music`, `decades`, `status`, `sort`, `offset` | `CelebritiesResponse`; 400 for bad ones |
+| Request                | Query                                                                                                              | Answer                                  |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------ | --------------------------------------- |
+| `GET /api/celebrities` | `month`, `day`; optional `locale`, `countries=US,UA`, `occupations=film,music`, `year`, `status`, `sort`, `offset` | `CelebritiesResponse`; 400 for bad ones |
 
 No sign-in. The answer is the top `CELEBRITIES_PAGE_SIZE` people of the date among those that match the filters, from
 `offset`, and how many match in total: names

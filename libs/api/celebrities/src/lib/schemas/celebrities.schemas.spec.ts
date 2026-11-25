@@ -10,7 +10,7 @@ describe('celebritiesRequestSchema', () => {
       locale: 'en',
       countries: [],
       occupations: [],
-      decades: [],
+      year: null,
       status: 'all',
       sort: 'popularity',
       offset: 0,
@@ -24,7 +24,7 @@ describe('celebritiesRequestSchema', () => {
       locale: 'ru',
       countries: 'us,UA',
       occupations: 'film,music',
-      decades: '1990,before-1900',
+      year: '1992',
       status: 'living',
       sort: 'oldest',
       offset: '50',
@@ -36,7 +36,7 @@ describe('celebritiesRequestSchema', () => {
       locale: 'ru',
       countries: ['US', 'UA'],
       occupations: ['film', 'music'],
-      decades: ['1990', 'before-1900'],
+      year: 1992,
       status: 'living',
       sort: 'oldest',
       offset: 50,
@@ -44,11 +44,10 @@ describe('celebritiesRequestSchema', () => {
   });
 
   it('treats empty list values as empty lists', () => {
-    const request: CelebritiesRequest = celebritiesRequestSchema.parse({ month: '1', day: '1', countries: '', occupations: '', decades: '' });
+    const request: CelebritiesRequest = celebritiesRequestSchema.parse({ month: '1', day: '1', countries: '', occupations: '' });
 
     expect(request.countries).toEqual([]);
     expect(request.occupations).toEqual([]);
-    expect(request.decades).toEqual([]);
   });
 
   it('removes duplicates from the lists, also after upper-casing the countries', () => {
@@ -57,12 +56,10 @@ describe('celebritiesRequestSchema', () => {
       day: '1',
       countries: 'us,US,ua',
       occupations: 'film,film',
-      decades: '1990,1990',
     });
 
     expect(request.countries).toEqual(['US', 'UA']);
     expect(request.occupations).toEqual(['film']);
-    expect(request.decades).toEqual(['1990']);
   });
 
   it.each<[string, Record<string, string>]>([

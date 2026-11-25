@@ -1,8 +1,17 @@
 import { computed, Injectable, Signal, signal, WritableSignal } from '@angular/core';
-import { AppLocale, CELEBRITY_COUNTRIES, CelebrityDto } from '@birthday/shared-models';
+import { AppLocale, CELEBRITY_COUNTRIES, CelebrityDto, isCelebrityBirthYear } from '@birthday/shared-models';
 import { injectState, ReadonlyState, State } from '@birthday/web-shared-data-access';
 import { LocaleState } from '@birthday/web-shared-i18n';
-import { BORN_DEFAULT_FILTERS, countActiveBornFilters, getBornDayPath, isSameBornDate, shiftBornDate, toBornDate, toReferenceDate } from '../helpers';
+import {
+  BORN_DEFAULT_FILTERS,
+  countActiveBornFilters,
+  getBornDayPath,
+  isSameBornDate,
+  shiftBornDate,
+  toBornDate,
+  toReferenceDate,
+  toYearDate,
+} from '../helpers';
 import { BORN_CODES_WITHOUT_FLAG, BORN_HISTORICAL_COUNTRY_CODES, BORN_HISTORICAL_FLAG_CODES } from '../constants';
 import { BornCountryOption, BornDate, BornFilters, CelebrityCard, CelebrityCountry } from '../types';
 
@@ -26,10 +35,9 @@ export class BornDayState extends State {
   public readonly isLoading: WritableSignal<boolean> = signal(false);
   public readonly isLoadingMore: WritableSignal<boolean> = signal(false);
 
-  // The date in a leap year, for formatting; `null` before the first date opens.
+  // The date in a leap year, for formatting and for the datepicker, which stays in that year so February 29 can always be
+  // picked; `null` before the first date opens.
   public readonly referenceDate: Signal<Date | null> = computed(() => this.toDate(this.date()));
-  // The datepicker shows this year; February 29 of a common year stays in the leap year.
-  public readonly pickerDate: Signal<Date | null> = computed(() => this.getPickerDate());
   public readonly previousDate: Signal<Date | null> = computed(() => this.toDate(this.shiftDate(-1)));
   public readonly nextDate: Signal<Date | null> = computed(() => this.toDate(this.shiftDate(1)));
   public readonly previousPath: Signal<string | null> = computed(() => this.toPath(this.shiftDate(-1)));
@@ -37,22 +45,26 @@ export class BornDayState extends State {
   public readonly todayPath: string = getBornDayPath(this.today);
   public readonly isToday: Signal<boolean> = computed(() => this.isTodayShown());
   public readonly activeFilterCount: Signal<number> = computed(() => countActiveBornFilters(this.filters()));
+  public readonly year: Signal<number | null> = computed(() => this.filters().year);
+  // The chosen year marked in the year picker, which otherwise opens on the current year. The picker offers years from 1
+  // to the current one, taken in UTC like the API takes it.
+  public readonly yearPickerValue: Signal<Date | null> = computed(() => this.toYearPickerValue(this.year()));
+  public readonly yearPickerMin: Date = toYearDate(1);
+  public readonly yearPickerMax: Date = toYearDate(new Date().getUTCFullYear());
+  // February 29 exists only in leap years.
+  public readonly yearFilter: Signal<(date: Date | null) => boolean> = computed(() => this.createYearFilter(this.date()));
   public readonly countryOptions: Signal<BornCountryOption[]> = computed(() => this.getCountryOptions());
   public readonly cards: Signal<CelebrityCard[]> = computed(() => this.celebrities().map((celebrity: CelebrityDto) => this.toCard(celebrity)));
   // The page credits Wikimedia Commons once a photo is shown.
   public readonly hasPhotos: Signal<boolean> = computed(() => this.cards().some((card: CelebrityCard) => !!card.photo));
   public readonly hasMore: Signal<boolean> = computed(() => this.celebrities().length < this.total());
 
-  private getPickerDate(): Date | null {
-    const date: BornDate | null = this.date();
+  private toYearPickerValue(year: number | null): Date | null {
+    return year === null ? null : toYearDate(year);
+  }
 
-    if (!date) {
-      return null;
-    }
-
-    const picker: Date = new Date(this.currentYear, date.month - 1, date.day);
-
-    return picker.getMonth() === date.month - 1 ? picker : toReferenceDate(date);
+  private createYearFilter(date: BornDate | null): (year: Date | null) => boolean {
+    return (year: Date | null) => !date || !year || isCelebrityBirthYear(year.getFullYear(), date.month, date.day);
   }
 
   private isTodayShown(): boolean {

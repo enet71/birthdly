@@ -1,0 +1,18 @@
+// Spaced like Material's calendar header.
+.header {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem 0.5rem 0 1.5rem;
+}
+
+.label {
+  flex: 1;
+  font: var(--mat-sys-title-small);
+  color: var(--mat-sys-on-surface-variant);
+
+  // Some languages name months in lower case.
+  &::first-letter {
+    text-transform: uppercase;
+  }
+}

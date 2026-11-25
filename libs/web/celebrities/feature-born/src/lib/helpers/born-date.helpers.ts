@@ -28,6 +28,15 @@ export function toReferenceDate({ month, day }: BornDate): Date {
   return new Date(REFERENCE_YEAR, month - 1, day);
 }
 
+// January 1 of the year; `new Date(year, 0)` would read years below 100 as 19xx.
+export function toYearDate(year: number): Date {
+  const date = new Date(REFERENCE_YEAR, 0, 1);
+
+  date.setFullYear(year);
+
+  return date;
+}
+
 export function toBornDate(date: Date): BornDate {
   return { month: date.getMonth() + 1, day: date.getDate() };
 }

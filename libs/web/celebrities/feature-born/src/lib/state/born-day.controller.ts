@@ -19,6 +19,7 @@ import {
   toBornFilterQueryParams,
   toCelebritiesRequest,
 } from '../helpers';
+import { BORN_YEAR_QUERY_PARAM } from '../constants';
 import { BornDate, BornFilters } from '../types';
 import { BornDayState } from './born-day.state';
 
@@ -116,9 +117,16 @@ export class BornDayController extends StateController {
     });
   }
 
-  // Keeps the sort order, which is not a filter.
+  // Keeps the sort order and the year, which are not filters.
   public resetFilters(): void {
-    this.changeFilters({ ...BORN_DEFAULT_FILTERS, sort: this.getRequestedFilters().sort });
+    const { sort, year }: BornFilters = this.getRequestedFilters();
+
+    this.changeFilters({ ...BORN_DEFAULT_FILTERS, sort, year });
+  }
+
+  // The year belongs to the date, so like another date it gets its own history entry.
+  public changeYear(year: number | null): void {
+    this.router.navigate([], { queryParams: { [BORN_YEAR_QUERY_PARAM]: year }, queryParamsHandling: 'merge' });
   }
 
   // The State has the filters of the people shown; a filter navigation still loading may already ask for others, and the

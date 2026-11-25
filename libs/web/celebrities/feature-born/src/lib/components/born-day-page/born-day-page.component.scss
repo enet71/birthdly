@@ -97,6 +97,22 @@
 
     min-width: 0;
   }
+
+  &__year {
+    @include mat.button-overrides(
+      (
+        text-container-height: 2.25rem,
+        text-container-shape: 0.5rem,
+        text-horizontal-padding: 0.75rem,
+        text-with-icon-horizontal-padding: 0.75rem,
+        text-label-text-color: var(--mat-sys-on-surface-variant),
+        text-label-text-size: 0.875rem,
+        text-label-text-weight: 600,
+      )
+    );
+
+    min-width: 0;
+  }
 }
 
 .visually-hidden {
@@ -190,6 +206,12 @@
   .toolbar {
     justify-content: center;
     padding-top: 0;
+  }
+
+  // The year tray moves to its own row when the trays do not fit.
+  .controls {
+    flex-wrap: wrap;
+    justify-content: center;
   }
 
   .title {

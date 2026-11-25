@@ -20,7 +20,7 @@ const REQUEST: CelebritiesRequest = {
   locale: 'de',
   countries: [],
   occupations: [],
-  decades: [],
+  year: null,
   status: 'all',
   sort: 'popularity',
   offset: 100,

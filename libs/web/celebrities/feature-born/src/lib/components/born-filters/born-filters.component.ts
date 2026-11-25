@@ -5,11 +5,9 @@ import { MatIcon } from '@angular/material/icon';
 import { MatOption, MatSelect, MatSelectChange, MatSelectTrigger } from '@angular/material/select';
 import { TranslocoPipe } from '@jsverse/transloco';
 import {
-  CELEBRITY_DECADES,
   CELEBRITY_OCCUPATIONS,
   CELEBRITY_SORTS,
   CELEBRITY_STATUSES,
-  CelebrityDecade,
   CelebrityOccupation,
   CelebritySort,
   CelebrityStatus,
@@ -30,7 +28,6 @@ export class BornFiltersComponent {
   private readonly bornDayController: BornDayController = inject(BornDayController);
 
   protected readonly occupations: readonly CelebrityOccupation[] = CELEBRITY_OCCUPATIONS;
-  protected readonly decades: readonly CelebrityDecade[] = CELEBRITY_DECADES;
   protected readonly statuses: readonly CelebrityStatus[] = CELEBRITY_STATUSES;
   protected readonly sorts: readonly CelebritySort[] = CELEBRITY_SORTS;
   // Phones show the filters only after the toggle; wider screens always show them.
@@ -58,10 +55,6 @@ export class BornFiltersComponent {
 
   protected changeOccupations({ value }: MatSelectChange<CelebrityOccupation[]>): void {
     this.bornDayController.changeFilters({ occupations: value });
-  }
-
-  protected changeDecades({ value }: MatSelectChange<CelebrityDecade[]>): void {
-    this.bornDayController.changeFilters({ decades: value });
   }
 
   protected changeStatus({ value }: MatSelectChange<CelebrityStatus>): void {

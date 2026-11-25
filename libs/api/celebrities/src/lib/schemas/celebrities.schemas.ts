@@ -1,11 +1,11 @@
 import { z } from 'zod';
 import {
   APP_LOCALES,
-  CELEBRITY_DECADES,
   CELEBRITY_OCCUPATIONS,
   CELEBRITY_SORTS,
   CELEBRITY_STATUSES,
   CelebritiesRequest,
+  isCelebrityBirthYear,
 } from '@birthday/shared-models';
 
 // Far more values than any list has, so a request cannot grow without limit.
@@ -23,9 +23,12 @@ function list<T extends z.ZodType>(item: T) {
   );
 }
 
+// Parameters of removed filters. Pages loaded before their removal still send them, so they are dropped, not answered with 400.
+const REMOVED_PARAMS: ReadonlySet<string> = new Set(['decades']);
+
 // Query parameters of `GET /api/celebrities`, as `toCelebritiesQueryParams` builds them. Strict: an unknown parameter is a
 // mistake and answers 400.
-export const celebritiesRequestSchema = z
+const requestSchema = z
   .strictObject({
     month: z.coerce.number().int().min(1).max(12),
     day: z.coerce.number().int().min(1).max(31),
@@ -37,7 +40,7 @@ export const celebritiesRequestSchema = z
         .transform((code: string) => code.toUpperCase()),
     ),
     occupations: list(z.enum(CELEBRITY_OCCUPATIONS)),
-    decades: list(z.enum(CELEBRITY_DECADES)),
+    year: z.coerce.number().int().nullable().default(null),
     status: z.enum(CELEBRITY_STATUSES).default('all'),
     sort: z.enum(CELEBRITY_SORTS).default('popularity'),
     offset: z.coerce.number().int().min(0).max(OFFSET_MAX).default(0),
@@ -46,11 +49,22 @@ export const celebritiesRequestSchema = z
     message: 'Must be a day that exists in the month',
     path: ['day'],
   })
+  .refine(({ month, day, year }) => year === null || isCelebrityBirthYear(year, month, day), {
+    message: 'Must be a year from 1 to the current one in which the date exists',
+    path: ['year'],
+  })
   .transform(
-    ({ countries, occupations, decades, ...rest }): CelebritiesRequest => ({
+    ({ countries, occupations, ...rest }): CelebritiesRequest => ({
       ...rest,
       countries: [...new Set(countries)],
       occupations: [...new Set(occupations)],
-      decades: [...new Set(decades)],
     }),
   );
+
+export const celebritiesRequestSchema = z.preprocess(withoutRemovedParams, requestSchema);
+
+function withoutRemovedParams(query: unknown): unknown {
+  return query && typeof query === 'object'
+    ? Object.fromEntries(Object.entries(query).filter(([key]: [string, unknown]) => !REMOVED_PARAMS.has(key)))
+    : query;
+}

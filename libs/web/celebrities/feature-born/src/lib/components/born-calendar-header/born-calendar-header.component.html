@@ -1,0 +1,21 @@
+<div class="header">
+  <span class="label" aria-live="polite">{{ label }}</span>
+  <button
+    matIconButton
+    type="button"
+    [disabled]="isPreviousDisabled"
+    [attr.aria-label]="(isYearView ? 'born.calendar.previousYears' : 'born.calendar.previousMonth') | transloco"
+    (click)="previous()"
+  >
+    <mat-icon>chevron_left</mat-icon>
+  </button>
+  <button
+    matIconButton
+    type="button"
+    [disabled]="isNextDisabled"
+    [attr.aria-label]="(isYearView ? 'born.calendar.nextYears' : 'born.calendar.nextMonth') | transloco"
+    (click)="next()"
+  >
+    <mat-icon>chevron_right</mat-icon>
+  </button>
+</div>

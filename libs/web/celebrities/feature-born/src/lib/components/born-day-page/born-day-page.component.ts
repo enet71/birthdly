@@ -10,6 +10,7 @@ import { StickyPanelComponent } from '@birthday/web-shared-ui';
 import { BornDayController, BornDayState } from '../../state';
 import { splitBornTitle } from '../../helpers';
 import { BornTitlePart, CelebrityCard } from '../../types';
+import { BornCalendarHeaderComponent } from '../born-calendar-header/born-calendar-header.component';
 import { BornFiltersComponent } from '../born-filters/born-filters.component';
 import { CelebrityCardComponent } from '../celebrity-card/celebrity-card.component';
 
@@ -37,6 +38,7 @@ export class BornDayPageComponent {
   private readonly bornDayController: BornDayController = inject(BornDayController);
   private readonly translator: AppTranslateService = inject(AppTranslateService);
 
+  protected readonly calendarHeader: typeof BornCalendarHeaderComponent = BornCalendarHeaderComponent;
   protected readonly titleParts: Signal<BornTitlePart[]> = computed(() => this.getTitleParts());
   protected readonly summary: Signal<string> = computed(() => this.translator.translatePlural('born.day.count', this.bornDayState.total()));
 
@@ -69,7 +71,7 @@ export class BornDayPageComponent {
   }
 
   protected get pickerDate(): Signal<Date | null> {
-    return this.bornDayState.pickerDate;
+    return this.bornDayState.referenceDate;
   }
 
   protected get previousDate(): Signal<Date | null> {
@@ -94,8 +96,38 @@ export class BornDayPageComponent {
     }
   }
 
+  protected get year(): Signal<number | null> {
+    return this.bornDayState.year;
+  }
+
+  protected get yearPickerValue(): Signal<Date | null> {
+    return this.bornDayState.yearPickerValue;
+  }
+
+  protected get yearPickerMin(): Date {
+    return this.bornDayState.yearPickerMin;
+  }
+
+  protected get yearPickerMax(): Date {
+    return this.bornDayState.yearPickerMax;
+  }
+
+  protected get yearFilter(): Signal<(date: Date | null) => boolean> {
+    return this.bornDayState.yearFilter;
+  }
+
   protected resetFilters(): void {
     this.bornDayController.resetFilters();
+  }
+
+  // The picker would go on to the months of the year; only the year is needed.
+  protected selectYear(date: Date, picker: MatDatepicker<Date>): void {
+    picker.close();
+    this.bornDayController.changeYear(date.getFullYear());
+  }
+
+  protected clearYear(): void {
+    this.bornDayController.changeYear(null);
   }
 
   protected get hasMore(): Signal<boolean> {
