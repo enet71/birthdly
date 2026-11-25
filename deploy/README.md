@@ -77,6 +77,13 @@ sudo -u deploy grep POSTGRES_PASSWORD /opt/birthdly/.env   # on the droplet: the
 Database `birthdly`, user `birthdly`. Clients with a built-in SSH tunnel (WebStorm: Data Source → SSH/SSL) take
 `ops@<droplet IP>` with your key and host `localhost`, port `5432`. It is production: prefer read-only queries.
 
+**Deleting an account** (on request to the support address, within 30 days, as the privacy policy promises): delete the
+user's row in `users` (every table that belongs to the user cascades), then delete the user's photos in Cloudflare R2
+(every object with the prefix `users/<user id>/`, nested in `birthdays/<birthday id>/`): in the dashboard (R2 → the
+photos bucket), or with any S3 client against `https://<account id>.r2.cloudflarestorage.com`, for example
+`aws s3 rm s3://<bucket>/users/<user id>/ --recursive --endpoint-url <that URL>` with an R2 token that has Object Read &
+Write on the bucket. The database does not reach R2, so the photos stay there until they are deleted by hand.
+
 Every container keeps at most 5 × 10 MB of logs. A deployment removes images other than those of the running and the
 previous release.
 

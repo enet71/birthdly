@@ -13,6 +13,13 @@
   <ul>
     <li><strong>Birthdays you add.</strong> The name and birth date (the birth year is optional) of each person you add to your calendar.</li>
     <li>
+      <strong>Photos of people you add.</strong> If you are signed in, you can add a photo to a person in your calendar. Before the photo leaves your
+      device, your browser crops it to a small square image (256 × 256 pixels) and saves it again, so the original file and its metadata, such as the
+      location where it was taken, are not uploaded. Birthdly shows the photo only to you: your account gets it through temporary links that work for
+      up to two days, and anyone you share such a link with could open it until it expires. Photos are not sent to Google Calendar or Google Contacts
+      and do not appear in notifications or invite links. Without an account, photos cannot be added.
+    </li>
+    <li>
       <strong>Google account information.</strong> When you sign in with Google, we receive your Google account ID, email address, name, and profile
       picture. We store your account ID, email address, name, and the address of your profile picture to create your Birthdly account and to show who
       is signed in. The picture itself is loaded from Google and is not copied to our servers.
@@ -125,10 +132,15 @@
       When you sign in, they are moved from the browser into your account.
     </li>
     <li>
-      <strong>With an account,</strong> your data is stored in Birthdly's own database on a server hosted by
+      <strong>With an account,</strong> your data, except photos (see below), is stored in Birthdly's own database on a server hosted by
       <a href="https://www.digitalocean.com" target="_blank" rel="noopener">DigitalOcean</a> in London, United Kingdom. Data is encrypted in transit
       (HTTPS), and Birthdly's server checks every request so that each user can reach only their own data. Google refresh tokens are encrypted
       (AES-256) in the database and are used only by Birthdly's server; they are never sent to your browser.
+    </li>
+    <li>
+      <strong>Photos of people you add</strong> are stored in a private storage bucket at
+      <a href="https://www.cloudflare.com/developer-platform/products/r2/" target="_blank" rel="noopener">Cloudflare R2</a>. The bucket is not public;
+      a photo can be opened only through a temporary link that Birthdly's server creates for your account.
     </li>
   </ul>
 </section>
@@ -138,8 +150,8 @@
   <ul>
     <li><strong>DigitalOcean</strong> — hosts Birthdly's server and database.</li>
     <li>
-      <strong>Cloudflare</strong> — delivers and protects the website. Every request to Birthdly passes through it, so it processes your IP address
-      and the requests.
+      <strong>Cloudflare</strong> — delivers and protects the website and stores the photos of people you add (Cloudflare R2). Every request to
+      Birthdly passes through it, so it processes your IP address and the requests.
     </li>
     <li><strong>Google</strong> — sign-in, Google Calendar, and Google Contacts, when you choose to use them.</li>
     <li><strong>Google Fonts</strong> — delivers the icon font, so Google receives your IP address when a page loads.</li>
@@ -159,6 +171,11 @@
   <h2>Data retention and deletion</h2>
   <ul>
     <li>We keep your data while your account exists. You can delete any birthday in the app at any time.</li>
+    <li>
+      Birthdly deletes a person's photo from storage when you replace or remove it and when you delete the person (including by deleting their
+      birthday event that Birthdly added to your Google Calendar). If that deletion fails because of a technical error, the photo can no longer be
+      opened through Birthdly and is deleted with your account. All your photos are deleted when your account is deleted.
+    </li>
     <li>
       Disconnecting Google Calendar in <a routerLink="/settings">Settings</a> revokes Birthdly's access to your Google account and deletes the stored
       Google token. When you disconnect, you choose whether Birthdly also removes the birthday events it added to your Google Calendar. If you choose
