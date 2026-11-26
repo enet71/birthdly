@@ -2,7 +2,7 @@
 <ul class="guides" role="list">
   @for (guide of guides; track guide.slug) {
     <li>
-      <a class="guide" [routerLink]="getGuidePath(guide)">
+      <a class="guide" [routerLink]="getGuidePath(guide) | localizedPath">
         <div class="guide__body">
           <h2 class="guide__title">{{ guide.title | transloco }}</h2>
           <span class="guide__text">{{ guide.description | transloco }}</span>

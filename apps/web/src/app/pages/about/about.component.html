@@ -2,7 +2,7 @@
   <h2 id="about-hero-title" class="hero__title">{{ 'about.hero.title' | transloco }}</h2>
   <p class="hero__text">{{ 'about.hero.text' | transloco }}</p>
   <div class="hero__actions">
-    <a matButton="filled" routerLink="/">
+    <a matButton="filled" [routerLink]="'/' | localizedPath">
       <mat-icon>calendar_month</mat-icon>
       {{ 'about.openCalendar' | transloco }}
     </a>
@@ -60,7 +60,7 @@
 <section class="cta" aria-labelledby="about-cta-title">
   <h2 id="about-cta-title" class="cta__title">{{ 'about.cta.title' | transloco }}</h2>
   <p class="cta__text">{{ 'about.cta.text' | transloco }}</p>
-  <a matButton="filled" routerLink="/">
+  <a matButton="filled" [routerLink]="'/' | localizedPath">
     <mat-icon>calendar_month</mat-icon>
     {{ 'about.openCalendar' | transloco }}
   </a>
@@ -71,11 +71,11 @@
   <ul class="links">
     @for (guide of guides; track guide.slug) {
       <li>
-        <a [routerLink]="getGuidePath(guide)">{{ guide.title | transloco }}</a>
+        <a [routerLink]="getGuidePath(guide) | localizedPath">{{ guide.title | transloco }}</a>
       </li>
     }
     <li>
-      <a routerLink="/guides">{{ 'about.allGuides' | transloco }}</a>
+      <a [routerLink]="'/guides' | localizedPath">{{ 'about.allGuides' | transloco }}</a>
     </li>
   </ul>
 </section>

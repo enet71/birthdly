@@ -9,7 +9,7 @@ import { AuthController, AuthState, AuthStatus } from '@birthday/web-auth-data-a
 import { BirthdayDialogController } from '@birthday/web-birthdays-data-access';
 import { CelebritiesApiService } from '@birthday/web-celebrities-data-access';
 import { AppLayoutController } from '@birthday/web-layout-data-access';
-import { AppTranslateService } from '@birthday/web-shared-i18n';
+import { AppTranslateService, LocalizedPathService } from '@birthday/web-shared-i18n';
 import { NotificationsService } from '@birthday/web-shared-util';
 import { toCelebrityBirthdayDraft } from '../helpers';
 import { BornDayController } from './born-day.controller';
@@ -65,6 +65,7 @@ describe('BornDayController', () => {
         { provide: AppLayoutController, useValue: { trackLoading: vi.fn() } },
         { provide: NotificationsService, useValue: { createErrorNotification: vi.fn() } },
         { provide: AppTranslateService, useValue: { translate: (key: string) => key } },
+        { provide: LocalizedPathService, useValue: { localize: (path: string) => path } },
       ],
     });
     controller = TestBed.inject(BornDayController);

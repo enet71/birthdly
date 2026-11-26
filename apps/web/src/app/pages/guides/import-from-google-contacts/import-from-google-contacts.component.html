@@ -13,7 +13,7 @@
   <h2>{{ 'guides.importFromGoogleContacts.text06' | transloco }}</h2>
   <ol>
     <li>
-      <span [innerHTML]="'guides.importFromGoogleContacts.openStep.before' | transloco"></span><a routerLink="/">Birthdly</a
+      <span [innerHTML]="'guides.importFromGoogleContacts.openStep.before' | transloco"></span><a [routerLink]="'/' | localizedPath">Birthdly</a
       ><span [innerHTML]="'guides.importFromGoogleContacts.openStep.after' | transloco"></span>
     </li>
     <li [innerHTML]="'guides.importFromGoogleContacts.text07' | transloco"></li>
@@ -54,7 +54,7 @@
   <h2>{{ 'guides.importFromGoogleContacts.text24' | transloco }}</h2>
   <p>
     <span [innerHTML]="'guides.importFromGoogleContacts.remindersLink.before' | transloco"></span
-    ><a [routerLink]="remindersGuidePath">{{ 'guides.importFromGoogleContacts.remindersLink.link' | transloco }}</a
+    ><a [routerLink]="remindersGuidePath | localizedPath">{{ 'guides.importFromGoogleContacts.remindersLink.link' | transloco }}</a
     ><span [innerHTML]="'guides.importFromGoogleContacts.remindersLink.after' | transloco"></span>
   </p>
 </section>

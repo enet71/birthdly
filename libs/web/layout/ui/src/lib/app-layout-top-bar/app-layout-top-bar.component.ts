@@ -20,10 +20,11 @@ import { AppLayoutController, AppLayoutState } from '@birthday/web-layout-data-a
 import { APP_LAYOUT_CONFIG, AppLayoutConfig, AppLayoutSearch } from '@birthday/web-layout-util';
 import { ReadonlyState, injectState } from '@birthday/web-shared-data-access';
 import { TranslocoPipe } from '@jsverse/transloco';
+import { LocalizedPathPipe } from '@birthday/web-shared-i18n';
 
 @Component({
   selector: 'ui-app-layout-top-bar',
-  imports: [TranslocoPipe, NgOptimizedImage, RouterLink, MatIconButton, MatFormField, MatPrefix, MatSuffix, MatIcon, MatInput],
+  imports: [TranslocoPipe, NgOptimizedImage, RouterLink, MatIconButton, MatFormField, MatPrefix, MatSuffix, MatIcon, MatInput, LocalizedPathPipe],
   templateUrl: './app-layout-top-bar.component.html',
   styleUrl: './app-layout-top-bar.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

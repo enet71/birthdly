@@ -2,13 +2,13 @@
 <ul class="links">
   @for (guide of guides(); track guide.slug) {
     <li>
-      <a [routerLink]="getGuidePath(guide)">{{ guide.title | transloco }}</a>
+      <a [routerLink]="getGuidePath(guide) | localizedPath">{{ guide.title | transloco }}</a>
     </li>
   }
   <li>
-    <a routerLink="/guides">{{ 'about.allGuides' | transloco }}</a>
+    <a [routerLink]="'/guides' | localizedPath">{{ 'about.allGuides' | transloco }}</a>
   </li>
   <li>
-    <a routerLink="/about">{{ 'guides.aboutAndFaq' | transloco }}</a>
+    <a [routerLink]="'/about' | localizedPath">{{ 'guides.aboutAndFaq' | transloco }}</a>
   </li>
 </ul>

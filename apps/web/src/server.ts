@@ -3,6 +3,7 @@ import express from 'express';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { APP_SITE_URL } from './app/app.constants';
+import { getSitemap, SITEMAP_PATHS } from './sitemap';
 
 const serverDistFolder = dirname(fileURLToPath(import.meta.url));
 const browserDistFolder = resolve(serverDistFolder, '../browser');
@@ -53,6 +54,18 @@ function isWwwHost(header: string | undefined): boolean {
  */
 
 /**
+ * The sitemaps list every public page in each language; `sitemap.ts` builds them once from the routes.
+ */
+// Express also matches `/sitemap.xml/` and `/SITEMAP.XML`, so each route passes its own path rather than `req.path`.
+for (const path of SITEMAP_PATHS) {
+  app.get(path, (req, res, next) => {
+    getSitemap(path)
+      .then((sitemap: string) => res.type('application/xml').set('Cache-Control', 'no-cache').send(sitemap))
+      .catch(next);
+  });
+}
+
+/**
  * Serve static files from /browser
  */
 app.use(
@@ -61,7 +74,7 @@ app.use(
     index: false,
     redirect: false,
     setHeaders: (res, filePath) => {
-      // Root public files (robots.txt, sitemap.xml, manifest, icons) keep fixed names, so caches must revalidate them.
+      // Root public files (robots.txt, manifest, icons) keep fixed names, so caches must revalidate them.
       if (dirname(filePath) === browserDistFolder && !/\.(js|css)$/.test(filePath)) {
         res.setHeader('Cache-Control', 'no-cache');
       }

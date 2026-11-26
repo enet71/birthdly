@@ -20,7 +20,7 @@ import { MatOption, MatSelect } from '@angular/material/select';
 import { RouterLink } from '@angular/router';
 import { getDaysInMonth } from 'date-fns';
 import { injectState, ReadonlyState } from '@birthday/web-shared-data-access';
-import { LocaleDatePipe } from '@birthday/web-shared-i18n';
+import { LocaleDatePipe, LocalizedPathPipe } from '@birthday/web-shared-i18n';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { INVITE_ANY_LEAP_YEAR, INVITE_NAME_MAX_LENGTH } from '../../constants';
 import { InviteController, InviteState } from '../../state';
@@ -29,6 +29,7 @@ import { InviteFormModel, InviteLoadResult, InviteSubmitError } from '../../type
 @Component({
   selector: 'ui-invite-page',
   imports: [
+    LocalizedPathPipe,
     TranslocoPipe,
     LocaleDatePipe,
     FormField,

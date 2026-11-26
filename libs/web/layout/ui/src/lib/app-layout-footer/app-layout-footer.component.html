@@ -8,7 +8,7 @@
   </p>
   <nav class="links" [attr.aria-label]="'layout.siteLinks' | transloco">
     @for (link of links(); track link.path) {
-      <a class="link" [routerLink]="link.path">{{ (compact() ? (link.shortLabel ?? link.label) : link.label) | transloco }}</a>
+      <a class="link" [routerLink]="link.path | localizedPath">{{ (compact() ? (link.shortLabel ?? link.label) : link.label) | transloco }}</a>
     }
   </nav>
 }

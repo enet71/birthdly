@@ -1,4 +1,5 @@
 export * from './constants';
+export * from './guards';
 export * from './helpers';
 export * from './pipes';
 export * from './providers';

@@ -9,10 +9,12 @@ import { APP_LAYOUT_CONFIG, APP_LAYOUT_PRIMARY_ACTION_HANDLER, AppLayoutConfig }
 import { ReadonlyState, injectState } from '@birthday/web-shared-data-access';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { AppLayoutFooterComponent } from '../app-layout-footer';
+import { LocalizedPathPipe } from '@birthday/web-shared-i18n';
 
 @Component({
   selector: 'ui-app-layout-sidenav',
   imports: [
+    LocalizedPathPipe,
     TranslocoPipe,
     NgOptimizedImage,
     RouterLink,

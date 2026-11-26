@@ -59,6 +59,11 @@ export function splitBornTitle(formatted: string): BornTitlePart[] {
     .map((text: string) => ({ text, isDay: /^\d+$/.test(text) }));
 }
 
-export function getBornDayPath({ month, day }: BornDate): string {
-  return `${BORN_BASE_PATH}/${BORN_MONTH_SLUGS[month - 1]}/${day}`;
+export function getBornDayPath(date: BornDate): string {
+  return `${BORN_BASE_PATH}/${getBornDaySegments(date)}`;
+}
+
+// `january/1`: the date page relative to the section, which keeps the language prefix of the current URL.
+export function getBornDaySegments({ month, day }: BornDate): string {
+  return `${BORN_MONTH_SLUGS[month - 1]}/${day}`;
 }

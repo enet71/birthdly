@@ -25,7 +25,7 @@
   <ol>
     <li>
       <span [innerHTML]="'guides.birthdayReminders.addStep.before' | transloco"></span
-      ><a routerLink="/">{{ 'guides.birthdayReminders.addStep.link' | transloco }}</a
+      ><a [routerLink]="'/' | localizedPath">{{ 'guides.birthdayReminders.addStep.link' | transloco }}</a
       ><span [innerHTML]="'guides.birthdayReminders.addStep.after' | transloco"></span>
     </li>
     <li [innerHTML]="'guides.birthdayReminders.text13' | transloco"></li>
@@ -46,7 +46,7 @@
   </ol>
   <p>
     <span [innerHTML]="'guides.birthdayReminders.googleCalendarLink.before' | transloco"></span
-    ><a [routerLink]="googleCalendarGuidePath">{{ 'guides.birthdayReminders.googleCalendarLink.link' | transloco }}</a
+    ><a [routerLink]="googleCalendarGuidePath | localizedPath">{{ 'guides.birthdayReminders.googleCalendarLink.link' | transloco }}</a
     ><span [innerHTML]="'guides.birthdayReminders.googleCalendarLink.after' | transloco"></span>
   </p>
 </section>

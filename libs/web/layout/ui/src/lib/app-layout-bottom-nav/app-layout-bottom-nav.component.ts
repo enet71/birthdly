@@ -3,10 +3,11 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
 import { APP_LAYOUT_CONFIG, AppLayoutConfig } from '@birthday/web-layout-util';
 import { TranslocoPipe } from '@jsverse/transloco';
+import { LocalizedPathPipe } from '@birthday/web-shared-i18n';
 
 @Component({
   selector: 'ui-app-layout-bottom-nav',
-  imports: [TranslocoPipe, RouterLink, RouterLinkActive, MatIcon],
+  imports: [TranslocoPipe, RouterLink, RouterLinkActive, MatIcon, LocalizedPathPipe],
   templateUrl: './app-layout-bottom-nav.component.html',
   styleUrl: './app-layout-bottom-nav.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

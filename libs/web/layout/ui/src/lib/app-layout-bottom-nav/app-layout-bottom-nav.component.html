@@ -5,7 +5,7 @@
       routerLinkActive="item_active"
       [routerLinkActiveOptions]="{ exact: item.path === config.homePath }"
       ariaCurrentWhenActive="page"
-      [routerLink]="item.path"
+      [routerLink]="item.path | localizedPath"
     >
       <span class="item__indicator">
         <mat-icon aria-hidden="true">{{ item.icon }}</mat-icon>

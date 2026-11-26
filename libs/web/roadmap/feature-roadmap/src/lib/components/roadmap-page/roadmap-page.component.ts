@@ -5,7 +5,7 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { RouterLink } from '@angular/router';
 import { RoadmapItemStatus } from '@birthday/shared-models';
 import { injectState, ReadonlyState } from '@birthday/web-shared-data-access';
-import { LocaleDatePipe } from '@birthday/web-shared-i18n';
+import { LocaleDatePipe, LocalizedPathPipe } from '@birthday/web-shared-i18n';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { ROADMAP_RELEASE_DATE_FORMAT, ROADMAP_STATUS_ICONS } from '../../constants';
 import { RoadmapController, RoadmapState } from '../../state';
@@ -13,7 +13,7 @@ import { RoadmapSection } from '../../types';
 
 @Component({
   selector: 'ui-roadmap-page',
-  imports: [TranslocoPipe, LocaleDatePipe, RouterLink, MatButton, MatIcon, MatProgressSpinner],
+  imports: [TranslocoPipe, LocaleDatePipe, RouterLink, MatButton, MatIcon, MatProgressSpinner, LocalizedPathPipe],
   templateUrl: './roadmap-page.component.html',
   styleUrl: './roadmap-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

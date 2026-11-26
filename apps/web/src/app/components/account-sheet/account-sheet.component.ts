@@ -8,11 +8,13 @@ import { AccountController, AccountState, AccountView } from '@birthday/web-auth
 import { injectState, ReadonlyState } from '@birthday/web-shared-data-access';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { AccountAvatarComponent } from '../account-avatar';
+import { LocalizedPathPipe } from '@birthday/web-shared-i18n';
 
 // The account menu as a full-height side sheet on narrow screens; opened by `AccountMenuController`.
 @Component({
   selector: 'app-account-sheet',
   imports: [
+    LocalizedPathPipe,
     TranslocoPipe,
     RouterLink,
     MatButton,

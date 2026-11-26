@@ -57,10 +57,11 @@
       server's memory, is not stored, and disappears about an hour after your last request or when the server restarts.
     </li>
     <li>
-      <strong>Feedback.</strong> If you send a message through the <a routerLink="/feedback">feedback form</a>, we store its topic, the text, the
-      email address you enter (optional), the language of the site, your browser's user agent, and when you sent it. If you are signed in, the message
-      is also linked to your account. You do not need an account. Only Birthdly's administrators read these messages, and we use your email address
-      only to reply to you. To limit abuse, Birthdly counts messages from your IP address in the server's memory in the same way as for invite links.
+      <strong>Feedback.</strong> If you send a message through the <a [routerLink]="'/feedback' | localizedPath">feedback form</a>, we store its
+      topic, the text, the email address you enter (optional), the language of the site, your browser's user agent, and when you sent it. If you are
+      signed in, the message is also linked to your account. You do not need an account. Only Birthdly's administrators read these messages, and we
+      use your email address only to reply to you. To limit abuse, Birthdly counts messages from your IP address in the server's memory in the same
+      way as for invite links.
     </li>
     <li>
       <strong>Usage statistics.</strong> To understand how Birthdly is used and improve it, the site counts page views and a few actions (such as

@@ -5,7 +5,7 @@ import { MatDatepicker, MatDatepickerInput, MatDatepickerInputEvent } from '@ang
 import { MatIcon } from '@angular/material/icon';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { injectState, ReadonlyState } from '@birthday/web-shared-data-access';
-import { AppTranslateService, LocaleDatePipe } from '@birthday/web-shared-i18n';
+import { AppTranslateService, LocaleDatePipe, LocalizedPathPipe } from '@birthday/web-shared-i18n';
 import { StickyPanelComponent } from '@birthday/web-shared-ui';
 import { BornDayController, BornDayState } from '../../state';
 import { splitBornTitle } from '../../helpers';
@@ -17,6 +17,7 @@ import { CelebrityCardComponent } from '../celebrity-card/celebrity-card.compone
 @Component({
   selector: 'ui-born-day-page',
   imports: [
+    LocalizedPathPipe,
     TranslocoPipe,
     LocaleDatePipe,
     RouterLink,

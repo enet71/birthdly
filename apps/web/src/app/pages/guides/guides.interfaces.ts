@@ -3,6 +3,6 @@ export interface Guide {
   // Translation keys.
   title: string;
   description: string;
-  // ISO date shown on the page and used as `dateModified`; update `lastmod` in `sitemap.xml` by hand.
+  // ISO date shown on the page and used as `dateModified`; the sitemap uses it as `lastmod`.
   updatedAt: string;
 }

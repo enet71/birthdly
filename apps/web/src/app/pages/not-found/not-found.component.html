@@ -1,5 +1,5 @@
 <p class="text">{{ 'notFound.text' | transloco }}</p>
-<a matButton="filled" routerLink="/">
+<a matButton="filled" [routerLink]="'/' | localizedPath">
   <mat-icon>calendar_month</mat-icon>
   {{ 'notFound.openCalendar' | transloco }}
 </a>

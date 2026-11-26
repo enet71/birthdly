@@ -64,6 +64,17 @@ Add new entries under the category that best matches their purpose, keeping newe
 - Trigger cues: SEO, home page text, intro section, landing content, calendar page, hero block
 - Status: active
 
+### SEO and i18n
+
+## 2026-11-26 - Localize a page's URL only when its text is translated
+
+- Type: rule
+- Context: Public pages get a URL per language (`/about`, `/de/about`) with `hreflang` alternates, built by `buildPublicRoutes` in `apps/web/src/app/app.routes.ts` and listed in the sitemap (`apps/web/src/sitemap.ts`). The privacy and terms texts are written in their templates in English; only their titles are translation keys.
+- Preferred behavior: Before adding a page to `buildPublicRoutes` (language prefixes, `hreflang`, sitemap alternates), check that its body text comes from the translation files. Keep pages whose text is hard-coded in one language, such as privacy and terms, on a single unprefixed URL without `hreflang`, and move them to `buildPublicRoutes` only after their texts are translated.
+- Generalized rule: A language URL and `hreflang` claim the page exists in that language; give them only to pages whose content is actually translated, otherwise search engines index the same text as several language versions.
+- Trigger cues: hreflang, language prefix, localized URL, buildPublicRoutes, sitemap alternates, new public page, legal pages, privacy, terms, hard-coded template text
+- Status: active
+
 ### Testing
 
 ### Workflow and Tooling

@@ -1,5 +1,5 @@
 <div class="header">
-  <a class="logo" [routerLink]="config.homePath">
+  <a class="logo" [routerLink]="config.homePath | localizedPath">
     <img class="logo__full" [alt]="config.appName" priority [ngSrc]="config.logo.src" [width]="config.logo.width" [height]="config.logo.height" />
     <img
       class="logo__small"
@@ -29,7 +29,7 @@
       [routerLinkActiveOptions]="{ exact: item.path === config.homePath }"
       #link="routerLinkActive"
       ariaCurrentWhenActive="page"
-      [routerLink]="item.path"
+      [routerLink]="item.path | localizedPath"
       [activated]="link.isActive"
       [attr.title]="item.label | transloco"
     >
@@ -48,7 +48,7 @@
         [routerLinkActiveOptions]="{ exact: item.path === config.homePath }"
         #link="routerLinkActive"
         ariaCurrentWhenActive="page"
-        [routerLink]="item.path"
+        [routerLink]="item.path | localizedPath"
         [activated]="link.isActive"
         [attr.title]="item.label | transloco"
       >

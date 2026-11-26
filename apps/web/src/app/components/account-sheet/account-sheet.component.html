@@ -28,7 +28,7 @@
     <mat-icon matListItemIcon>settings</mat-icon>
     <span matListItemTitle>{{ 'nav.settings' | transloco }}</span>
   </a>
-  <a mat-list-item routerLink="/feedback" mat-dialog-close>
+  <a mat-list-item [routerLink]="'/feedback' | localizedPath" mat-dialog-close>
     <mat-icon matListItemIcon>feedback</mat-icon>
     <span matListItemTitle>{{ 'nav.feedback' | transloco }}</span>
   </a>

@@ -8,7 +8,7 @@ import { RouterLink } from '@angular/router';
 import { map } from 'rxjs';
 import { AccountController, AccountState, AccountView } from '@birthday/web-auth-feature-account';
 import { injectState, ReadonlyState } from '@birthday/web-shared-data-access';
-import { AppTranslateService } from '@birthday/web-shared-i18n';
+import { AppTranslateService, LocalizedPathPipe } from '@birthday/web-shared-i18n';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { APP_COMPACT_LAYOUT_QUERY } from '../../app.constants';
 import { AccountMenuController } from '../../state';
@@ -17,7 +17,7 @@ import { AccountAvatarComponent } from '../account-avatar';
 // Opens the account menu: a dropdown on wide screens, a side sheet on narrow ones.
 @Component({
   selector: 'app-account-button',
-  imports: [TranslocoPipe, MatIcon, MatDivider, MatMenu, MatMenuItem, MatMenuTrigger, RouterLink, AccountAvatarComponent],
+  imports: [TranslocoPipe, MatIcon, MatDivider, MatMenu, MatMenuItem, MatMenuTrigger, RouterLink, AccountAvatarComponent, LocalizedPathPipe],
   providers: [AccountState, AccountController, AccountMenuController],
   templateUrl: './account-button.component.html',
   styleUrl: './account-button.component.scss',

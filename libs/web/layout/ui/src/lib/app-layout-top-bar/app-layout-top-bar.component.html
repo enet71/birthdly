@@ -1,4 +1,4 @@
-<a class="logo" [routerLink]="config.homePath">
+<a class="logo" [routerLink]="config.homePath | localizedPath">
   <img [alt]="config.appName" priority [ngSrc]="config.logoSmall.src" [width]="config.logoSmall.width" [height]="config.logoSmall.height" />
 </a>
 <h1 class="title">{{ pageTitle() }}</h1>

@@ -3,10 +3,11 @@ import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
+import { LocalizedPathPipe } from '@birthday/web-shared-i18n';
 
 @Component({
   selector: 'app-not-found',
-  imports: [TranslocoPipe, MatButton, MatIcon, RouterLink],
+  imports: [TranslocoPipe, MatButton, MatIcon, RouterLink, LocalizedPathPipe],
   templateUrl: './not-found.component.html',
   styleUrl: './not-found.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

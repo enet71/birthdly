@@ -1,10 +1,12 @@
 import type { Mock } from 'vitest';
-import { DOCUMENT, PLATFORM_ID, REQUEST, signal, WritableSignal } from '@angular/core';
+import { DOCUMENT, PLATFORM_ID, REQUEST } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { Router, UrlTree } from '@angular/router';
 import { Translation, TranslocoService } from '@jsverse/transloco';
 import { EMPTY, Observable, of, Subject, tap, throwError } from 'rxjs';
-import { NotificationsService, PlatformService } from '@birthday/web-shared-util';
+import { NotificationsService } from '@birthday/web-shared-util';
 import { LocaleController } from './locale.controller';
+import { AppLocale } from '../types';
 import { LocaleState } from './locale.state';
 
 interface FakeDocument {
@@ -23,7 +25,6 @@ describe('LocaleController', () => {
   let controller: LocaleController;
   let state: LocaleState;
   let fakeDocument: FakeDocument;
-  let isRendered: WritableSignal<boolean>;
   // Translations that finished loading, as `TranslocoService.getTranslation(lang)` reports them.
   let loaded: Record<string, Translation>;
   const transloco: {
@@ -50,7 +51,6 @@ describe('LocaleController', () => {
 
   function setup(options: SetupOptions): void {
     fakeDocument = { documentElement: { lang: options.documentLang ?? '' }, cookie: options.documentCookie ?? '' };
-    isRendered = signal(false);
 
     TestBed.configureTestingModule({
       providers: [
@@ -59,7 +59,6 @@ describe('LocaleController', () => {
         { provide: DOCUMENT, useValue: fakeDocument },
         { provide: TranslocoService, useValue: transloco },
         { provide: NotificationsService, useValue: notifications },
-        { provide: PlatformService, useValue: { isRendered } },
       ],
     });
 
@@ -67,8 +66,23 @@ describe('LocaleController', () => {
     state = TestBed.inject(LocaleState);
   }
 
-  function createRequest(headers: Record<string, string>): Request {
-    return new Request('https://birthdly.test/', { headers });
+  function createRequest(headers: Record<string, string>, url = 'https://birthdly.test/'): Request {
+    return new Request(url, { headers });
+  }
+
+  // Runs the route entry and returns what it emitted.
+  function enter(routeLocale: AppLocale, url: string): boolean | UrlTree | undefined {
+    let result: boolean | UrlTree | undefined;
+
+    controller.enterRouteLocale(routeLocale, url).subscribe((value: boolean | UrlTree) => (result = value));
+
+    return result;
+  }
+
+  function serialize(result: boolean | UrlTree | undefined): string {
+    expect(result).toBeInstanceOf(UrlTree);
+
+    return TestBed.inject(Router).serializeUrl(result as UrlTree);
   }
 
   beforeEach(() => {
@@ -104,6 +118,26 @@ describe('LocaleController', () => {
 
       expect(transloco.load).toHaveBeenCalledWith('en');
       expect(state.locale()).toBe('en');
+    });
+
+    it('uses the language prefix of the request URL over the cookie and Accept-Language', () => {
+      setup({
+        platform: 'server',
+        request: createRequest({ cookie: 'locale=ru', 'accept-language': 'fr' }, 'https://birthdly.test/de/about?x=1'),
+      });
+
+      controller.init().subscribe();
+
+      expect(transloco.load).toHaveBeenCalledWith('de');
+      expect(state.locale()).toBe('de');
+    });
+
+    it('uses the cookie when the request URL has no language prefix', () => {
+      setup({ platform: 'server', request: createRequest({ cookie: 'locale=ru' }, 'https://birthdly.test/deutsch') });
+
+      controller.init().subscribe();
+
+      expect(state.locale()).toBe('ru');
     });
 
     it('uses English without a request', () => {
@@ -196,6 +230,7 @@ describe('LocaleController', () => {
       controller.changeLocale('de');
 
       expect(state.locale()).toBe('en');
+      expect(fakeDocument.cookie).toBe('');
       expect(transloco.translate).toHaveBeenCalledWith('i18n.loadError');
       expect(notifications.createErrorNotification).toHaveBeenCalledWith('i18n.loadError');
     });
@@ -242,6 +277,85 @@ describe('LocaleController', () => {
     });
   });
 
+  describe('enterRouteLocale', () => {
+    it('redirects an English URL to the saved language on the server', () => {
+      setup({ platform: 'server', request: createRequest({ cookie: 'theme=dark; locale=de' }, 'https://birthdly.test/about?x=1') });
+
+      expect(serialize(enter('en', '/about?x=1'))).toBe('/de/about?x=1');
+      expect(transloco.load).not.toHaveBeenCalled();
+    });
+
+    it('redirects the English home page to the saved language in the browser', () => {
+      setup({ platform: 'browser', documentCookie: 'locale=fr' });
+
+      expect(serialize(enter('en', '/?year=1990'))).toBe('/fr?year=1990');
+    });
+
+    it('does not redirect for the browser language alone', () => {
+      setup({ platform: 'server', request: createRequest({ 'accept-language': 'de' }, 'https://birthdly.test/about') });
+
+      expect(enter('en', '/about')).toBe(true);
+      expect(state.locale()).toBe('en');
+    });
+
+    it('does not redirect when the saved language is English', () => {
+      setup({ platform: 'browser', documentCookie: 'locale=en' });
+
+      expect(enter('en', '/about')).toBe(true);
+    });
+
+    it('does not redirect for an unsupported saved value', () => {
+      setup({ platform: 'browser', documentCookie: 'locale=xx' });
+
+      expect(enter('en', '/about')).toBe(true);
+    });
+
+    it('shows a prefixed page in its language without saving it', () => {
+      setup({ platform: 'browser', documentCookie: 'locale=fr' });
+
+      const result: boolean | UrlTree | undefined = enter('de', '/de/about');
+      TestBed.tick();
+
+      expect(result).toBe(true);
+      expect(transloco.load).toHaveBeenCalledWith('de');
+      expect(state.locale()).toBe('de');
+      expect(fakeDocument.cookie).toBe('locale=fr');
+    });
+
+    it('returns an English page from a prefixed one to English', () => {
+      setup({ platform: 'browser' });
+      enter('de', '/de/about');
+
+      expect(enter('en', '/about')).toBe(true);
+      expect(state.locale()).toBe('en');
+    });
+
+    it('does not reload the language that is already shown', () => {
+      setup({ platform: 'browser' });
+
+      expect(enter('en', '/about')).toBe(true);
+      expect(transloco.load).not.toHaveBeenCalled();
+    });
+
+    it('still opens the page and notifies when its language fails to load', () => {
+      setup({ platform: 'browser' });
+      transloco.load.mockReturnValue(EMPTY);
+
+      expect(enter('de', '/de/about')).toBe(true);
+      expect(state.locale()).toBe('en');
+      expect(notifications.createErrorNotification).toHaveBeenCalledWith('i18n.loadError');
+    });
+
+    it('still opens the page when the load throws', () => {
+      setup({ platform: 'browser' });
+      transloco.load.mockReturnValue(throwError(() => new Error('chunk')));
+
+      expect(enter('ru', '/ru')).toBe(true);
+      expect(state.locale()).toBe('en');
+      expect(notifications.createErrorNotification).toHaveBeenCalledWith('i18n.loadError');
+    });
+  });
+
   describe('effects', () => {
     beforeEach(() => setup({ platform: 'browser' }));
 
@@ -253,25 +367,14 @@ describe('LocaleController', () => {
       expect(fakeDocument.documentElement.lang).toBe('uk');
     });
 
-    it('does not write the cookie before the first render', () => {
+    it('does not save a language the user did not choose', () => {
       state.locale.set('de');
       TestBed.tick();
 
       expect(fakeDocument.cookie).toBe('');
     });
 
-    it('writes the cookie after the first render', () => {
-      state.locale.set('de');
-      isRendered.set(true);
-      TestBed.tick();
-
-      expect(fakeDocument.cookie).toBe('locale=de; path=/; max-age=31536000; samesite=lax');
-    });
-
-    it('rewrites the cookie after a switch', () => {
-      isRendered.set(true);
-      TestBed.tick();
-
+    it('saves the language the user chose', () => {
       controller.changeLocale('es');
       TestBed.tick();
 

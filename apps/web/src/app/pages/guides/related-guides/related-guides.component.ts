@@ -4,10 +4,11 @@ import { GUIDES } from '../guides.constants';
 import { getGuidePath } from '../guides.helpers';
 import { Guide } from '../guides.interfaces';
 import { TranslocoPipe } from '@jsverse/transloco';
+import { LocalizedPathPipe } from '@birthday/web-shared-i18n';
 
 @Component({
   selector: 'app-related-guides',
-  imports: [TranslocoPipe, RouterLink],
+  imports: [TranslocoPipe, RouterLink, LocalizedPathPipe],
   templateUrl: './related-guides.component.html',
   styleUrl: './related-guides.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

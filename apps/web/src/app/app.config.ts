@@ -12,7 +12,7 @@ import { provideReminders } from '@birthday/web-reminders-data-access';
 import { provideI18n } from '@birthday/web-shared-i18n';
 import { AnalyticsService, ENVIRONMENT_TOKEN } from '@birthday/web-shared-util';
 import { loadAppTranslation } from './app.i18n';
-import { appRoutes } from './app.routes';
+import { APP_LOCALIZED_PATHS, appRoutes } from './app.routes';
 import { APP_LAYOUT } from './app.constants';
 import { AppPageMetaStrategy } from './app-page-meta.strategy';
 import { ThemeController } from './state';
@@ -25,7 +25,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(appRoutes, withAutoCleanupInjectors()),
     { provide: TitleStrategy, useClass: AppPageMetaStrategy },
     provideHttpClient(withFetch()),
-    provideI18n({ loadTranslation: loadAppTranslation }),
+    provideI18n({ loadTranslation: loadAppTranslation, localizedPaths: APP_LOCALIZED_PATHS }),
     // Shows birthday push notifications. It caches no files (see `ngsw-config.json`), so every page comes from the network.
     provideServiceWorker('ngsw-worker.js', { enabled: !isDevMode(), registrationStrategy: 'registerWhenStable:5000' }),
     provideAuth(),

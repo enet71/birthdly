@@ -3,7 +3,7 @@ import { APP_DESCRIPTION_DATA_KEY, APP_DOCUMENT_TITLE_DATA_KEY } from '@birthday
 import { BIRTHDAY_REMINDERS_GUIDE, GOOGLE_CALENDAR_BIRTHDAYS_GUIDE, IMPORT_FROM_GOOGLE_CONTACTS_GUIDE } from './guides.constants';
 import { buildGuideRoute } from './guides.helpers';
 
-// Every guide also needs an entry in `app.routes.server.ts` and a URL in `sitemap.xml`.
+// Every guide also needs an entry in `app.routes.server.ts` and in `GUIDES`, which the sitemap lists.
 export const GUIDES_ROUTES: Route[] = [
   {
     path: '',

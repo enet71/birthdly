@@ -9,7 +9,7 @@ import { BirthdayDialogController } from '@birthday/web-birthdays-data-access';
 import { CelebritiesApiService } from '@birthday/web-celebrities-data-access';
 import { AppLayoutController } from '@birthday/web-layout-data-access';
 import { injectState, ReadonlyState, StateController } from '@birthday/web-shared-data-access';
-import { AppTranslateService, LocaleState } from '@birthday/web-shared-i18n';
+import { AppTranslateService, LocaleState, LocalizedPathService } from '@birthday/web-shared-i18n';
 import { NotificationsService } from '@birthday/web-shared-util';
 import {
   BORN_DEFAULT_FILTERS,
@@ -34,6 +34,7 @@ export class BornDayController extends StateController {
   private readonly authController: AuthController = inject(AuthController);
   private readonly authState: ReadonlyState<AuthState> = injectState(AuthState);
   private readonly router: Router = inject(Router);
+  private readonly localizedPathService: LocalizedPathService = inject(LocalizedPathService);
   private readonly dateAdapter: DateAdapter<Date> = inject(DateAdapter);
   private readonly localeState: ReadonlyState<LocaleState> = injectState(LocaleState);
   private readonly notifications: NotificationsService = inject(NotificationsService);
@@ -140,7 +141,7 @@ export class BornDayController extends StateController {
 
   // The filters stay when another date opens.
   public openDate(date: Date): void {
-    this.router.navigate([getBornDayPath(toBornDate(date))], { queryParamsHandling: 'preserve' });
+    this.router.navigate([this.localizedPathService.localize(getBornDayPath(toBornDate(date)))], { queryParamsHandling: 'preserve' });
   }
 
   // The URL keeps the filters; the resolver passes them to the State. Filter changes replace the history entry, so Back

@@ -1,6 +1,7 @@
 import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivateFn, Router, UrlTree } from '@angular/router';
 import { isCelebrityBirthYear } from '@birthday/shared-models';
+import { APP_DEFAULT_LOCALE, getRouteLocale, localizePath } from '@birthday/web-shared-i18n';
 import { BORN_YEAR_QUERY_PARAM } from '../constants';
 import { getBornDayPath, parseBornYear, readBornDate } from '../helpers';
 import { BornDate } from '../types';
@@ -16,5 +17,7 @@ export const bornYearGuard: CanActivateFn = (route: ActivatedRouteSnapshot): boo
     return true;
   }
 
-  return inject(Router).createUrlTree([getBornDayPath(date)], { queryParams: { ...route.queryParams, [BORN_YEAR_QUERY_PARAM]: null } });
+  const path: string = localizePath(getBornDayPath(date), getRouteLocale(route) ?? APP_DEFAULT_LOCALE);
+
+  return inject(Router).createUrlTree([path], { queryParams: { ...route.queryParams, [BORN_YEAR_QUERY_PARAM]: null } });
 };

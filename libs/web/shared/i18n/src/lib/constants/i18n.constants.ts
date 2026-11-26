@@ -29,3 +29,6 @@ export const APP_LOCALE_NAMES: Record<(typeof APP_LOCALES)[number], string> = {
   ru: 'Русский',
   uk: 'Українська',
 };
+
+// Route data with the language of a public page, which has its own URL per language (`/about`, `/de/about`).
+export const APP_ROUTE_LOCALE_DATA_KEY = 'routeLocale';

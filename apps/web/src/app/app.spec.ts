@@ -4,6 +4,7 @@ import { TranslocoTestingModule } from '@jsverse/transloco';
 import { NEVER, of } from 'rxjs';
 import { AuthApiService, GoogleIdentityService } from '@birthday/web-auth-data-access';
 import { APP_LAYOUT_CONFIG } from '@birthday/web-layout-util';
+import { LocalizedPathService } from '@birthday/web-shared-i18n';
 import { AnalyticsService, NotificationsService } from '@birthday/web-shared-util';
 import { App } from './app';
 import { APP_LAYOUT } from './app.constants';
@@ -38,6 +39,8 @@ describe('App', () => {
         { provide: GoogleIdentityService, useValue: { load: () => of(undefined), promptOneTap: () => NEVER } },
         { provide: NotificationsService, useValue: {} },
         { provide: AnalyticsService, useValue: { track: vi.fn() } },
+        // The layout links keep the current language; the language itself is not under test here.
+        { provide: LocalizedPathService, useValue: { localize: (path: string) => path } },
       ],
     }).compileComponents();
   });

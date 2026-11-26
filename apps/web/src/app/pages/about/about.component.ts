@@ -9,10 +9,11 @@ import { Guide } from '../guides/guides.interfaces';
 import { ABOUT_FAQ, ABOUT_FEATURES } from './about.constants';
 import { AboutFaqItem, AboutFeature } from './about.interfaces';
 import { TranslocoPipe } from '@jsverse/transloco';
+import { LocalizedPathPipe } from '@birthday/web-shared-i18n';
 
 @Component({
   selector: 'app-about',
-  imports: [TranslocoPipe, MatButton, MatExpansionModule, MatIcon, RouterLink],
+  imports: [TranslocoPipe, MatButton, MatExpansionModule, MatIcon, RouterLink, LocalizedPathPipe],
   templateUrl: './about.component.html',
   styleUrl: './about.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

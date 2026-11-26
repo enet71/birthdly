@@ -1,4 +1,5 @@
-import { Route } from '@angular/router';
+import { ActivatedRouteSnapshot, Route } from '@angular/router';
+import { APP_DEFAULT_LOCALE, AppLocale, getRouteLocale, localizePath } from '@birthday/web-shared-i18n';
 import { APP_DESCRIPTION_DATA_KEY, APP_STRUCTURED_DATA_DATA_KEY, AppRouteTranslator } from '@birthday/web-shared-util';
 import { APP_LAYOUT, APP_SITE_URL } from '../../app.constants';
 import { Guide } from './guides.interfaces';
@@ -13,15 +14,16 @@ export function buildGuideRoute(guide: Guide, loadComponent: Route['loadComponen
     title: guide.title,
     data: {
       [APP_DESCRIPTION_DATA_KEY]: guide.description,
-      [APP_STRUCTURED_DATA_DATA_KEY]: (translator: AppRouteTranslator) => buildGuideStructuredData(guide, translator),
+      [APP_STRUCTURED_DATA_DATA_KEY]: (translator: AppRouteTranslator, route: ActivatedRouteSnapshot) =>
+        buildGuideStructuredData(guide, translator, getRouteLocale(route) ?? APP_DEFAULT_LOCALE),
     },
     loadComponent,
   };
 }
 
 // The page script holds one object, so the article and its breadcrumbs share a `@graph`.
-function buildGuideStructuredData(guide: Guide, translator: AppRouteTranslator): object {
-  const url = `${APP_SITE_URL}${getGuidePath(guide)}`;
+function buildGuideStructuredData(guide: Guide, translator: AppRouteTranslator, locale: AppLocale): object {
+  const url = `${APP_SITE_URL}${localizePath(getGuidePath(guide), locale)}`;
   const organization = { '@type': 'Organization', name: APP_LAYOUT.appName, url: `${APP_SITE_URL}/` };
   const title: string = translator.translate(guide.title);
 
@@ -42,8 +44,18 @@ function buildGuideStructuredData(guide: Guide, translator: AppRouteTranslator):
       {
         '@type': 'BreadcrumbList',
         itemListElement: [
-          { '@type': 'ListItem', position: 1, name: translator.translate('guides.breadcrumbHome'), item: `${APP_SITE_URL}/` },
-          { '@type': 'ListItem', position: 2, name: translator.translate('routes.guides.title'), item: `${APP_SITE_URL}/guides` },
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: translator.translate('guides.breadcrumbHome'),
+            item: `${APP_SITE_URL}${localizePath('/', locale)}`,
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: translator.translate('routes.guides.title'),
+            item: `${APP_SITE_URL}${localizePath('/guides', locale)}`,
+          },
           { '@type': 'ListItem', position: 3, name: title, item: url },
         ],
       },

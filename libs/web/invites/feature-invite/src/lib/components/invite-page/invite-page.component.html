@@ -5,7 +5,7 @@
         <mat-icon class="card__icon" aria-hidden="true">link_off</mat-icon>
         <h2 #cardTitle tabindex="-1" class="card__title">{{ 'invites.guest.invalidTitle' | transloco }}</h2>
         <p class="card__text">{{ 'invites.guest.invalidText' | transloco }}</p>
-        <a matButton="outlined" routerLink="/">{{ 'invites.guest.openApp' | transloco }}</a>
+        <a matButton="outlined" [routerLink]="'/' | localizedPath">{{ 'invites.guest.openApp' | transloco }}</a>
       </div>
     }
     @case ('failed') {
@@ -30,7 +30,7 @@
           <div class="card card_promo">
             <h2 #cardTitle tabindex="-1" class="card__title">{{ 'invites.guest.promoTitle' | transloco }}</h2>
             <p class="card__text">{{ 'invites.guest.promoText' | transloco }}</p>
-            <a matButton="filled" routerLink="/">
+            <a matButton="filled" [routerLink]="'/' | localizedPath">
               <mat-icon>cake</mat-icon>
               {{ 'invites.guest.promoButton' | transloco }}
             </a>

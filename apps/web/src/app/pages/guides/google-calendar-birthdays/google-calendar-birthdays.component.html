@@ -26,11 +26,11 @@
 
 <section>
   <h2>{{ 'guides.googleCalendarBirthdays.text16' | transloco }}</h2>
-  <p><a routerLink="/">Birthdly</a><span [innerHTML]="'guides.googleCalendarBirthdays.intro.after' | transloco"></span></p>
+  <p><a [routerLink]="'/' | localizedPath">Birthdly</a><span [innerHTML]="'guides.googleCalendarBirthdays.intro.after' | transloco"></span></p>
   <ol>
     <li>
       <span [innerHTML]="'guides.googleCalendarBirthdays.addStep.before' | transloco"></span
-      ><a routerLink="/">{{ 'guides.googleCalendarBirthdays.addStep.link' | transloco }}</a
+      ><a [routerLink]="'/' | localizedPath">{{ 'guides.googleCalendarBirthdays.addStep.link' | transloco }}</a
       ><span [innerHTML]="'guides.googleCalendarBirthdays.addStep.after' | transloco"></span>
     </li>
     <li [innerHTML]="'guides.googleCalendarBirthdays.text17' | transloco"></li>

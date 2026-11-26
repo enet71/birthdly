@@ -2,7 +2,16 @@ import { DOCUMENT, effect, inject, Injectable, untracked } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRouteSnapshot, RouterStateSnapshot, TitleStrategy } from '@angular/router';
 import { injectState, ReadonlyState } from '@birthday/web-shared-data-access';
-import { AppTranslateService, LocaleState } from '@birthday/web-shared-i18n';
+import {
+  APP_DEFAULT_LOCALE,
+  APP_LOCALES,
+  APP_ROUTE_LOCALE_DATA_KEY,
+  AppLocale,
+  AppTranslateService,
+  localizePath,
+  LocaleState,
+  parseLocalePath,
+} from '@birthday/web-shared-i18n';
 import {
   APP_DESCRIPTION_DATA_KEY,
   APP_DOCUMENT_TITLE_DATA_KEY,
@@ -15,6 +24,7 @@ import {
 import { APP_DEFAULT_DESCRIPTION, APP_LAYOUT, APP_OPEN_GRAPH_LOCALES, APP_SITE_URL } from './app.constants';
 
 const STRUCTURED_DATA_SCRIPT_ID = 'page-structured-data';
+const OPEN_GRAPH_LOCALE_ALTERNATE = 'og:locale:alternate';
 
 // Runs on every navigation on the server and in the browser, so it also owns the per-route SEO tags.
 // Route titles stay short for the layout top bar; the document title also carries the app name.
@@ -53,6 +63,7 @@ export class AppPageMetaStrategy extends TitleStrategy {
     this.title.setTitle(title);
     this.updateSocialTags(title, description);
     this.updateCanonicalUrl(snapshot.url);
+    this.updateAlternateLanguages(snapshot.root, snapshot.url);
     this.updateRobots(snapshot.root);
     this.updateStructuredData(snapshot.root);
   }
@@ -101,6 +112,39 @@ export class AppPageMetaStrategy extends TitleStrategy {
 
     link.href = canonicalUrl;
     this.meta.updateTag({ property: 'og:url', content: canonicalUrl });
+  }
+
+  // A public page links its URLs in every language, so search engines index each of them and show the visitor's one.
+  // `x-default` is the English URL, which sends a visitor who prefers another language to that language's URL.
+  private updateAlternateLanguages(root: ActivatedRouteSnapshot, url: string): void {
+    const routeLocale: AppLocale | undefined = this.findRouteData<AppLocale>(root, APP_ROUTE_LOCALE_DATA_KEY);
+    const path: string = parseLocalePath(url.split(/[?#]/)[0]).path;
+
+    this.document.head.querySelectorAll('link[rel="alternate"][hreflang]').forEach((link: Element) => link.remove());
+    this.meta.getTags(`property="${OPEN_GRAPH_LOCALE_ALTERNATE}"`).forEach((tag: HTMLMetaElement) => this.meta.removeTagElement(tag));
+
+    if (!routeLocale || this.findRouteData<boolean>(root, APP_NOINDEX_DATA_KEY)) {
+      return;
+    }
+
+    APP_LOCALES.forEach((locale: AppLocale) => this.appendAlternateLink(locale, localizePath(path, locale)));
+    this.appendAlternateLink('x-default', localizePath(path, APP_DEFAULT_LOCALE));
+    // `og:locale` is the language the page is shown in, so the alternates are the other ones.
+    this.meta.addTags(
+      APP_LOCALES.filter((locale: AppLocale) => locale !== this.localeState.locale()).map((locale: AppLocale) => ({
+        property: OPEN_GRAPH_LOCALE_ALTERNATE,
+        content: APP_OPEN_GRAPH_LOCALES[locale],
+      })),
+    );
+  }
+
+  private appendAlternateLink(hreflang: string, path: string): void {
+    const link: HTMLLinkElement = this.document.createElement('link');
+
+    link.rel = 'alternate';
+    link.hreflang = hreflang;
+    link.href = `${APP_SITE_URL}${path}`;
+    this.document.head.appendChild(link);
   }
 
   private updateRobots(root: ActivatedRouteSnapshot): void {

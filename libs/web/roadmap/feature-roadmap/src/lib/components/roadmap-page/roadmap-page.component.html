@@ -12,7 +12,7 @@
         <span class="item__dot" aria-hidden="true"></span>
         <div class="item__card item__card_idea">
           <p class="item__text">{{ 'roadmap.cta.text' | transloco }}</p>
-          <a matButton="filled" routerLink="/feedback">
+          <a matButton="filled" [routerLink]="'/feedback' | localizedPath">
             <mat-icon>edit</mat-icon>
             {{ 'roadmap.cta.action' | transloco }}
           </a>
