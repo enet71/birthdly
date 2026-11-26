@@ -1,0 +1,16 @@
+<span class="gifts">
+  @for (tone of gifts(); track tone) {
+    <span class="gift" [class]="'gift_' + tone">
+      <span class="gift__bow"></span>
+      <span class="gift__lid"></span>
+      <span class="gift__box"></span>
+    </span>
+  }
+</span>
+@if (festive()) {
+  <span class="confetti">
+    @for (piece of confetti; track piece) {
+      <span class="confetti__piece"></span>
+    }
+  </span>
+}

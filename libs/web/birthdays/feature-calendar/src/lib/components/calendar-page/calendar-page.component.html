@@ -8,6 +8,9 @@
 </section>
 <aside class="next-birthdays" [attr.aria-label]="'calendar.upcomingBirthdays' | transloco">
   <ui-next-birthdays class="next-birthdays__content"></ui-next-birthdays>
+  @if (isNewYearTreeVisible()) {
+    <ui-new-year-tree class="next-birthdays__tree"></ui-new-year-tree>
+  }
   <div class="next-birthdays__bottom">
     @if (isSignInPromptVisible()) {
       <ui-sign-in-prompt></ui-sign-in-prompt>

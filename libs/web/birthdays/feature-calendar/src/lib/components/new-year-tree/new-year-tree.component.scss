@@ -1,0 +1,401 @@
+// Brand tones: lavender and blue lights on a violet strand. On the dark panel they glow light; on the light panel
+// they are soft pastel tints, deep enough to show on the pale glass but not heavy.
+$strand: light-dark(
+  color-mix(in srgb, var(--app-accent) 40%, var(--app-tone-violet)),
+  color-mix(in srgb, var(--app-tone-violet-ink) 75%, var(--app-accent))
+);
+$violet: light-dark(
+  color-mix(in srgb, var(--app-accent) 55%, var(--app-tone-violet)),
+  color-mix(in srgb, var(--app-tone-violet-ink) 75%, var(--app-on-accent))
+);
+$blue: light-dark(
+  color-mix(in srgb, var(--app-tone-sky-ink) 55%, var(--app-tone-sky)),
+  color-mix(in srgb, var(--app-tone-sky-ink) 75%, var(--app-on-accent))
+);
+$snow: light-dark(
+  color-mix(in srgb, var(--app-tone-sky-ink) 35%, var(--app-tone-sky)),
+  color-mix(in srgb, var(--app-on-accent) 85%, var(--app-tone-violet-ink))
+);
+// The entrance: the star flares first, then the strand draws down from it and the lights come on behind it.
+$star-delay: 0.1s;
+$draw-delay: 0.7s;
+$draw-time: 2.4s;
+
+// A large background decoration, a touch softer than the content around it.
+:host {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+// Hovering the panel brightens the tree for a moment.
+:host-context(.next-birthdays:hover) .tree {
+  filter: brightness(1.2) saturate(1.2);
+}
+
+// Snow and stars fill all the free space, far above the tree.
+.sky {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+
+  &__stars path {
+    fill: $blue;
+    animation: tree-twinkle 3.6s ease-in-out infinite alternate;
+
+    &:nth-child(odd) {
+      fill: $violet;
+    }
+
+    @for $i from 1 through 22 {
+      &:nth-child(#{$i}) {
+        animation-delay: -0.55s * $i;
+      }
+    }
+  }
+
+  // Three depths of snow: far flakes are small and slow, near ones large, soft, and quick, which reads as depth.
+  &__snow circle {
+    fill: $snow;
+    opacity: 0;
+    animation: linear infinite;
+  }
+
+  &__snow_far circle {
+    animation-name: snow-far;
+
+    @for $i from 1 through 26 {
+      &:nth-child(#{$i}) {
+        animation-duration: 16s + ($i % 4) * 2s;
+        animation-delay: -1.7s * $i;
+      }
+    }
+  }
+
+  &__snow_mid circle {
+    animation-name: snow-mid;
+
+    @for $i from 1 through 18 {
+      &:nth-child(#{$i}) {
+        animation-duration: 10s + ($i % 4) * 1.4s;
+        animation-delay: -1.3s * $i;
+      }
+    }
+  }
+
+  &__snow_near circle {
+    animation-name: snow-near;
+
+    @for $i from 1 through 8 {
+      &:nth-child(#{$i}) {
+        animation-duration: 6.5s + ($i % 3) * 1.2s;
+        animation-delay: -1.9s * $i;
+      }
+    }
+  }
+}
+
+// Sized by the height it gets, up to the width of the panel, so it shrinks with the free space around it.
+.tree {
+  position: relative;
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: 100%;
+  max-height: 34rem;
+  overflow: visible;
+  transition: filter 0.8s ease;
+
+  &__stop {
+    // Both halo stops share the color and fade by opacity; fading to `transparent` would pass through gray.
+    &_halo,
+    &_halo-end {
+      stop-color: var(--app-accent);
+    }
+
+    &_halo {
+      stop-opacity: 0.05;
+    }
+
+    &_halo-end {
+      stop-opacity: 0;
+    }
+  }
+
+  // Out-of-focus lights behind the tree drift and breathe slowly.
+  &__bokeh-dot {
+    opacity: 0.1;
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    animation: tree-bokeh 9s ease-in-out infinite alternate;
+
+    @each $tone in (violet, sky, rose, peach) {
+      &_#{$tone} {
+        // On the light panel the dots are much fainter, or they read as smudges.
+        fill: light-dark(color-mix(in srgb, var(--app-tone-#{$tone}-ink) 35%, transparent), var(--app-tone-#{$tone}-ink));
+      }
+    }
+
+    @for $i from 1 through 7 {
+      &:nth-child(#{$i}) {
+        animation-delay: -1.9s * $i;
+        animation-duration: 8s + ($i % 3) * 2s;
+      }
+    }
+  }
+
+  &__strand {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+
+    &_back {
+      stroke: color-mix(in srgb, #{$strand} 45%, transparent);
+      stroke-width: 0.6;
+    }
+
+    &_front {
+      stroke: $strand;
+      stroke-width: 1.1;
+    }
+  }
+
+  // Lavender and blue lights with rare warm peach and rose accents: vivid ink tints on the light panel, bright and
+  // glowing on the dark one.
+  &__light {
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    opacity: 0.75;
+    // A wave of brightness runs down the spiral again and again.
+    animation: tree-wave 5s ease-in-out calc(var(--t) * 2.5s) infinite;
+
+    @each $tone in (violet, sky, rose, peach) {
+      &_#{$tone} {
+        fill: light-dark(
+          color-mix(in srgb, var(--app-tone-#{$tone}-ink) 68%, var(--app-tone-#{$tone})),
+          color-mix(in srgb, var(--app-tone-#{$tone}-ink) 85%, var(--app-on-accent))
+        );
+      }
+    }
+  }
+
+  &__lights_back .tree__light {
+    fill-opacity: 0.55;
+  }
+
+  // Thin rays turn slowly around the star.
+  &__star-rays {
+    fill: color-mix(in srgb, #{$violet} 25%, transparent);
+    transform-box: view-box;
+    transform-origin: 100px 22px;
+    animation: tree-rays 40s linear infinite;
+  }
+
+  // A softer star: slightly see-through, with a lavender rather than white core.
+  &__star-spark {
+    fill: $violet;
+    opacity: 0.8;
+  }
+
+  &__star-core {
+    fill: $violet;
+  }
+}
+
+// The entrance, once per browser session: the star flares, the strand draws down from it, and each light comes on as the
+// strand reaches it before joining the wave.
+:host(.entering) {
+  .tree__halo,
+  .tree__bokeh {
+    animation: tree-fade-in 1.6s ease-out both;
+  }
+
+  .tree__star {
+    animation: tree-star-in 0.9s cubic-bezier(0.2, 0.9, 0.3, 1.4) $star-delay both;
+  }
+
+  // Each run has `pathLength="1"`, so a dash of 1 is the whole run; it draws in its share of the entrance time.
+  .tree__strand {
+    stroke-dasharray: 1;
+    animation: tree-draw calc(var(--len) * #{$draw-time}) linear calc(#{$draw-delay} + var(--start) * #{$draw-time}) both;
+  }
+
+  .tree__light {
+    animation:
+      tree-light-in 0.5s ease-out calc(#{$draw-delay} + var(--t) * #{$draw-time}) both,
+      tree-wave 5s ease-in-out calc(#{$draw-delay + $draw-time + 0.4s} + var(--t) * 2.5s) infinite;
+  }
+}
+
+@keyframes tree-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes tree-light-in {
+  from {
+    opacity: 0;
+    scale: 0.2;
+  }
+
+  to {
+    opacity: 0.75;
+    scale: 1;
+  }
+}
+
+// Mostly resting, with a short swell of brightness that the delays turn into a wave running down the spiral.
+@keyframes tree-wave {
+  0%,
+  30%,
+  100% {
+    opacity: 0.75;
+    scale: 1;
+  }
+
+  12% {
+    opacity: 1;
+    scale: 1.45;
+  }
+}
+
+@keyframes tree-star-in {
+  from {
+    opacity: 0;
+    scale: 0.2;
+  }
+
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+@keyframes tree-rays {
+  to {
+    rotate: 1turn;
+  }
+}
+
+@keyframes tree-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes tree-bokeh {
+  from {
+    opacity: 0.06;
+    translate: 0 0;
+  }
+
+  to {
+    opacity: 0.13;
+    translate: 4px -6px;
+  }
+}
+
+@keyframes tree-twinkle {
+  from {
+    opacity: 0.45;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+// Lengths here are SVG user units; nearer layers travel farther.
+@keyframes snow-far {
+  0% {
+    opacity: 0;
+    transform: translate(0, -10px);
+  }
+
+  20%,
+  80% {
+    opacity: 0.5;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(3px, 18px);
+  }
+}
+
+@keyframes snow-mid {
+  0% {
+    opacity: 0;
+    transform: translate(0, -20px);
+  }
+
+  20%,
+  80% {
+    opacity: 0.8;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(6px, 32px);
+  }
+}
+
+@keyframes snow-near {
+  0% {
+    opacity: 0;
+    transform: translate(0, -30px);
+  }
+
+  20%,
+  80% {
+    opacity: 0.7;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(10px, 56px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host(.entering) .tree__halo,
+  :host(.entering) .tree__bokeh,
+  :host(.entering) .tree__star,
+  :host(.entering) .tree__light,
+  .sky__stars path,
+  .tree__halo,
+  .tree__bokeh,
+  .tree__bokeh-dot,
+  .tree__light,
+  .tree__star,
+  .tree__star-rays {
+    animation: none;
+  }
+
+  .sky__snow circle {
+    animation: none;
+    opacity: 0.6;
+  }
+
+  :host(.entering) .tree__strand {
+    animation: none;
+    stroke-dasharray: none;
+  }
+
+  .tree__light {
+    opacity: 0.85;
+  }
+
+  .tree {
+    transition: none;
+  }
+}

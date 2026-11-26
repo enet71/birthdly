@@ -8,7 +8,13 @@
 </div>
 <div class="days">
   @for (day of days(); track day.date.getTime()) {
-    <div class="day" [class.day_outside]="!day.isCurrentMonth" [class.day_today]="day.isToday" [class.day_birthday]="day.birthdays.length">
+    <div
+      class="day"
+      [class.day_outside]="!day.isCurrentMonth"
+      [class.day_today]="day.isToday"
+      [class.day_birthday]="day.birthdays.length"
+      [class.day_celebrating]="day.isToday && day.birthdays.length"
+    >
       <!-- Covers the whole cell; birthday buttons sit on top of it, because buttons cannot be nested. -->
       <button
         class="day__select"
@@ -19,10 +25,21 @@
       >
         <mat-icon class="day__add" aria-hidden="true">add</mat-icon>
       </button>
+      @if (day.isToday) {
+        <ui-today-decor class="day__decor" [festive]="day.birthdays.length > 0"></ui-today-decor>
+      }
       <span class="day__header" aria-hidden="true">
-        <span class="day__number">{{ day.date | localeDate: 'd' }}</span>
+        <span class="day__number">
+          {{ day.date | localeDate: 'd' }}
+          @if (day.isToday) {
+            <ui-party-hat class="day__hat day__hat_number"></ui-party-hat>
+          }
+        </span>
         @if (day.isToday) {
-          <span class="day__today">{{ 'calendar.today' | transloco }}</span>
+          <span class="day__today">
+            {{ 'calendar.today' | transloco }}
+            <ui-party-hat class="day__hat day__hat_pill"></ui-party-hat>
+          </span>
         }
       </span>
       @if (day.birthdays.length) {

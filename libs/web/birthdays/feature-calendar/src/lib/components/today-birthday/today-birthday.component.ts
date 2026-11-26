@@ -16,5 +16,7 @@ export class TodayBirthdayComponent {
   public readonly celebration: InputSignal<UpcomingCelebration> = input.required();
 
   // Each piece gets its position, color, and timing from its index in the stylesheet.
+  protected readonly giftTones: string[] = ['violet', 'rose', 'mint'];
+  protected readonly balloonTones: string[] = ['rose', 'sky', 'peach'];
   protected readonly confetti: number[] = Array.from({ length: 14 }, (_: unknown, index: number) => index);
 }

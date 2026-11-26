@@ -49,6 +49,18 @@
     margin-top: auto;
   }
 
+  // The seasonal tree fills the free space between the list and the bottom block and scales down to fit it,
+  // so it never covers the list or makes the page scroll.
+  &__tree {
+    flex: 1 1 0;
+    min-height: 0;
+    padding: 0.5rem 0.75rem 0.75rem;
+
+    + .next-birthdays__bottom {
+      margin-top: 0;
+    }
+  }
+
   // Hidden on desktop, where the expanded sidenav shows the footer; below the breakpoint the sidenav is a rail or gone.
   &__footer {
     display: none;
@@ -102,6 +114,10 @@
 
     &__footer {
       display: block;
+    }
+
+    &__tree {
+      display: none;
     }
   }
 }

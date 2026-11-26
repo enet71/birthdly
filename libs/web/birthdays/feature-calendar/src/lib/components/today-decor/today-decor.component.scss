@@ -1,0 +1,235 @@
+@use 'sass:list';
+
+$confetti-colors: (
+  light-dark(color-mix(in srgb, var(--app-tone-rose) 40%, var(--app-tone-rose-ink)), var(--app-tone-rose-ink)),
+  light-dark(color-mix(in srgb, var(--app-tone-sky) 40%, var(--app-tone-sky-ink)), var(--app-tone-sky-ink)),
+  light-dark(color-mix(in srgb, var(--app-tone-peach) 40%, var(--app-tone-peach-ink)), var(--app-tone-peach-ink)),
+  light-dark(color-mix(in srgb, var(--app-tone-mint) 40%, var(--app-tone-mint-ink)), var(--app-tone-mint-ink)),
+  light-dark(color-mix(in srgb, var(--app-tone-violet) 40%, var(--app-tone-violet-ink)), var(--app-tone-violet-ink))
+);
+// Spots spread over the cell, away from the date in the top left corner.
+$confetti-spots: ((58, 12), (86, 26), (40, 34), (70, 44), (12, 52), (90, 8), (28, 22), (52, 60), (22, 72), (8, 88));
+$gold-ribbon: light-dark(color-mix(in srgb, var(--app-tone-peach) 55%, var(--app-tone-peach-ink)), var(--app-tone-peach-ink));
+
+:host {
+  position: absolute;
+  inset: 0;
+  // Keeps the gifts' own layering inside, so the date and the chips stay on top.
+  z-index: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+// Large, faint gifts floating across the whole cell; some drift past its edges.
+.gifts {
+  position: absolute;
+  inset: 0;
+  opacity: 0.22;
+}
+
+.gift {
+  --base: light-dark(color-mix(in srgb, var(--tone) 20%, var(--ink)), color-mix(in srgb, var(--ink) 70%, var(--tone)));
+  --band: calc(0.4375rem * var(--size));
+  --ribbon-band: linear-gradient(
+    90deg,
+    transparent calc(50% - var(--band) / 2),
+    var(--ribbon) calc(50% - var(--band) / 2) calc(50% + var(--band) / 2),
+    transparent calc(50% + var(--band) / 2)
+  );
+
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: calc(2.75rem * var(--size));
+  animation: gift-float ease-in-out infinite alternate;
+
+  &_violet {
+    --tone: var(--app-tone-violet);
+    --ink: var(--app-tone-violet-ink);
+    --ribbon: #{$gold-ribbon};
+    --pattern: linear-gradient(180deg, transparent 34%, var(--ribbon) 34% 54%, transparent 54%);
+    --size: 1.5;
+    --tilt: -12deg;
+
+    top: 38%;
+    left: 30%;
+    animation-duration: 6s;
+  }
+
+  &_mint {
+    --tone: var(--app-tone-mint);
+    --ink: var(--app-tone-mint-ink);
+    --ribbon: #{$gold-ribbon};
+    --pattern: repeating-linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--app-on-accent) 24%, transparent) 0 0.1875rem,
+      transparent 0.1875rem 0.4375rem
+    );
+    --size: 0.9;
+    --tilt: 16deg;
+
+    top: 62%;
+    left: -12%;
+    animation-duration: 5s;
+    animation-delay: -2s;
+  }
+
+  &_rose {
+    --tone: var(--app-tone-rose);
+    --ink: var(--app-tone-rose-ink);
+    --ribbon: color-mix(in srgb, var(--app-on-accent) 92%, var(--app-tone-rose));
+    --pattern: radial-gradient(circle, color-mix(in srgb, var(--app-on-accent) 55%, transparent) 0.09rem, transparent 0.11rem) 0 0 / 0.4375rem
+      0.4375rem;
+    --size: 1.05;
+    --tilt: 20deg;
+
+    top: 50%;
+    left: 80%;
+    animation-duration: 7s;
+    animation-delay: -4s;
+  }
+
+  &_sky {
+    --tone: var(--app-tone-sky);
+    --ink: var(--app-tone-sky-ink);
+    --ribbon: #{$gold-ribbon};
+    --pattern: repeating-linear-gradient(
+      45deg,
+      color-mix(in srgb, var(--app-on-accent) 22%, transparent) 0 0.1875rem,
+      transparent 0.1875rem 0.4375rem
+    );
+    --size: 0.8;
+    --tilt: -18deg;
+
+    top: 76%;
+    left: 72%;
+    animation-duration: 5.5s;
+    animation-delay: -1s;
+  }
+
+  &__box {
+    width: 100%;
+    height: calc(2.125rem * var(--size));
+    border-radius: 0 0 calc(0.25rem * var(--size)) calc(0.25rem * var(--size));
+    background:
+      var(--ribbon-band), var(--pattern),
+      linear-gradient(
+        160deg,
+        color-mix(in srgb, var(--base) 78%, var(--app-on-accent)),
+        var(--base) 45%,
+        color-mix(in srgb, var(--base) 82%, var(--mat-sys-shadow))
+      );
+    box-shadow: inset 0 calc(-0.1875rem * var(--size)) 0 color-mix(in srgb, var(--mat-sys-shadow) 12%, transparent);
+  }
+
+  &__lid {
+    position: relative;
+    z-index: 1;
+    width: calc(100% + 0.25rem * var(--size));
+    height: calc(0.625rem * var(--size));
+    border-radius: calc(0.1875rem * var(--size));
+    background:
+      var(--ribbon-band),
+      linear-gradient(180deg, color-mix(in srgb, var(--base) 70%, var(--app-on-accent)), color-mix(in srgb, var(--base) 92%, var(--mat-sys-shadow)));
+  }
+
+  // The knot; its pseudo-elements are the two loops behind it.
+  &__bow {
+    position: relative;
+    z-index: 2;
+    width: calc(0.4375rem * var(--size));
+    height: calc(0.4375rem * var(--size));
+    margin-bottom: calc(-0.2rem * var(--size));
+    border-radius: 50%;
+    background: var(--ribbon);
+
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 30%;
+      z-index: -1;
+      box-sizing: border-box;
+      width: calc(0.875rem * var(--size));
+      height: calc(0.625rem * var(--size));
+      border: calc(0.1875rem * var(--size)) solid var(--ribbon);
+      border-radius: 50%;
+      background: color-mix(in srgb, var(--ribbon) 70%, var(--mat-sys-shadow));
+    }
+
+    &::before {
+      right: 50%;
+      transform-origin: 100% 100%;
+      transform: rotate(-22deg);
+    }
+
+    &::after {
+      left: 50%;
+      transform-origin: 0 100%;
+      transform: rotate(22deg);
+    }
+  }
+}
+
+.confetti__piece {
+  position: absolute;
+  width: 0.25rem;
+  height: 0.5rem;
+  border-radius: 0.0625rem;
+  opacity: 0.75;
+  animation: twinkle ease-in-out infinite alternate;
+
+  @for $i from 1 through list.length($confetti-spots) {
+    $spot: list.nth($confetti-spots, $i);
+
+    &:nth-child(#{$i}) {
+      top: list.nth($spot, 2) * 1%;
+      left: list.nth($spot, 1) * 1%;
+      background: list.nth($confetti-colors, ($i % list.length($confetti-colors)) + 1);
+      transform: rotate(($i * 37deg) % 180);
+      animation-duration: 1.6s + ($i % 3) * 0.5s;
+      animation-delay: -0.37s * $i;
+
+      @if $i % 3 == 0 {
+        width: 0.3125rem;
+        height: 0.3125rem;
+        border-radius: 50%;
+      }
+    }
+  }
+}
+
+@keyframes gift-float {
+  from {
+    transform: translate(0, 0) rotate(var(--tilt));
+  }
+
+  to {
+    transform: translate(0.25rem, -0.5rem) rotate(calc(var(--tilt) + 6deg));
+  }
+}
+
+@keyframes twinkle {
+  from {
+    opacity: 0.25;
+    scale: 0.7;
+  }
+
+  to {
+    opacity: 0.9;
+    scale: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gift {
+    animation: none;
+    transform: rotate(var(--tilt));
+  }
+
+  .confetti__piece {
+    animation: none;
+  }
+}

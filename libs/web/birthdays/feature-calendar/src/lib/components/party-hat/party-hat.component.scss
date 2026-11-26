@@ -1,0 +1,47 @@
+:host {
+  display: block;
+  pointer-events: none;
+}
+
+// Tones mirror between themes: light dots on a mid pink in light, dark dots on a light pink in dark.
+.hat {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  transform-origin: 50% 100%;
+  animation: hat-sway 3.4s ease-in-out infinite;
+
+  &__cone {
+    fill: light-dark(color-mix(in srgb, var(--app-tone-rose) 45%, var(--app-tone-rose-ink)), var(--app-tone-rose-ink));
+  }
+
+  &__dot {
+    fill: var(--app-tone-peach);
+  }
+
+  &__brim {
+    fill: light-dark(color-mix(in srgb, var(--app-tone-violet) 40%, var(--app-tone-violet-ink)), var(--app-tone-violet-ink));
+  }
+
+  &__pompom {
+    fill: light-dark(color-mix(in srgb, var(--app-tone-peach) 40%, var(--app-tone-peach-ink)), var(--app-tone-peach-ink));
+  }
+}
+
+@keyframes hat-sway {
+  0%,
+  100% {
+    transform: rotate(-4deg);
+  }
+
+  50% {
+    transform: rotate(4deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hat {
+    animation: none;
+  }
+}

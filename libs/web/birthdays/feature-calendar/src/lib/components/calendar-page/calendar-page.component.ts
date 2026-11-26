@@ -9,6 +9,7 @@ import { CalendarMonthComponent } from '../calendar-month';
 import { CalendarToolbarComponent } from '../calendar-toolbar';
 import { CalendarYearComponent } from '../calendar-year';
 import { GoogleCalendarPromptComponent } from '../google-calendar-prompt';
+import { NewYearTreeComponent } from '../new-year-tree';
 import { NextBirthdaysComponent } from '../next-birthdays';
 import { SignInPromptComponent } from '../sign-in-prompt';
 import { TranslocoPipe } from '@jsverse/transloco';
@@ -24,6 +25,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
     CalendarToolbarComponent,
     CalendarYearComponent,
     GoogleCalendarPromptComponent,
+    NewYearTreeComponent,
     NextBirthdaysComponent,
     SignInPromptComponent,
   ],
@@ -41,6 +43,10 @@ export class CalendarPageComponent {
 
   protected get isLoading(): Signal<boolean> {
     return this.calendarState.isLoading;
+  }
+
+  protected get isNewYearTreeVisible(): Signal<boolean> {
+    return this.calendarState.isNewYearTreeVisible;
   }
 
   protected get isSignInPromptVisible(): Signal<boolean> {

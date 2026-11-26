@@ -1,4 +1,26 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="338" height="327" viewBox="53.1 71 337.5 326.9">
+    <style>
+        /* The flame sits in a y-flipped group, so 0% of its box is the wick.
+           It already touches the top and right edges of the viewBox, so it only shrinks and sways
+           by a small angle; any edge overlap stays well under a pixel. */
+        .flame {
+            transform-box: fill-box;
+            transform-origin: 50% 0%;
+            animation: flame-flicker 3.2s ease-in-out infinite;
+        }
+
+        @keyframes flame-flicker {
+            0%, 100% { transform: rotate(0deg) scale(1, 1); }
+            20% { transform: rotate(-1.5deg) scale(0.97, 0.95); }
+            40% { transform: rotate(1.5deg) scale(0.98, 0.99); }
+            60% { transform: rotate(-1deg) scale(0.97, 0.94); }
+            80% { transform: rotate(1deg) scale(0.99, 0.98); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .flame { animation: none; }
+        }
+    </style>
     <defs>
         <radialGradient id="logo2-box" gradientUnits="userSpaceOnUse"
                         cx="3450" cy="4400" r="3600">
@@ -24,7 +46,7 @@
     </defs>
 
     <g transform="translate(0 571) scale(0.1 -0.1)">
-        <path fill="url(#logo2-flame)" d="M3430 4932 c-283 -425 -371 -654 -329 -854 28 -132 132 -264 244
+        <path class="flame" fill="url(#logo2-flame)" d="M3430 4932 c-283 -425 -371 -654 -329 -854 28 -132 132 -264 244
           -309 51 -20 77 -24 175 -24 106 0 120 2 172 28 80 39 149 118 184 209 37 96
           39 222 5 344 -30 110 -122 295 -212 429 -81 119 -177 245 -187 245 -4 0 -27
           -31 -52 -68z m128 -631 c47 -58 99 -158 118 -227 15 -56 15 -65 0 -116 -9 -30

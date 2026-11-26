@@ -6,52 +6,126 @@
       <span class="confetti__piece"></span>
     }
   </span>
-  <svg class="balloons" viewBox="0 0 72 120" aria-hidden="true">
-    <path class="balloons__string" d="M18 44C20 58 12 66 22 76S34 86 36 92" />
-    <path class="balloons__string" d="M38 33C35 50 43 60 37 72S35 86 36 92" />
-    <path class="balloons__string" d="M57 48.5C58 60 64 68 54 78S40 86 36 92" />
-    <g class="gift gift_small gift_mint">
-      <rect class="gift__box" x="5" y="107" width="15" height="12" rx="1.5" />
-      <rect class="gift__lid" x="4" y="103.5" width="17" height="4.5" rx="1.2" />
-      <rect class="gift__ribbon" x="11.25" y="103.5" width="2.5" height="15.5" />
-      <path class="gift__bow" d="M12.5 103.5c-3-4-6.5-2.5-4.5 0zM12.5 103.5c3-4 6.5-2.5 4.5 0z" />
+  <svg class="balloons" viewBox="0 0 80 120" aria-hidden="true">
+    <!-- Only one card is shown at a time, so these ids stay unique on the page. -->
+    <defs>
+      @for (tone of giftTones; track tone) {
+        <linearGradient [attr.id]="'today-card-' + tone + '-box'" x1="0" x2="1" y1="0" y2="0">
+          <stop offset="0" [attr.class]="'gift-stop gift-stop_' + tone + '-light'" />
+          <stop offset="1" [attr.class]="'gift-stop gift-stop_' + tone + '-deep'" />
+        </linearGradient>
+        <linearGradient [attr.id]="'today-card-' + tone + '-lid'" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0" [attr.class]="'gift-stop gift-stop_' + tone + '-light'" />
+          <stop offset="1" [attr.class]="'gift-stop gift-stop_' + tone + '-deep'" />
+        </linearGradient>
+      }
+      @for (tone of balloonTones; track tone) {
+        <radialGradient [attr.id]="'today-card-' + tone + '-balloon'" cx="0.35" cy="0.3" r="0.75">
+          <stop offset="0" [attr.class]="'balloon-stop balloon-stop_' + tone + '-light'" />
+          <stop offset="0.6" [attr.class]="'balloon-stop balloon-stop_' + tone + '-base'" />
+          <stop offset="1" [attr.class]="'balloon-stop balloon-stop_' + tone + '-deep'" />
+        </radialGradient>
+      }
+      <linearGradient id="today-card-gold" x1="0" x2="1" y1="0" y2="1">
+        <stop offset="0" class="gift-stop gift-stop_gold-light" />
+        <stop offset="1" class="gift-stop gift-stop_gold-deep" />
+      </linearGradient>
+      <pattern id="today-card-dots" width="4" height="4" patternUnits="userSpaceOnUse">
+        <circle class="gift__pattern" cx="2" cy="2" r="0.7" />
+      </pattern>
+      <pattern id="today-card-stripes" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+        <rect class="gift__pattern" width="1.6" height="4" />
+      </pattern>
+    </defs>
+
+    <path class="balloons__string" d="M20 44C22 56 14 64 24 72S38 76 40 80" />
+    <path class="balloons__string" d="M40 33C37 48 45 58 39 68S38 76 40 80" />
+    <path class="balloons__string" d="M59 48.5C60 58 66 66 56 72S42 76 40 80" />
+
+    <ellipse class="gift__ground" cx="40" cy="119.2" rx="18" ry="1.4" />
+    <ellipse class="gift__ground" cx="13" cy="119.2" rx="10" ry="1.2" />
+    <ellipse class="gift__ground" cx="67" cy="119.2" rx="10" ry="1.2" />
+
+    <g class="gift gift_big">
+      <rect x="24.5" y="89" width="31" height="30" rx="2.5" fill="url(#today-card-violet-box)" />
+      <rect x="37.5" y="89" width="5" height="30" fill="url(#today-card-gold)" />
+      <rect x="24.5" y="101" width="31" height="5" fill="url(#today-card-gold)" />
+      <rect class="gift__shade" x="24.5" y="90" width="31" height="2.5" />
+      <rect x="22" y="82" width="36" height="8" rx="2" fill="url(#today-card-violet-lid)" />
+      <rect x="37.5" y="82" width="5" height="8" fill="url(#today-card-gold)" />
+      <rect class="gift__gloss" x="23.5" y="82.8" width="33" height="1.2" rx="0.6" />
+      <path d="M38.5 83 34 92l3-1 1.5 2.5zM41.5 83 46 92l-3-1-1.5 2.5z" fill="url(#today-card-gold)" />
+      <path d="M40 82C34 72 24 74 28 80.5 30 83.5 36 83.5 40 82zM40 82C46 72 56 74 52 80.5 50 83.5 44 83.5 40 82z" fill="url(#today-card-gold)" />
+      <path class="gift__hole" d="M38 81C34.5 76 29.5 77 31 80 32 81.6 35.5 81.8 38 81zM42 81C45.5 76 50.5 77 49 80 48 81.6 44.5 81.8 42 81z" />
+      <ellipse cx="40" cy="82.3" rx="3.2" ry="2.8" fill="url(#today-card-gold)" />
     </g>
-    <g class="gift gift_big gift_violet">
-      <rect class="gift__box" x="22" y="98.5" width="28" height="20.5" rx="2" />
-      <rect class="gift__lid" x="20" y="92.5" width="32" height="7" rx="1.6" />
-      <rect class="gift__ribbon" x="34" y="92.5" width="4" height="26.5" />
-      <rect class="gift__ribbon" x="22" y="106.5" width="28" height="3.5" />
-      <path class="gift__bow" d="M36 92.5c-5-7-11-4.5-7.5 0zM36 92.5c5-7 11-4.5 7.5 0z" />
-    </g>
+
     <g class="gift gift_small gift_rose">
-      <rect class="gift__box" x="53" y="104" width="14" height="15" rx="1.5" />
-      <rect class="gift__lid" x="52" y="100.5" width="16" height="4.5" rx="1.2" />
-      <rect class="gift__ribbon" x="58.75" y="100.5" width="2.5" height="18.5" />
-      <path class="gift__bow" d="M60 100.5c-3-4-6.5-2.5-4.5 0zM60 100.5c3-4 6.5-2.5 4.5 0z" />
+      <rect x="4.5" y="101.5" width="17" height="17.5" rx="1.8" fill="url(#today-card-rose-box)" />
+      <rect x="4.5" y="101.5" width="17" height="17.5" rx="1.8" fill="url(#today-card-dots)" />
+      <rect x="11.25" y="101.5" width="3.5" height="17.5" fill="url(#today-card-gold)" />
+      <rect class="gift__shade" x="4.5" y="102" width="17" height="1.8" />
+      <rect x="2.5" y="96" width="21" height="6" rx="1.5" fill="url(#today-card-rose-lid)" />
+      <rect x="11.25" y="96" width="3.5" height="6" fill="url(#today-card-gold)" />
+      <rect class="gift__gloss" x="3.5" y="96.6" width="19" height="0.9" rx="0.45" />
+      <path
+        d="M13 96C9.4 90 3.4 91.2 5.8 95.1 7 96.9 10.6 96.9 13 96zM13 96C16.6 90 22.6 91.2 20.2 95.1 19 96.9 15.4 96.9 13 96z"
+        fill="url(#today-card-gold)"
+      />
+      <path
+        class="gift__hole"
+        d="M11.8 95.4C9.7 92.4 6.7 93 7.6 94.8 8.2 95.8 10.3 95.9 11.8 95.4zM14.2 95.4C16.3 92.4 19.3 93 18.4 94.8 17.8 95.8 15.7 95.9 14.2 95.4z"
+      />
+      <ellipse cx="13" cy="96.2" rx="2" ry="1.8" fill="url(#today-card-gold)" />
     </g>
+
+    <g class="gift gift_small gift_mint">
+      <rect x="58.5" y="103.5" width="17" height="15.5" rx="1.8" fill="url(#today-card-mint-box)" />
+      <rect x="58.5" y="103.5" width="17" height="15.5" rx="1.8" fill="url(#today-card-stripes)" />
+      <rect x="65.25" y="103.5" width="3.5" height="15.5" fill="url(#today-card-gold)" />
+      <rect class="gift__shade" x="58.5" y="104" width="17" height="1.8" />
+      <rect x="56.5" y="98" width="21" height="6" rx="1.5" fill="url(#today-card-mint-lid)" />
+      <rect x="65.25" y="98" width="3.5" height="6" fill="url(#today-card-gold)" />
+      <rect class="gift__gloss" x="57.5" y="98.6" width="19" height="0.9" rx="0.45" />
+      <path
+        d="M67 98C63.4 92 57.4 93.2 59.8 97.1 61 98.9 64.6 98.9 67 98zM67 98C70.6 92 76.6 93.2 74.2 97.1 73 98.9 69.4 98.9 67 98z"
+        fill="url(#today-card-gold)"
+      />
+      <path
+        class="gift__hole"
+        d="M65.8 97.4C63.7 94.4 60.7 95 61.6 96.8 62.2 97.8 64.3 97.9 65.8 97.4zM68.2 97.4C70.3 94.4 73.3 95 72.4 96.8 71.8 97.8 69.7 97.9 68.2 97.4z"
+      />
+      <ellipse cx="67" cy="98.2" rx="2" ry="1.8" fill="url(#today-card-gold)" />
+    </g>
+
     <g class="balloons__balloon balloons__balloon_secondary">
-      <ellipse cx="18" cy="27" rx="12" ry="14.5" />
-      <path d="M15.5 41h5l-2.5 3.5z" />
-      <ellipse class="balloons__gloss" cx="13.5" cy="21" rx="3" ry="5" />
+      <g transform="translate(20 27)">
+        <path d="M0-14.5C8-14.5 12-7 12-1 12 7 5 13.5 0 14.5-5 13.5-12 7-12-1-12-7-8-14.5 0-14.5z" fill="url(#today-card-sky-balloon)" />
+        <path d="M-2.5 17.5Q0 16.2 2.5 17.5L.9 14.2H-.9z" fill="url(#today-card-sky-balloon)" />
+        <path class="balloons__gloss" d="M-7.5-6C-7-10-4-12.5-1-12.8-4-11-6-8.5-6.2-5.2-6.3-4-7.6-4.3-7.5-6z" />
+        <circle class="balloons__gloss" cx="-7" cy="-1.8" r="1" />
+      </g>
     </g>
     <g class="balloons__balloon balloons__balloon_tertiary">
-      <ellipse cx="57" cy="31" rx="12" ry="14.5" />
-      <path d="M54.5 45h5L57 48.5z" />
-      <ellipse class="balloons__gloss" cx="52.5" cy="25" rx="3" ry="5" />
+      <g transform="translate(59 31)">
+        <path d="M0-14.5C8-14.5 12-7 12-1 12 7 5 13.5 0 14.5-5 13.5-12 7-12-1-12-7-8-14.5 0-14.5z" fill="url(#today-card-peach-balloon)" />
+        <path d="M-2.5 17.5Q0 16.2 2.5 17.5L.9 14.2H-.9z" fill="url(#today-card-peach-balloon)" />
+        <path class="balloons__gloss" d="M-7.5-6C-7-10-4-12.5-1-12.8-4-11-6-8.5-6.2-5.2-6.3-4-7.6-4.3-7.5-6z" />
+        <circle class="balloons__gloss" cx="-7" cy="-1.8" r="1" />
+      </g>
     </g>
     <g class="balloons__balloon balloons__balloon_primary">
-      <ellipse cx="38" cy="15" rx="12.5" ry="15" />
-      <path d="M35.5 29.5h5L38 33z" />
-      <ellipse class="balloons__gloss" cx="33.5" cy="9" rx="3" ry="5" />
+      <g transform="translate(40 15) scale(1.04)">
+        <path d="M0-14.5C8-14.5 12-7 12-1 12 7 5 13.5 0 14.5-5 13.5-12 7-12-1-12-7-8-14.5 0-14.5z" fill="url(#today-card-rose-balloon)" />
+        <path d="M-2.5 17.5Q0 16.2 2.5 17.5L.9 14.2H-.9z" fill="url(#today-card-rose-balloon)" />
+        <path class="balloons__gloss" d="M-7.5-6C-7-10-4-12.5-1-12.8-4-11-6-8.5-6.2-5.2-6.3-4-7.6-4.3-7.5-6z" />
+        <circle class="balloons__gloss" cx="-7" cy="-1.8" r="1" />
+      </g>
     </g>
   </svg>
-  <span class="shine" aria-hidden="true"></span>
 
   <span class="content">
-    <span class="label">
-      <span class="label__dot" aria-hidden="true"></span>
-      {{ 'calendar.today' | transloco }} · {{ item.date | localeDate: ('dates.monthDay' | transloco) }}
-    </span>
+    <span class="label"> {{ 'calendar.today' | transloco }} · {{ item.date | localeDate: ('dates.monthDay' | transloco) }} </span>
     <span class="person">
       <span class="person__avatar-ring">
         <ui-birthday-avatar class="person__avatar" [name]="item.birthday.name" [photoUrl]="item.birthday.photoUrl"></ui-birthday-avatar>

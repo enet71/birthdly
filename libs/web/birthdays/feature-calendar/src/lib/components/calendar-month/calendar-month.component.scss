@@ -86,6 +86,7 @@
   }
 
   &__number {
+    position: relative;
     font-size: 1.125rem;
     font-weight: 400;
     line-height: 1.625rem;
@@ -93,23 +94,53 @@
     font-variant-numeric: tabular-nums;
   }
 
+  // A glossy accent pill; the party hat sits on its right end.
   &__today {
-    padding: 0.125rem 0.5rem;
+    position: relative;
+    padding: 0.1875rem 0.5rem;
     border-radius: 999rem;
-    background: var(--app-accent);
-    box-shadow: 0 0.0625rem 0.1875rem color-mix(in srgb, var(--app-shadow-tint) 30%, transparent);
+    background: linear-gradient(120deg, var(--app-accent), color-mix(in srgb, var(--app-accent) 50%, var(--app-tone-rose-ink)));
+    box-shadow:
+      0 0.125rem 0.5rem color-mix(in srgb, var(--app-accent) 45%, transparent),
+      inset 0 0.0625rem 0 color-mix(in srgb, var(--app-on-accent) 35%, transparent);
     color: var(--app-on-accent);
     font-size: 0.625rem;
     font-weight: 700;
     line-height: 0.875rem;
     letter-spacing: 0.05em;
     text-transform: uppercase;
+    white-space: nowrap;
   }
 
-  // Narrow cells keep only the border and the colored number to mark today.
-  @container (max-width: 6rem) {
+  // Tilted to the right; it sits on the pill, or on the number where the pill does not fit.
+  &__hat {
+    position: absolute;
+    transform: rotate(20deg);
+
+    &_pill {
+      right: -0.3125rem;
+      bottom: calc(100% - 0.375rem);
+      width: 0.8125rem;
+      height: 1rem;
+    }
+
+    &_number {
+      display: none;
+      bottom: calc(100% - 0.5rem);
+      left: 0.75rem;
+      width: 0.9375rem;
+      height: 1.1875rem;
+    }
+  }
+
+  // Narrow cells drop the pill and keep the border, the colored number, and the hat on it.
+  @container (max-width: 4.875rem) {
     &__today {
       display: none;
+    }
+
+    &__hat_number {
+      display: block;
     }
   }
 
@@ -203,6 +234,18 @@
       color: var(--mat-sys-primary);
     }
   }
+
+  // Today with a birthday: a brighter border, a soft accent gradient, and a stronger glow.
+  &_celebrating,
+  &_celebrating:hover {
+    border-color: color-mix(in srgb, var(--app-accent) 75%, transparent);
+    background: linear-gradient(
+      160deg,
+      color-mix(in srgb, var(--app-accent) 16%, transparent),
+      color-mix(in srgb, var(--mat-sys-tertiary) 10%, transparent)
+    );
+    box-shadow: 0 0.5rem 1.75rem color-mix(in srgb, var(--app-accent) 30%, transparent);
+  }
 }
 
 @media (max-width: 48rem) {
@@ -240,8 +283,18 @@
 
     &__today,
     &__birthdays,
-    &__add {
+    &__add,
+    &__decor {
       display: none;
+    }
+
+    &__hat_number {
+      display: block;
+      bottom: calc(100% - 0.4375rem);
+      left: 0.875rem;
+      width: 0.75rem;
+      height: 0.9375rem;
+      transform: rotate(25deg);
     }
 
     &__dot {
@@ -262,7 +315,9 @@
     }
 
     &_today,
-    &_today:hover {
+    &_today:hover,
+    &_celebrating,
+    &_celebrating:hover {
       border-color: transparent;
       background: none;
       box-shadow: none;

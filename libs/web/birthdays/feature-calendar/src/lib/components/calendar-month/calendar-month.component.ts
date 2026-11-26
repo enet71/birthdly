@@ -7,13 +7,15 @@ import { getCalendarDayLabel } from '../../helpers';
 import { CalendarController, CalendarState } from '../../state';
 import { CalendarDay } from '../../types';
 import { BirthdayChipComponent } from '../birthday-chip';
+import { PartyHatComponent } from '../party-hat';
+import { TodayDecorComponent } from '../today-decor';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 const DAYS_IN_WEEK = 7;
 
 @Component({
   selector: 'ui-calendar-month',
-  imports: [TranslocoPipe, LocaleDatePipe, MatIcon, BirthdayChipComponent],
+  imports: [TranslocoPipe, LocaleDatePipe, MatIcon, BirthdayChipComponent, PartyHatComponent, TodayDecorComponent],
   templateUrl: './calendar-month.component.html',
   styleUrl: './calendar-month.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

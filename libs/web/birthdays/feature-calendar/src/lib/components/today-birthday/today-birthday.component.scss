@@ -90,7 +90,7 @@ $confetti-lefts: (4, 61, 23, 88, 45, 12, 72, 34, 95, 53, 18, 80, 39, 66);
   position: absolute;
   top: 0.5rem;
   right: 0.5rem;
-  width: 4.25rem;
+  width: 4.75rem;
   height: auto;
   overflow: visible;
   pointer-events: none;
@@ -108,23 +108,40 @@ $confetti-lefts: (4, 61, 23, 88, 45, 12, 72, 34, 95, 53, 18, 80, 39, 66);
     animation: balloon-bob 3.2s ease-in-out infinite alternate;
 
     &_primary {
-      fill: light-dark(color-mix(in srgb, var(--app-tone-rose) 65%, var(--app-tone-rose-ink)), var(--app-tone-rose-ink));
       animation-delay: -1.2s;
     }
 
-    &_secondary {
-      fill: light-dark(color-mix(in srgb, var(--app-tone-sky) 65%, var(--app-tone-sky-ink)), var(--app-tone-sky-ink));
-    }
-
     &_tertiary {
-      fill: light-dark(color-mix(in srgb, var(--app-tone-peach) 65%, var(--app-tone-peach-ink)), var(--app-tone-peach-ink));
       animation-delay: -2.1s;
       animation-duration: 3.8s;
     }
   }
 
   &__gloss {
-    fill: color-mix(in srgb, var(--app-on-accent) 60%, transparent);
+    fill: color-mix(in srgb, var(--app-on-accent) 70%, transparent);
+  }
+}
+
+// A light spot at the top left, the tone in the middle, and a deeper edge give each balloon volume.
+.balloon-stop {
+  @each $tone in (rose, sky, peach) {
+    &_#{$tone}-light {
+      stop-color: light-dark(
+        color-mix(in srgb, var(--app-tone-#{$tone}) 85%, var(--app-tone-#{$tone}-ink)),
+        color-mix(in srgb, var(--app-tone-#{$tone}-ink) 70%, var(--app-on-accent))
+      );
+    }
+
+    &_#{$tone}-base {
+      stop-color: light-dark(color-mix(in srgb, var(--app-tone-#{$tone}) 55%, var(--app-tone-#{$tone}-ink)), var(--app-tone-#{$tone}-ink));
+    }
+
+    &_#{$tone}-deep {
+      stop-color: light-dark(
+        color-mix(in srgb, var(--app-tone-#{$tone}) 20%, var(--app-tone-#{$tone}-ink)),
+        color-mix(in srgb, var(--app-tone-#{$tone}-ink) 70%, var(--app-tone-#{$tone}))
+      );
+    }
   }
 }
 
@@ -134,48 +151,59 @@ $confetti-lefts: (4, 61, 23, 88, 45, 12, 72, 34, 95, 53, 18, 80, 39, 66);
   transform-origin: 50% 100%;
 
   &_small {
-    animation: gift-hop 3.6s ease-in-out infinite;
+    animation: gift-hop 8s ease-in-out infinite;
   }
 
   &_rose {
-    --gift-tone: var(--app-tone-rose);
-    --gift-ink: var(--app-tone-rose-ink);
-
-    animation-delay: -1.8s;
+    animation-delay: -4s;
   }
 
-  &_mint {
-    --gift-tone: var(--app-tone-mint);
-    --gift-ink: var(--app-tone-mint-ink);
+  &__shade {
+    fill: color-mix(in srgb, var(--mat-sys-shadow) 18%, transparent);
   }
 
-  &_violet {
-    --gift-tone: var(--app-tone-violet);
-    --gift-ink: var(--app-tone-violet-ink);
+  &__gloss {
+    fill: color-mix(in srgb, var(--app-on-accent) 40%, transparent);
   }
 
-  &__box {
-    fill: light-dark(color-mix(in srgb, var(--gift-tone) 70%, var(--gift-ink)), var(--gift-ink));
+  &__hole {
+    fill: color-mix(in srgb, var(--app-tone-peach-ink) 60%, var(--mat-sys-shadow));
   }
 
-  &__lid {
-    fill: light-dark(color-mix(in srgb, var(--gift-tone) 50%, var(--gift-ink)), color-mix(in srgb, var(--gift-ink) 80%, var(--gift-tone)));
+  &__pattern {
+    fill: color-mix(in srgb, var(--app-on-accent) 45%, transparent);
   }
 
-  &__ribbon,
-  &__bow {
-    fill: color-mix(in srgb, var(--app-on-accent) 90%, transparent);
+  &__ground {
+    fill: color-mix(in srgb, var(--mat-sys-shadow) 22%, transparent);
   }
 }
 
-// A light sweep that crosses the card every few seconds.
-.shine {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(105deg, transparent 40%, color-mix(in srgb, var(--app-on-accent) 22%, transparent) 50%, transparent 60%);
-  background-size: 300% 100%;
-  pointer-events: none;
-  animation: shine-sweep 5s ease-in-out infinite;
+// Gradient stops: a lighter left or top edge and a deeper right or bottom edge give the boxes volume.
+.gift-stop {
+  @each $tone in (violet, rose, mint) {
+    &_#{$tone}-light {
+      stop-color: light-dark(color-mix(in srgb, var(--app-tone-#{$tone}) 50%, var(--app-tone-#{$tone}-ink)), var(--app-tone-#{$tone}-ink));
+    }
+
+    &_#{$tone}-deep {
+      stop-color: light-dark(
+        color-mix(in srgb, var(--app-tone-#{$tone}) 10%, var(--app-tone-#{$tone}-ink)),
+        color-mix(in srgb, var(--app-tone-#{$tone}-ink) 62%, var(--app-tone-#{$tone}))
+      );
+    }
+  }
+
+  &_gold-light {
+    stop-color: light-dark(var(--app-tone-peach), var(--app-tone-peach-ink));
+  }
+
+  &_gold-deep {
+    stop-color: light-dark(
+      color-mix(in srgb, var(--app-tone-peach) 35%, var(--app-tone-peach-ink)),
+      color-mix(in srgb, var(--app-tone-peach-ink) 72%, var(--app-tone-peach))
+    );
+  }
 }
 
 .content {
@@ -196,15 +224,6 @@ $confetti-lefts: (4, 61, 23, 88, 45, 12, 72, 34, 95, 53, 18, 80, 39, 66);
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: color-mix(in srgb, var(--app-on-accent) 85%, transparent);
-
-  &__dot {
-    flex-shrink: 0;
-    width: 0.5rem;
-    height: 0.5rem;
-    border-radius: 50%;
-    background: var(--app-on-accent);
-    animation: dot-pulse 1.8s ease-out infinite;
-  }
 }
 
 .person {
@@ -213,26 +232,28 @@ $confetti-lefts: (4, 61, 23, 88, 45, 12, 72, 34, 95, 53, 18, 80, 39, 66);
   gap: 0.875rem;
   min-width: 0;
 
-  // A light arc runs around the avatar.
+  // A soft, blurred iridescent ring turns slowly around the avatar while its glow breathes.
   &__avatar-ring {
     position: relative;
     flex-shrink: 0;
     padding: 0.1875rem;
     overflow: hidden;
     border-radius: 1.125rem;
+    animation: ring-glow 3.2s ease-in-out infinite alternate;
 
     &::before {
       content: '';
       position: absolute;
       inset: -50%;
       background: conic-gradient(
-        var(--app-on-accent),
-        transparent 25%,
-        color-mix(in srgb, var(--app-on-accent) 40%, transparent) 50%,
-        transparent 75%,
-        var(--app-on-accent)
+        color-mix(in srgb, var(--app-on-accent) 85%, transparent),
+        color-mix(in srgb, var(--app-tone-peach-ink) 75%, transparent) 25%,
+        color-mix(in srgb, var(--app-tone-rose-ink) 70%, transparent) 50%,
+        color-mix(in srgb, var(--app-tone-sky-ink) 70%, transparent) 75%,
+        color-mix(in srgb, var(--app-on-accent) 85%, transparent)
       );
-      animation: ring-spin 4s linear infinite;
+      filter: blur(0.25rem);
+      animation: ring-spin 9s linear infinite;
     }
   }
 
@@ -311,42 +332,31 @@ $confetti-lefts: (4, 61, 23, 88, 45, 12, 72, 34, 95, 53, 18, 80, 39, 66);
 
 @keyframes gift-hop {
   0%,
-  70%,
+  88%,
   100% {
     transform: translateY(0) scale(1);
   }
 
-  76% {
+  90.5% {
     transform: translateY(0) scale(1.08, 0.9);
   }
 
-  84% {
+  94% {
     transform: translateY(-0.25rem) scale(0.95, 1.06);
   }
 
-  92% {
+  97.5% {
     transform: translateY(0) scale(1.04, 0.96);
   }
 }
 
-@keyframes shine-sweep {
-  0% {
-    background-position: 100% 0;
-  }
-
-  40%,
-  100% {
-    background-position: 0% 0;
-  }
-}
-
-@keyframes dot-pulse {
+@keyframes ring-glow {
   from {
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--app-on-accent) 70%, transparent);
+    box-shadow: 0 0 0.25rem 0 color-mix(in srgb, var(--app-on-accent) 15%, transparent);
   }
 
   to {
-    box-shadow: 0 0 0 0.5rem transparent;
+    box-shadow: 0 0 1rem 0.125rem color-mix(in srgb, var(--app-on-accent) 40%, transparent);
   }
 }
 
@@ -361,8 +371,7 @@ $confetti-lefts: (4, 61, 23, 88, 45, 12, 72, 34, 95, 53, 18, 80, 39, 66);
   .aurora,
   .balloons__balloon,
   .gift,
-  .shine,
-  .label__dot,
+  .person__avatar-ring,
   .person__avatar-ring::before {
     animation: none;
   }

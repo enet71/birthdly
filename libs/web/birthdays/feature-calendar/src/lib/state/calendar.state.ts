@@ -8,6 +8,7 @@ import { PlatformService } from '@birthday/web-shared-util';
 import { BirthdaysState } from '@birthday/web-birthdays-data-access';
 import { Birthday, getAgeOnDate, getMonthGridDays, isBirthdayOn, UpcomingBirthday } from '@birthday/web-birthdays-util';
 import { NEXT_BIRTHDAYS_LIMIT } from '../constants';
+import { isNewYearSeason } from '../helpers';
 import { CalendarDay, CalendarMonth, CalendarView, GoogleCalendarPrompt, UpcomingCelebration } from '../types';
 
 @Injectable()
@@ -25,6 +26,8 @@ export class CalendarState extends State {
   public readonly isSigningIn: WritableSignal<boolean> = signal(false);
   // The session is known only in the browser, so the server and the first client render leave the prompt out.
   public readonly isSignInPromptVisible: Signal<boolean> = computed(() => this.platform.isRendered() && this.authState.status() === 'signedOut');
+  // Browser only: the tree decides there whether to play its entrance, so the server render must not start it.
+  public readonly isNewYearTreeVisible: Signal<boolean> = computed(() => this.platform.isRendered() && isNewYearSeason(this.today));
   public readonly isConnectingGoogleCalendar: WritableSignal<boolean> = signal(false);
   // `null` hides the prompt, also while the connection loads or failed to load.
   public readonly googleCalendarPrompt: Signal<GoogleCalendarPrompt | null> = computed(() => this.getGoogleCalendarPrompt());
