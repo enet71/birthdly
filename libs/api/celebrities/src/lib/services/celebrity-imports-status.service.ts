@@ -18,7 +18,9 @@ import {
   CELEBRITIES_SEGMENT_QUEUE,
   CELEBRITY_SEGMENTS,
 } from '../constants';
+import { MODULE_OPTIONS_TOKEN } from '../celebrities.module-definition';
 import { getSegmentImportStatus } from '../helpers';
+import { CelebritiesModuleOptions } from '../types';
 
 const QUEUES: string[] = [
   CELEBRITIES_SEGMENT_QUEUE,
@@ -47,12 +49,15 @@ interface FailureRow extends Record<string, unknown> {
 // (`pgboss.job`), since pg-boss has no API that lists jobs by state.
 @Injectable()
 export class CelebrityImportsStatusService {
-  constructor(@Inject(DATABASE) private readonly db: Database) {}
+  constructor(
+    @Inject(DATABASE) private readonly db: Database,
+    @Inject(MODULE_OPTIONS_TOKEN) private readonly options: CelebritiesModuleOptions,
+  ) {}
 
   public async getStatus(): Promise<CelebrityImportsStatusResponse> {
     const [segments, progress, queues, failures] = await Promise.all([this.getSegments(), this.getProgress(), this.getQueues(), this.getFailures()]);
 
-    return { segments, progress, queues, failures, checkedAt: new Date().toISOString() };
+    return { segments, progress, queues, failures, importEnabled: this.options.importEnabled, checkedAt: new Date().toISOString() };
   }
 
   private async getSegments(): Promise<CelebritySegmentImportDto[]> {

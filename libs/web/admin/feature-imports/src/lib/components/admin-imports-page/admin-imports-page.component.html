@@ -17,8 +17,16 @@
   <section class="imports" [attr.aria-busy]="isRefreshing()">
     <header class="toolbar">
       <span class="badge" [class.badge--active]="isImportRunning()">
-        <mat-icon aria-hidden="true">{{ isImportRunning() ? 'sync' : 'check_circle' }}</mat-icon>
-        {{ isImportRunning() ? 'Import in progress' : 'Nothing in progress' }}
+        @if (!isImportEnabled()) {
+          <mat-icon aria-hidden="true">pause_circle</mat-icon>
+          Import turned off
+        } @else if (isImportRunning()) {
+          <mat-icon aria-hidden="true">sync</mat-icon>
+          Import in progress
+        } @else {
+          <mat-icon aria-hidden="true">check_circle</mat-icon>
+          Nothing in progress
+        }
       </span>
       <span class="toolbar__checked">Checked {{ status.checkedAt | date: dateFormat }} · refreshes every 10 s</span>
       <button matButton="tonal" type="button" disabledInteractive [disabled]="isRefreshing()" (click)="refresh()">

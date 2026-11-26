@@ -42,9 +42,10 @@ export class AdminImportsState extends State {
     computation: (groups: AdminSegmentGroup[], previous?: { value: ReadonlySet<string> | null }) =>
       previous?.value ?? this.pickInitiallyExpanded(groups),
   });
-  // Something still waits, runs or will be retried.
+  public readonly isImportEnabled: Signal<boolean> = computed(() => this.status()?.importEnabled ?? true);
+  // Something still waits, runs or will be retried, on an API that works the jobs.
   public readonly isImportRunning: Signal<boolean> = computed(
-    () => !!this.status()?.queues.some(({ counts }) => counts.created + counts.active + counts.retry > 0),
+    () => this.isImportEnabled() && !!this.status()?.queues.some(({ counts }) => counts.created + counts.active + counts.retry > 0),
   );
 
   private buildSegmentGroups(segments: CelebritySegmentImportDto[]): AdminSegmentGroup[] {

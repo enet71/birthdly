@@ -41,6 +41,10 @@ export class AdminImportsPageComponent {
     return this.adminImportsState.expandedCountries;
   }
 
+  protected get isImportEnabled(): Signal<boolean> {
+    return this.adminImportsState.isImportEnabled;
+  }
+
   protected get isImportRunning(): Signal<boolean> {
     return this.adminImportsState.isImportRunning;
   }

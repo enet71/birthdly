@@ -44,6 +44,8 @@ export interface CelebrityImportsStatusResponse {
   progress: CelebrityImportProgressDto;
   queues: CelebrityImportQueueDto[];
   failures: CelebrityImportFailureDto[];
+  // `false` when this API is set not to import (`CELEBRITY_IMPORT_ENABLED`); its queued jobs then wait for good.
+  importEnabled: boolean;
   // ISO timestamp.
   checkedAt: string;
 }
