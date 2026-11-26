@@ -41,6 +41,9 @@ jobs:
       VAPID_PRIVATE_KEY: 'IxnVgDnpNpqdt4hIlN5ktIe6gy2lHJ-itSKeGxE0zH8'
       VAPID_SUBJECT: 'mailto:e2e@example.com'
       GOOGLE_CALENDAR_EVENT_TAG: 'ci'
+      # Quoted: YAML would read it as a boolean. On the empty database the API would start a full import from Wikimedia
+      # with production's User-Agent and share its rate limit.
+      CELEBRITY_IMPORT_ENABLED: 'false'
     steps:
       - uses: actions/checkout@v7
         with:
@@ -96,7 +99,8 @@ jobs:
         run: |
           docker run -d --name api-image --network host -e PORT=3100 -e DATABASE_URL -e APP_ORIGIN -e GOOGLE_CLIENT_ID \
             -e GOOGLE_CLIENT_SECRET -e AUTH_SECRET -e GOOGLE_TOKEN_ENCRYPTION_KEY \
-            -e VAPID_PUBLIC_KEY -e VAPID_PRIVATE_KEY -e VAPID_SUBJECT -e GOOGLE_CALENDAR_EVENT_TAG birthday-api:local
+            -e VAPID_PUBLIC_KEY -e VAPID_PRIVATE_KEY -e VAPID_SUBJECT -e GOOGLE_CALENDAR_EVENT_TAG \
+            -e CELEBRITY_IMPORT_ENABLED birthday-api:local
           for _ in $(seq 1 30); do
             if [ "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:3100/api/health || true)" = "200" ]; then
               echo "The API image is healthy."

@@ -25,6 +25,17 @@ import { CelebritySegment } from '../types';
 const SPARQL_TIMEOUT_MS = 2 * 60 * 1000;
 const REQUEST_TIMEOUT_MS = 30 * 1000;
 
+// A 429 answer. `retryAfterMs` is the pause the `Retry-After` header asks for, `null` without a readable one.
+export class WikimediaRateLimitError extends Error {
+  constructor(
+    message: string,
+    public readonly retryAfterMs: number | null,
+  ) {
+    super(message);
+    this.name = WikimediaRateLimitError.name;
+  }
+}
+
 // Reads Wikidata, Commons photo metadata and Wikipedia page views. Failed requests throw; the jobs retry them later with growing pauses, which
 // also keeps the import within Wikimedia's rate limits.
 @Injectable()
@@ -153,9 +164,24 @@ export class WikimediaClient {
     if (!response.ok) {
       const url = new URL(response.url);
 
-      throw new Error(`${url.origin}${url.pathname} failed: ${response.status} ${text.slice(0, 300)}`);
+      const message = `${url.origin}${url.pathname} failed: ${response.status} ${text.slice(0, 300)}`;
+
+      throw response.status === 429
+        ? new WikimediaRateLimitError(message, readRetryAfterMs(response.headers.get('Retry-After')))
+        : new Error(message);
     }
 
     return JSON.parse(text);
   }
+}
+
+// `Retry-After` holds either seconds or an HTTP date.
+function readRetryAfterMs(value: string | null): number | null {
+  if (!value) {
+    return null;
+  }
+
+  const ms: number = /^\d+$/.test(value.trim()) ? Number(value) * 1000 : Date.parse(value) - Date.now();
+
+  return Number.isNaN(ms) ? null : Math.max(ms, 0);
 }

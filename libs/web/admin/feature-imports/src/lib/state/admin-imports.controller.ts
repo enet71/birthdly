@@ -25,6 +25,18 @@ export class AdminImportsController extends StateController {
       .subscribe(() => this.refresh());
   }
 
+  public toggleCountry(country: string): void {
+    this.adminImportsState.expandedCountries.update((expanded: ReadonlySet<string> | null) => {
+      const next: Set<string> = new Set(expanded);
+
+      if (!next.delete(country)) {
+        next.add(country);
+      }
+
+      return next;
+    });
+  }
+
   // Also retries a failed load. A refresh still loading, a non-admin and a signed-out visitor need none.
   public refresh(): void {
     if (!this.adminImportsState.isRefreshing() && !this.adminImportsState.isNotFound()) {

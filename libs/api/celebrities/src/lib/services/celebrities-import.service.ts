@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { and, arrayContains, eq, gt, inArray, isNotNull, isNull, sql } from 'drizzle-orm';
+import { and, arrayContains, eq, gt, inArray, isNotNull, isNull, lt, or, sql } from 'drizzle-orm';
 import { setTimeout as delay } from 'node:timers/promises';
 import { celebrities, celebrityImports, Database, DATABASE } from '@birthday/api-database';
 import { CELEBRITY_SEGMENTS } from '../constants';
@@ -16,12 +16,17 @@ import {
   readPhotoFile,
   WikidataEntity,
 } from '../helpers';
-import { WikimediaClient } from './wikimedia.client';
+import { WikimediaClient, WikimediaRateLimitError } from './wikimedia.client';
 
 // Postgres limits a statement to 65,535 parameters; also the batch size of deletes.
 const ROWS_PER_INSERT = 1000;
 // Spreads the page view requests out, well below Wikimedia's rate limit; 200 ms ran into it on a large import.
 const PAGEVIEWS_REQUEST_PAUSE_MS = 500;
+// On a 429 the job waits as long as `Retry-After` asks, or the default without one, and goes on. A longer pause or more
+// waits fail the job, and pg-boss retries it later with growing pauses.
+const PAGEVIEWS_RATE_LIMIT_DEFAULT_WAIT_MS = 30 * 1000;
+const PAGEVIEWS_RATE_LIMIT_MAX_WAIT_MS = 60 * 1000;
+const PAGEVIEWS_RATE_LIMIT_MAX_WAITS = 3;
 
 // The steps of a celebrity import: the segment's people, then their details, then their photos and the page views of
 // their articles.
@@ -196,19 +201,42 @@ export class CelebritiesImportService {
   }
 
   // Page views of the English articles, one request at a time. People without an English article keep `null` and rank
-  // by their sitelinks.
-  public async loadPageviews(ids: string[]): Promise<void> {
+  // by their sitelinks. A retried job skips the people its earlier runs loaded after `queuedAt`, the job's creation.
+  public async loadPageviews(ids: string[], queuedAt: Date): Promise<void> {
     const rows = await this.db
       .select({ id: celebrities.id, titles: celebrities.wikipediaTitles })
       .from(celebrities)
-      .where(inArray(celebrities.id, ids));
+      .where(and(inArray(celebrities.id, ids), or(isNull(celebrities.pageviewsLoadedAt), lt(celebrities.pageviewsLoadedAt, queuedAt))));
+    // The waits for Wikimedia's rate limit so far, over the whole job.
+    const rateLimit: { waits: number } = { waits: 0 };
 
     for (const row of rows) {
       const title: string | undefined = row.titles['en'];
-      const pageviews: number | null = title ? await this.wikimedia.getYearlyPageviews(title) : null;
+      const pageviews: number | null = title ? await this.getYearlyPageviews(title, rateLimit) : null;
 
-      await this.db.update(celebrities).set({ pageviews, pageviewsLoadedAt: new Date() }).where(eq(celebrities.id, row.id));
+      // The database's clock, like the job's `queuedAt`.
+      await this.db
+        .update(celebrities)
+        .set({ pageviews, pageviewsLoadedAt: sql`now()` })
+        .where(eq(celebrities.id, row.id));
       await delay(PAGEVIEWS_REQUEST_PAUSE_MS);
+    }
+  }
+
+  private async getYearlyPageviews(title: string, rateLimit: { waits: number }): Promise<number | null> {
+    for (;;) {
+      try {
+        return await this.wikimedia.getYearlyPageviews(title);
+      } catch (error) {
+        const waitMs: number | null = error instanceof WikimediaRateLimitError ? (error.retryAfterMs ?? PAGEVIEWS_RATE_LIMIT_DEFAULT_WAIT_MS) : null;
+
+        if (waitMs === null || waitMs > PAGEVIEWS_RATE_LIMIT_MAX_WAIT_MS || rateLimit.waits >= PAGEVIEWS_RATE_LIMIT_MAX_WAITS) {
+          throw error;
+        }
+
+        rateLimit.waits++;
+        await delay(waitMs);
+      }
     }
   }
 

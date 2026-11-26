@@ -50,6 +50,9 @@ export const envSchema = z.object({
   R2_ACCESS_KEY_ID: optionalSetting(z.string()),
   R2_SECRET_ACCESS_KEY: optionalSetting(z.string()),
   R2_BUCKET: optionalSetting(z.string()),
+  // `false` keeps this API from importing celebrities from Wikimedia, for example in local development, where an import
+  // shares Wikimedia's rate limit with production.
+  CELEBRITY_IMPORT_ENABLED: optionalSetting(z.stringbool()).default(true),
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace']).default('info'),
 });
 

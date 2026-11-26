@@ -22,6 +22,7 @@ describe('validateEnv', () => {
       DATABASE_URL: databaseUrl,
       ...auth,
       ADMIN_EMAILS: [],
+      CELEBRITY_IMPORT_ENABLED: true,
       LOG_LEVEL: 'info',
     });
   });
@@ -35,6 +36,7 @@ describe('validateEnv', () => {
       DATABASE_URL: databaseUrl,
       ...auth,
       ADMIN_EMAILS: ['me@example.com', 'you@example.com'],
+      CELEBRITY_IMPORT_ENABLED: true,
       LOG_LEVEL: 'debug',
     });
   });

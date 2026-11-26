@@ -95,7 +95,10 @@ import { HealthModule } from './health/health.module';
         return { r2: accountId && accessKeyId && secretAccessKey && bucket ? { accountId, accessKeyId, secretAccessKey, bucket } : null };
       },
     }),
-    CelebritiesModule,
+    CelebritiesModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService<Env, true>) => ({ importEnabled: config.get('CELEBRITY_IMPORT_ENABLED', { infer: true }) }),
+    }),
     FeedbackModule,
     HealthModule,
     BirthdaysModule,

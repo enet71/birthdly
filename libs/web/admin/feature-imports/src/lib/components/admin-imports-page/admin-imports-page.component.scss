@@ -77,10 +77,12 @@
     padding: 0.5rem 0.75rem;
     text-align: left;
     white-space: nowrap;
-    border-bottom: 0.0625rem solid var(--mat-sys-outline-variant);
+    // A top border, so a collapsed group at the end of the table leaves no line above the wrapper's own border.
+    border-top: 0.0625rem solid var(--mat-sys-outline-variant);
   }
 
   thead th {
+    border-top: 0;
     font-weight: 500;
     color: var(--mat-sys-on-surface-variant);
   }
@@ -89,8 +91,9 @@
     font-weight: 500;
   }
 
-  tbody tr:last-child > * {
-    border-bottom: 0;
+  &__segment {
+    padding-inline-start: 2.5rem !important;
+    font-weight: 400 !important;
   }
 
   &__number {
@@ -105,6 +108,57 @@
 
   &__error-row td {
     white-space: normal;
+  }
+}
+
+.group {
+  background: var(--mat-sys-surface-container-low);
+  cursor: pointer;
+
+  &:hover {
+    background: var(--mat-sys-surface-container);
+  }
+
+  th {
+    padding: 0;
+  }
+
+  &__toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.5rem 0.75rem 0.5rem 0.5rem;
+    border: 0;
+    background: none;
+    font: inherit;
+    font-weight: 500;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: 0.125rem solid var(--mat-sys-primary);
+      outline-offset: -0.125rem;
+    }
+  }
+
+  &__chevron {
+    width: 1.25rem;
+    height: 1.25rem;
+    font-size: 1.25rem;
+    transition: transform 150ms ease;
+
+    &--open {
+      transform: rotate(90deg);
+    }
+  }
+
+  &__count {
+    margin-inline-start: auto;
+    padding-inline-start: 1rem;
+    font-weight: 400;
+    color: var(--mat-sys-on-surface-variant);
   }
 }
 

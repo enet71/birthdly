@@ -8,7 +8,7 @@ import { CelebrityImportsStatusResponse } from '@birthday/shared-models';
 import { injectState, ReadonlyState } from '@birthday/web-shared-data-access';
 import { ADMIN_DATE_FORMAT, ADMIN_IMPORT_STATUS_LABELS, ADMIN_JOB_STATE_COLUMNS } from '../../constants';
 import { AdminImportsController, AdminImportsState } from '../../state';
-import { AdminImportStage } from '../../types';
+import { AdminImportStage, AdminSegmentGroup } from '../../types';
 
 @Component({
   selector: 'ui-admin-imports-page',
@@ -33,6 +33,14 @@ export class AdminImportsPageComponent {
     return this.adminImportsState.stages;
   }
 
+  protected get segmentGroups(): Signal<AdminSegmentGroup[]> {
+    return this.adminImportsState.segmentGroups;
+  }
+
+  protected get expandedCountries(): Signal<ReadonlySet<string> | null> {
+    return this.adminImportsState.expandedCountries;
+  }
+
   protected get isImportRunning(): Signal<boolean> {
     return this.adminImportsState.isImportRunning;
   }
@@ -51,6 +59,10 @@ export class AdminImportsPageComponent {
 
   protected get hasLoadError(): Signal<boolean> {
     return this.adminImportsState.hasLoadError;
+  }
+
+  protected toggleCountry(country: string): void {
+    this.adminImportsController.toggleCountry(country);
   }
 
   protected refresh(): void {

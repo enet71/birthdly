@@ -40,26 +40,47 @@
               <th scope="col" class="table__number">People</th>
             </tr>
           </thead>
-          <tbody>
-            @for (segment of status.segments; track segment.segment) {
-              <tr>
-                <th scope="row">{{ segment.segment }}</th>
+          @for (group of segmentGroups(); track group.country) {
+            @let isExpanded = !!expandedCountries()?.has(group.country);
+            <tbody>
+              <!-- The whole row toggles; the button's own click bubbles up to it and gives keyboard access. -->
+              <tr class="group" (click)="toggleCountry(group.country)">
+                <th scope="row">
+                  <button class="group__toggle" type="button" [attr.aria-expanded]="isExpanded" [attr.aria-controls]="'segments-' + group.country">
+                    <mat-icon class="group__chevron" [class.group__chevron--open]="isExpanded" aria-hidden="true">chevron_right</mat-icon>
+                    <span>{{ group.country }} · {{ group.countryName }}</span>
+                    <span class="group__count">{{ group.finished }}/{{ group.segments.length }} finished</span>
+                  </button>
+                </th>
                 <td>
-                  <span class="status" [class]="'status--' + segment.status">{{ statusLabels[segment.status] }}</span>
+                  <span class="status" [class]="'status--' + group.status">{{ statusLabels[group.status] }}</span>
                 </td>
-                <td>{{ (segment.startedAt | date: dateFormat) ?? '—' }}</td>
-                <td>{{ (segment.finishedAt | date: dateFormat) ?? '—' }}</td>
-                <td class="table__number">{{ segment.people ?? '—' }}</td>
+                <td>{{ (group.startedAt | date: dateFormat) ?? '—' }}</td>
+                <td>{{ (group.finishedAt | date: dateFormat) ?? '—' }}</td>
+                <td class="table__number">{{ group.people ?? '—' }}</td>
               </tr>
-              @if (segment.error) {
-                <tr class="table__error-row">
-                  <td colspan="5">
-                    <pre class="error">{{ segment.error }}</pre>
+            </tbody>
+            <tbody [id]="'segments-' + group.country" [hidden]="!isExpanded">
+              @for (segment of group.segments; track segment.segment) {
+                <tr>
+                  <th scope="row" class="table__segment">{{ segment.segment }}</th>
+                  <td>
+                    <span class="status" [class]="'status--' + segment.status">{{ statusLabels[segment.status] }}</span>
                   </td>
+                  <td>{{ (segment.startedAt | date: dateFormat) ?? '—' }}</td>
+                  <td>{{ (segment.finishedAt | date: dateFormat) ?? '—' }}</td>
+                  <td class="table__number">{{ segment.people ?? '—' }}</td>
                 </tr>
+                @if (segment.error) {
+                  <tr class="table__error-row">
+                    <td colspan="5">
+                      <pre class="error">{{ segment.error }}</pre>
+                    </td>
+                  </tr>
+                }
               }
-            }
-          </tbody>
+            </tbody>
+          }
         </table>
       </div>
     </section>

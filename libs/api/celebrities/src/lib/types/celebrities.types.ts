@@ -66,3 +66,8 @@ export interface CelebrityDetails {
   // Occupations (P106) in Wikidata's order.
   occupationItems: string[];
 }
+
+export interface CelebritiesModuleOptions {
+  // `false` keeps this API from working and queueing import jobs, so it never calls Wikimedia.
+  importEnabled: boolean;
+}

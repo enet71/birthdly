@@ -44,6 +44,9 @@ jobs:
       VAPID_PRIVATE_KEY: 'IxnVgDnpNpqdt4hIlN5ktIe6gy2lHJ-itSKeGxE0zH8'
       VAPID_SUBJECT: 'mailto:e2e@example.com'
       GOOGLE_CALENDAR_EVENT_TAG: 'ci'
+      # Quoted: YAML would read it as a boolean. On the empty database the API would start a full import from Wikimedia
+      # with production's User-Agent and share its rate limit.
+      CELEBRITY_IMPORT_ENABLED: 'false'
     steps:
       - uses: actions/checkout@v7
 

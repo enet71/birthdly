@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { CelebritiesController } from './celebrities.controller';
+import { ConfigurableModuleClass } from './celebrities.module-definition';
 import { CelebrityImportsAdminController } from './celebrity-imports-admin.controller';
 import { CelebritiesImportService, CelebritiesJobsService, CelebritiesService, CelebrityImportsStatusService, WikimediaClient } from './services';
 
@@ -8,4 +9,4 @@ import { CelebritiesImportService, CelebritiesJobsService, CelebritiesService, C
   controllers: [CelebritiesController, CelebrityImportsAdminController],
   providers: [WikimediaClient, CelebritiesImportService, CelebritiesJobsService, CelebritiesService, CelebrityImportsStatusService],
 })
-export class CelebritiesModule {}
+export class CelebritiesModule extends ConfigurableModuleClass {}

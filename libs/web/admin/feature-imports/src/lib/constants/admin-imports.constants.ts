@@ -19,3 +19,9 @@ export const ADMIN_JOB_STATE_COLUMNS: { state: CelebrityJobState; label: string 
 ];
 
 export const ADMIN_DATE_FORMAT = 'yyyy-MM-dd HH:mm:ss';
+
+// A country row shows the first of these statuses that any of its segments has.
+export const ADMIN_IMPORT_STATUS_PRIORITY: readonly CelebrityImportStatus[] = ['failed', 'running', 'notImported', 'finished'];
+
+// Country rows with these statuses are expanded when the page first loads.
+export const ADMIN_EXPANDED_IMPORT_STATUSES: ReadonlySet<CelebrityImportStatus> = new Set(['failed', 'running']);

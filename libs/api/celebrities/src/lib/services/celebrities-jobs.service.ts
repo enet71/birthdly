@@ -11,7 +11,15 @@ import {
   CELEBRITY_SEGMENTS,
   WIKIDATA_ENTITIES_PER_REQUEST,
 } from '../constants';
-import { CelebrityDetailsJob, CelebrityPageviewsJob, CelebrityPhotosBackfillJob, CelebrityPhotosJob, CelebritySegmentJob } from '../types';
+import { MODULE_OPTIONS_TOKEN } from '../celebrities.module-definition';
+import {
+  CelebritiesModuleOptions,
+  CelebrityDetailsJob,
+  CelebrityPageviewsJob,
+  CelebrityPhotosBackfillJob,
+  CelebrityPhotosJob,
+  CelebritySegmentJob,
+} from '../types';
 import { CelebritiesImportService } from './celebrities-import.service';
 
 // `stately` with the segment as `singletonKey`: at most one waiting and one running import per segment. Failures retry
@@ -36,6 +44,7 @@ export class CelebritiesJobsService implements OnApplicationBootstrap {
 
   constructor(
     @Inject(PG_BOSS) private readonly boss: PgBoss,
+    @Inject(MODULE_OPTIONS_TOKEN) private readonly options: CelebritiesModuleOptions,
     private readonly importService: CelebritiesImportService,
   ) {}
 
@@ -55,10 +64,19 @@ export class CelebritiesJobsService implements OnApplicationBootstrap {
     await this.boss.createQueue(CELEBRITIES_PHOTOS_QUEUE, PHOTOS_QUEUE_OPTIONS);
     await this.boss.updateQueue(CELEBRITIES_PHOTOS_QUEUE, PHOTOS_QUEUE_OPTIONS);
     await this.boss.createQueue(CELEBRITIES_PHOTOS_BACKFILL_QUEUE, PHOTOS_BACKFILL_QUEUE_OPTIONS);
+
+    // The queues stay, so the admin page can still read them.
+    if (!this.options.importEnabled) {
+      this.logger.log('The celebrity import is turned off (CELEBRITY_IMPORT_ENABLED=false)');
+      return;
+    }
+
     await this.boss.work<CelebritySegmentJob>(CELEBRITIES_SEGMENT_QUEUE, ([job]: Job<CelebritySegmentJob>[]) => this.runSegment(job.data));
     await this.boss.work<CelebrityDetailsJob>(CELEBRITIES_DETAILS_QUEUE, ([job]: Job<CelebrityDetailsJob>[]) => this.runDetails(job.data));
-    await this.boss.work<CelebrityPageviewsJob>(CELEBRITIES_PAGEVIEWS_QUEUE, ([job]: Job<CelebrityPageviewsJob>[]) =>
-      this.importService.loadPageviews(job.data.ids),
+    await this.boss.work<CelebrityPageviewsJob, void, { includeMetadata: true }>(
+      CELEBRITIES_PAGEVIEWS_QUEUE,
+      { includeMetadata: true },
+      ([job]: JobWithMetadata<CelebrityPageviewsJob>[]) => this.importService.loadPageviews(job.data.ids, job.createdOn),
     );
     await this.boss.work<CelebrityPhotosJob>(CELEBRITIES_PHOTOS_QUEUE, ([job]: Job<CelebrityPhotosJob>[]) => this.runPhotos(job.data));
     await this.boss.work<CelebrityPhotosBackfillJob, void, { includeMetadata: true }>(

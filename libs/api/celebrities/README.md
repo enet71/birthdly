@@ -24,10 +24,18 @@ for example `US-film`); a new one is imported after the next deployment.
 2. **Details jobs**, 50 people each, one at a time: names, Wikipedia titles, death date, and the person's field. The
    field is that of the first occupation in Wikidata's order that has one: listed in `CELEBRITY_OCCUPATION_ITEMS`, or a
    subclass of one of `CELEBRITY_OCCUPATION_ROOTS`. People whose field puts them outside every segment are removed.
-3. **Page view jobs**: views of the English articles in the last 12 full months, under two requests per second.
+3. **Page view jobs**: views of the English articles in the last 12 full months, under two requests per second. On a
+   429 the job waits as long as `Retry-After` asks (30 s without it) and goes on, up to three waits of at most 60 s; a
+   retried job skips the people its earlier runs already loaded.
 
 Failed jobs retry with growing pauses. `celebrity_imports` keeps every segment's last start, end and error. Requests
 send `WIKIMEDIA_USER_AGENT`, as Wikimedia asks.
+
+`CELEBRITY_IMPORT_ENABLED=false` keeps an API from working and queueing import jobs; the queues stay for the admin page,
+and the `celebrities:import` command below only queues jobs that such an API never works. CI and the nightly e2e run
+turn it off.
+Set it in local development unless you need an import there: every API sends the same User-Agent, so a local import
+shares Wikimedia's rate limit with production.
 
 A new import of one segment, or of all, is queued from the API container:
 
