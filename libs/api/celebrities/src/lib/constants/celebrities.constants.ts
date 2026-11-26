@@ -43,6 +43,14 @@ export const CELEBRITY_SEGMENTS: readonly CelebritySegment[] = [
   { key: 'ES-science', countryItem: 'Q29', country: 'ES', occupation: 'science' },
   { key: 'ES-art', countryItem: 'Q29', country: 'ES', occupation: 'art' },
   { key: 'ES-business', countryItem: 'Q29', country: 'ES', occupation: 'business' },
+  { key: 'GB-film', countryItem: 'Q145', country: 'GB', occupation: 'film' },
+  { key: 'GB-music', countryItem: 'Q145', country: 'GB', occupation: 'music' },
+  { key: 'GB-sports', countryItem: 'Q145', country: 'GB', occupation: 'sports' },
+  { key: 'GB-literature', countryItem: 'Q145', country: 'GB', occupation: 'literature' },
+  { key: 'GB-politics', countryItem: 'Q145', country: 'GB', occupation: 'politics' },
+  { key: 'GB-science', countryItem: 'Q145', country: 'GB', occupation: 'science' },
+  { key: 'GB-art', countryItem: 'Q145', country: 'GB', occupation: 'art' },
+  { key: 'GB-business', countryItem: 'Q145', country: 'GB', occupation: 'business' },
 ];
 
 // Wikidata occupations (P106) of every field. An occupation listed here belongs to its field directly.
