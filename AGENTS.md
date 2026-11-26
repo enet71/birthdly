@@ -42,7 +42,6 @@
   - `libs/web/shared/{ui,util,data-access}` (`@birthday/web-shared-*`): shared dialog pieces, directives, helpers, `PlatformService`, `NotificationsService` (`MatSnackBar`), `ApiService`, `State`, `StateController`, and `injectState`.
   - `libs/web/styles` and `libs/web/assets`: global styles, the Material theme, and fonts, wired into `apps/web`.
 - UI components come from Angular Material (`@angular/material`, M3 theme in `libs/web/styles/theme.scss`, icons via `mat-icon` with Material Symbols). Reuse it before writing a new base component.
-- Libraries migrated from lemmi-frontend use `migratedLibOverrides` from the root `eslint.config.mjs` (relaxed a11y template rules). Do not add it to new libraries.
 - `libs/api/*` (`platform:api`): NestJS/Node-only libraries.
 - Every project has one `platform:*` tag; `@nx/enforce-module-boundaries` forbids `web` ↔ `api` imports and any framework imports in `shared`. See `code-best-practices` → Platform Layout.
 

@@ -102,17 +102,23 @@ function listIssues() {
     labels.push(typeLabel);
   }
 
-  const issues = ghJson([
-    'issue',
-    'list',
-    '--state',
-    state,
-    '--limit',
-    stringArg('limit') || '50',
-    ...labels.flatMap((label) => ['--label', label]),
-    '--json',
-    'number,state,title,labels,url',
-  ]);
+  if (!['open', 'closed', 'all'].includes(state)) {
+    fail('Invalid --state. Use open, closed, or all.');
+  }
+
+  const limit = Number(stringArg('limit') || '50');
+
+  if (!Number.isInteger(limit) || limit < 1) {
+    fail('Invalid --limit. Use a positive integer.');
+  }
+
+  // `gh issue list --label` filters through GitHub search, which can return nothing for labeled issues, so the
+  // REST issues endpoint filters by label instead. It also returns pull requests, which are skipped.
+  const query = new URLSearchParams({ state, labels: labels.join(','), per_page: '100' });
+  const issues = ghJson(['api', '--paginate', '--slurp', `repos/{owner}/{repo}/issues?${query}`])
+    .flat()
+    .filter((issue) => !issue.pull_request)
+    .slice(0, limit);
 
   if (issues.length === 0) {
     console.log('No matching GitHub tasks found.');
@@ -121,9 +127,9 @@ function listIssues() {
 
   for (const issue of issues) {
     const issueLabels = issue.labels.map((label) => label.name).join(', ');
-    console.log(`#${issue.number} [${issue.state}] ${issue.title}`);
+    console.log(`#${issue.number} [${issue.state.toUpperCase()}] ${issue.title}`);
     console.log(`labels: ${issueLabels}`);
-    console.log(issue.url);
+    console.log(issue.html_url);
     console.log('');
   }
 }
@@ -330,7 +336,7 @@ function gh(ghArgs) {
 function printHelp() {
   console.log(`Usage:
   node .agents/skills/github-tasks/scripts/github-tasks.mjs create --type bug --title "..." --body "..." [--label extra] [--write]
-  node .agents/skills/github-tasks/scripts/github-tasks.mjs list [--state open|closed|all] [--type bug|tech-debt|task|cleanup]
+  node .agents/skills/github-tasks/scripts/github-tasks.mjs list [--state open|closed|all] [--type bug|tech-debt|task|cleanup] [--limit 50]
   node .agents/skills/github-tasks/scripts/github-tasks.mjs start --issue 123 [--write]
   node .agents/skills/github-tasks/scripts/github-tasks.mjs close --issue 123 [--reason completed|"not planned"] [--write]
   node .agents/skills/github-tasks/scripts/github-tasks.mjs labels [--write]
