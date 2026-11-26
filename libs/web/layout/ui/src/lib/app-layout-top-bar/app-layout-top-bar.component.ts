@@ -7,11 +7,10 @@ import {
   Injector,
   linkedSignal,
   Signal,
-  TemplateRef,
   viewChild,
   WritableSignal,
 } from '@angular/core';
-import { NgOptimizedImage, NgTemplateOutlet } from '@angular/common';
+import { NgOptimizedImage } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatIconButton } from '@angular/material/button';
 import { MatFormField, MatPrefix, MatSuffix } from '@angular/material/form-field';
@@ -24,7 +23,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 
 @Component({
   selector: 'ui-app-layout-top-bar',
-  imports: [TranslocoPipe, NgOptimizedImage, NgTemplateOutlet, RouterLink, MatIconButton, MatFormField, MatPrefix, MatSuffix, MatIcon, MatInput],
+  imports: [TranslocoPipe, NgOptimizedImage, RouterLink, MatIconButton, MatFormField, MatPrefix, MatSuffix, MatIcon, MatInput],
   templateUrl: './app-layout-top-bar.component.html',
   styleUrl: './app-layout-top-bar.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -60,10 +59,6 @@ export class AppLayoutTopBarComponent {
 
   protected get searchQuery(): Signal<string> {
     return this.appLayoutState.searchQuery;
-  }
-
-  protected get actions(): Signal<TemplateRef<unknown> | null> {
-    return this.appLayoutState.actions;
   }
 
   protected setSearchQuery(event: Event): void {

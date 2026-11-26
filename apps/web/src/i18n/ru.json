@@ -162,8 +162,6 @@
     }
   },
   "common": {
-    "showLess": "Свернуть",
-    "showMore": "Показать полностью",
     "close": "Закрыть",
     "cancel": "Отмена",
     "save": "Сохранить",
@@ -173,7 +171,6 @@
   "dates": {
     "monthDay": "d MMM",
     "monthDayYear": "d MMM y",
-    "weekdayMonthDay": "EEEE, d MMMM",
     "longDate": "d MMMM y 'г.'",
     "longMonthDay": "d MMMM"
   },
@@ -206,16 +203,6 @@
       "many": "через {{ count }} дней",
       "other": "через {{ count }} дня"
     },
-    "days": {
-      "one": "{{ count }} день",
-      "few": "{{ count }} дня",
-      "many": "{{ count }} дней",
-      "other": "{{ count }} дня"
-    },
-    "nextCelebration": "Следующий праздник",
-    "countdown": "Осталось",
-    "noBirthdaysTitle": "Пока нет дней рождения",
-    "noBirthdaysText": "Добавьте первый день рождения, чтобы видеть, у кого праздник следующим.",
     "signInPromptTitle": "Ваши дни рождения сохранены только в этом браузере.",
     "signInPromptText": "Войдите, чтобы сохранить их в аккаунте и пользоваться ими на любом устройстве.",
     "googleCalendarPromptTitle": "Синхронизируйте с Google Календарём",

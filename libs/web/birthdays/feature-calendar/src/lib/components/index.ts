@@ -6,7 +6,6 @@ export * from './calendar-year';
 export * from './google-calendar-prompt';
 export * from './next-birthdays';
 export * from './new-year-tree';
-export * from './next-celebration';
 export * from './party-hat';
 export * from './sign-in-prompt';
 export * from './today-birthday';

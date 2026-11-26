@@ -162,8 +162,6 @@
     }
   },
   "common": {
-    "showLess": "Mostrar menos",
-    "showMore": "Mostrar más",
     "close": "Cerrar",
     "cancel": "Cancelar",
     "save": "Guardar",
@@ -173,7 +171,6 @@
   "dates": {
     "monthDay": "d MMM",
     "monthDayYear": "d MMM y",
-    "weekdayMonthDay": "EEEE, d 'de' MMMM",
     "longDate": "d 'de' MMMM 'de' y",
     "longMonthDay": "d 'de' MMMM"
   },
@@ -204,14 +201,6 @@
       "one": "en {{ count }} día",
       "other": "en {{ count }} días"
     },
-    "days": {
-      "one": "{{ count }} día",
-      "other": "{{ count }} días"
-    },
-    "nextCelebration": "Próxima celebración",
-    "countdown": "Cuenta atrás",
-    "noBirthdaysTitle": "Aún no hay cumpleaños",
-    "noBirthdaysText": "Añade el primer cumpleaños para ver quién es el próximo en cumplir años.",
     "signInPromptTitle": "Tus cumpleaños solo están guardados en este navegador.",
     "signInPromptText": "Inicia sesión para guardarlos en tu cuenta y usarlos en cualquier dispositivo.",
     "googleCalendarPromptTitle": "Sincroniza con Google Calendar",

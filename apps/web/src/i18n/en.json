@@ -162,8 +162,6 @@
     }
   },
   "common": {
-    "showLess": "Show less",
-    "showMore": "Show more",
     "close": "Close",
     "cancel": "Cancel",
     "save": "Save",
@@ -173,7 +171,6 @@
   "dates": {
     "monthDay": "MMM d",
     "monthDayYear": "MMM d, y",
-    "weekdayMonthDay": "EEEE, MMMM d",
     "longDate": "MMMM d, y",
     "longMonthDay": "MMMM d"
   },
@@ -204,14 +201,6 @@
       "one": "in {{ count }} day",
       "other": "in {{ count }} days"
     },
-    "days": {
-      "one": "{{ count }} day",
-      "other": "{{ count }} days"
-    },
-    "nextCelebration": "Next celebration",
-    "countdown": "Countdown",
-    "noBirthdaysTitle": "No birthdays yet",
-    "noBirthdaysText": "Add the first birthday to see who celebrates next.",
     "signInPromptTitle": "Your birthdays are saved only in this browser.",
     "signInPromptText": "Sign in to save them to your account and use them on any device.",
     "googleCalendarPromptTitle": "Sync with Google Calendar",

@@ -1,4 +1,4 @@
-import { DestroyRef, effect, EffectRef, inject, Injectable, Injector, Signal, TemplateRef } from '@angular/core';
+import { DestroyRef, effect, EffectRef, inject, Injectable, Injector, Signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRouteSnapshot, Event as RouterEvent, NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
@@ -40,17 +40,6 @@ export class AppLayoutController extends StateController {
 
   public setSearchQuery(query: string): void {
     this.appLayoutState.searchQuery.set(query);
-  }
-
-  public setActions(actions: TemplateRef<unknown>): void {
-    this.appLayoutState.actions.set(actions);
-  }
-
-  public clearActions(actions: TemplateRef<unknown>): void {
-    // A page entering the view may register its actions before the leaving page clears its own.
-    if (this.appLayoutState.actions() === actions) {
-      this.appLayoutState.actions.set(null);
-    }
   }
 
   /** Shows the header loader while `isLoading` is `true`, until `destroyRef` (usually the caller's own) is destroyed. */

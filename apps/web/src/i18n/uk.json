@@ -162,8 +162,6 @@
     }
   },
   "common": {
-    "showLess": "Згорнути",
-    "showMore": "Показати повністю",
     "close": "Закрити",
     "cancel": "Скасувати",
     "save": "Зберегти",
@@ -173,7 +171,6 @@
   "dates": {
     "monthDay": "d MMM",
     "monthDayYear": "d MMM y",
-    "weekdayMonthDay": "EEEE, d MMMM",
     "longDate": "d MMMM y 'р.'",
     "longMonthDay": "d MMMM"
   },
@@ -206,16 +203,6 @@
       "many": "через {{ count }} днів",
       "other": "через {{ count }} дня"
     },
-    "days": {
-      "one": "{{ count }} день",
-      "few": "{{ count }} дні",
-      "many": "{{ count }} днів",
-      "other": "{{ count }} дня"
-    },
-    "nextCelebration": "Наступне свято",
-    "countdown": "Залишилося",
-    "noBirthdaysTitle": "Поки немає днів народження",
-    "noBirthdaysText": "Додайте перший день народження, щоб бачити, у кого свято наступним.",
     "signInPromptTitle": "Ваші дні народження збережено лише в цьому браузері.",
     "signInPromptText": "Увійдіть, щоб зберегти їх в акаунті й користуватися ними на будь-якому пристрої.",
     "googleCalendarPromptTitle": "Синхронізуйте з Google Календарем",

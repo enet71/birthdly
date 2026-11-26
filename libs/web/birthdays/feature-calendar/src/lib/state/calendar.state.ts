@@ -58,7 +58,6 @@ export class CalendarState extends State {
         }),
       );
   });
-  public readonly nextCelebration: Signal<UpcomingCelebration | null> = computed(() => this.nextBirthdays()[0] ?? null);
 
   public override resetState(): void {
     this.view.set('month');
