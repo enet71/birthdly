@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal, Signal, WritableSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signal, Signal, WritableSignal } from '@angular/core';
 import { FieldTree, form, FormField, maxLength, pattern, required, submit, validate } from '@angular/forms/signals';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatChipListbox, MatChipOption } from '@angular/material/chips';
@@ -6,15 +6,19 @@ import { MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, Ma
 import { MatError, MatFormField, MatHint, MatLabel, MatPrefix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatOption, MatSelect } from '@angular/material/select';
 import { getDaysInMonth, parseISO } from 'date-fns';
-import { BirthdayRelationship } from '@birthday/shared-models';
-import { RelationshipDotComponent } from '@birthday/web-birthdays-ui';
-import { BirthdayDialogData, BirthdayFormModel } from '@birthday/web-birthdays-data-access';
+import { BirthdayRelationship, CreateBirthdayRequest } from '@birthday/shared-models';
+import { AuthState } from '@birthday/web-auth-data-access';
+import { BirthdayAvatarComponent, RelationshipDotComponent } from '@birthday/web-birthdays-ui';
+import { BirthdayDialogData, BirthdayDialogState, BirthdayDraftPhoto, BirthdayFormModel } from '@birthday/web-birthdays-data-access';
 import { BIRTHDAY_NOTES_MAX_LENGTH, hasBirthYear, RELATIONSHIP_OPTIONS, RelationshipOption } from '@birthday/web-birthdays-util';
+import { injectState, ReadonlyState } from '@birthday/web-shared-data-access';
 import { LocaleDatePipe } from '@birthday/web-shared-i18n';
 import { DialogHeaderComponent } from '@birthday/web-shared-ui';
 import { BirthdayFormController } from '../../state';
+import { BirthdayDialogPhoto } from '../../types';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 // A leap year, so Feb 29 can be chosen while the birth year is empty.
@@ -41,9 +45,13 @@ const ANY_LEAP_YEAR = 2000;
     MatPrefix,
     MatIcon,
     MatInput,
+    MatMenu,
+    MatMenuItem,
+    MatMenuTrigger,
     MatOption,
     MatSelect,
     DialogHeaderComponent,
+    BirthdayAvatarComponent,
     RelationshipDotComponent,
   ],
   templateUrl: './birthday-dialog.component.html',
@@ -53,8 +61,13 @@ const ANY_LEAP_YEAR = 2000;
 export class BirthdayDialogComponent {
   private readonly data: BirthdayDialogData = inject(MAT_DIALOG_DATA);
   private readonly birthdayFormController: BirthdayFormController = inject(BirthdayFormController);
+  private readonly authState: ReadonlyState<AuthState> = injectState(AuthState);
+  private readonly birthdayDialogState: ReadonlyState<BirthdayDialogState> = injectState(BirthdayDialogState);
+  // The preview of a chosen file, released when another photo is chosen or the dialog closes.
+  private objectUrl: string | null = null;
 
   protected readonly isEdit: boolean = !!this.data.birthday;
+  protected readonly photo: WritableSignal<BirthdayDialogPhoto> = signal(this.createPhoto());
   protected readonly relationshipOptions: RelationshipOption[] = RELATIONSHIP_OPTIONS;
   protected readonly notesMaxLength: number = BIRTHDAY_NOTES_MAX_LENGTH;
   protected readonly months: Date[] = Array.from({ length: 12 }, (_, index: number) => new Date(ANY_LEAP_YEAR, index));
@@ -82,10 +95,43 @@ export class BirthdayDialogComponent {
     maxLength(path.notes, BIRTHDAY_NOTES_MAX_LENGTH, { message: 'birthdayDialog.errors.notesTooLong' });
   });
 
+  constructor() {
+    inject(DestroyRef).onDestroy(() => this.releaseObjectUrl());
+  }
+
+  protected get isSignedIn(): Signal<boolean> {
+    return this.authState.isAuthenticated;
+  }
+
+  // Signing in starts only once the session is known to be signed out, and not while a sign-in runs.
+  protected readonly canSignIn: Signal<boolean> = computed(() => this.authState.status() === 'signedOut' && !this.birthdayDialogState.isSigningIn());
+
   protected save(event: Event): void {
     event.preventDefault();
     // `submit` requires a Promise-returning action; saving itself stays an Observable.
-    submit(this.birthdayForm, async () => this.birthdayFormController.saveBirthday(this.model()));
+    submit(this.birthdayForm, async () => this.birthdayFormController.saveBirthday(this.model(), this.photo().change));
+  }
+
+  protected signInToAddPhoto(): void {
+    this.birthdayFormController.signInToAddPhoto();
+  }
+
+  protected onPhotoSelected(input: HTMLInputElement): void {
+    const image: File | undefined = input.files?.[0];
+
+    // Cleared, so choosing the same file again still reports a change.
+    input.value = '';
+    if (image) {
+      this.releaseObjectUrl();
+      this.objectUrl = URL.createObjectURL(image);
+      this.photo.set({ previewUrl: this.objectUrl, change: { kind: 'file', image } });
+    }
+  }
+
+  // Only a photo the birthday already has is deleted on save; a photo that was only chosen is simply dropped.
+  protected removePhoto(): void {
+    this.releaseObjectUrl();
+    this.photo.set({ previewUrl: null, change: { kind: this.data.birthday?.photoUrl ? 'remove' : 'keep' } });
   }
 
   // The listbox emits `undefined` when the selected chip is clicked again.
@@ -97,17 +143,34 @@ export class BirthdayDialogComponent {
     this.birthdayFormController.deleteBirthday();
   }
 
+  private createPhoto(): BirthdayDialogPhoto {
+    const draftPhoto: BirthdayDraftPhoto | null | undefined = this.data.draft?.photo;
+
+    if (draftPhoto) {
+      return { previewUrl: draftPhoto.previewUrl, change: { kind: 'url', sourceUrls: draftPhoto.sourceUrls } };
+    }
+    return { previewUrl: this.data.birthday?.photoUrl ?? null, change: { kind: 'keep' } };
+  }
+
+  private releaseObjectUrl(): void {
+    if (this.objectUrl) {
+      URL.revokeObjectURL(this.objectUrl);
+      this.objectUrl = null;
+    }
+  }
+
   private createModel(): BirthdayFormModel {
-    const birthDate: string | undefined = this.data.birthday?.birthDate;
+    const source: CreateBirthdayRequest | undefined = this.data.birthday ?? this.data.draft;
+    const birthDate: string | undefined = source?.birthDate;
     const date: Date = birthDate ? parseISO(birthDate) : this.data.date;
 
     return {
-      name: this.data.birthday?.name ?? '',
+      name: source?.name ?? '',
       month: date.getMonth() + 1,
       day: date.getDate(),
       year: birthDate && hasBirthYear(birthDate) ? String(date.getFullYear()) : '',
-      relationship: this.data.birthday?.relationship ?? null,
-      notes: this.data.birthday?.notes ?? '',
+      relationship: source?.relationship ?? null,
+      notes: source?.notes ?? '',
     };
   }
 }

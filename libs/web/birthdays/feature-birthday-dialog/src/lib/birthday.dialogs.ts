@@ -25,7 +25,7 @@ export function provideBirthdayDialog(): EnvironmentProviders {
       dialogRef = dialog.open(component, {
         data,
         autoFocus: 'input',
-        width: '32rem',
+        width: '34rem',
         maxWidth: 'calc(100vw - 2rem)',
       });
       dialogRef.afterClosed().subscribe(() => {

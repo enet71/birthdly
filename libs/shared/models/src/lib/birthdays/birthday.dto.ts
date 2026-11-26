@@ -1,4 +1,4 @@
-export const BIRTHDAY_RELATIONSHIPS = ['family', 'friends', 'colleagues', 'other'] as const;
+export const BIRTHDAY_RELATIONSHIPS = ['family', 'friends', 'colleagues', 'celebrity', 'other'] as const;
 
 export type BirthdayRelationship = (typeof BIRTHDAY_RELATIONSHIPS)[number];
 

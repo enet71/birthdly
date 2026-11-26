@@ -214,12 +214,14 @@
     "family": "Родина",
     "friends": "Друзі",
     "colleagues": "Колеги",
+    "celebrity": "Знаменитості",
     "other": "Інше"
   },
   "birthdayDialog": {
     "addTitle": "Новий день народження",
     "editTitle": "Змінити день народження",
     "subtitle": "Додайте людину та її день народження до календаря.",
+    "photoSignIn": "Увійдіть, щоб додати фото",
     "name": "Ім'я",
     "month": "Місяць",
     "day": "День",
@@ -851,7 +853,8 @@
     },
     "card": {
       "photoCredit": "Фото: {{ credit }}",
-      "photoLink": "Фото: {{ name }}, Wikimedia Commons: {{ credit }}"
+      "photoLink": "Фото: {{ name }}, Wikimedia Commons: {{ credit }}",
+      "addToCalendar": "Додати {{ name }} до календаря"
     },
     "historicalCountries": {
       "CS": "Чехословаччина або Сербія і Чорногорія",

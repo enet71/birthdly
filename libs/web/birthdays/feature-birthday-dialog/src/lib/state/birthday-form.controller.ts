@@ -1,12 +1,14 @@
 import { inject, Injectable } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Observable } from 'rxjs';
+import { EMPTY, Observable } from 'rxjs';
+import { AuthState } from '@birthday/web-auth-data-access';
 import {
   BirthdayDialogController,
   BirthdayDialogData,
   BirthdayDialogState,
   BirthdayFormModel,
   BirthdayInput,
+  BirthdayPhotoChange,
   BirthdaysController,
 } from '@birthday/web-birthdays-data-access';
 import { injectState, ReadonlyState, StateController } from '@birthday/web-shared-data-access';
@@ -16,10 +18,12 @@ import { Birthday } from '@birthday/web-birthdays-util';
 @Injectable({ providedIn: 'root' })
 export class BirthdayFormController extends StateController {
   private readonly birthdayDialogState: ReadonlyState<BirthdayDialogState> = injectState(BirthdayDialogState);
+  private readonly authState: ReadonlyState<AuthState> = injectState(AuthState);
   private readonly birthdayDialogController: BirthdayDialogController = inject(BirthdayDialogController);
   private readonly birthdaysController: BirthdaysController = inject(BirthdaysController);
 
-  public saveBirthday({ name, month, day, year, relationship, notes }: BirthdayFormModel): void {
+  // The dialog closes once the birthday is saved; the photo uploads after that, and a failed upload only shows an error.
+  public saveBirthday({ name, month, day, year, relationship, notes }: BirthdayFormModel, photoChange: BirthdayPhotoChange): void {
     const dialog: BirthdayDialogData | null = this.birthdayDialogState.dialog();
     const isYearKnown: boolean = year !== '';
     // Without a year, a leap year keeps Feb 29; the year is then replaced by the unknown-year marker.
@@ -29,7 +33,10 @@ export class BirthdayFormController extends StateController {
       ? this.birthdaysController.updateBirthday(dialog.birthday.id, input)
       : this.birthdaysController.addBirthday(input);
 
-    save$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.closeBirthdayDialogIfCurrent(dialog));
+    save$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((birthday: Birthday) => {
+      this.birthdayDialogController.closeBirthdayDialogIfCurrent(dialog);
+      this.savePhoto(birthday, photoChange).pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+    });
   }
 
   public deleteBirthday(): void {
@@ -43,13 +50,28 @@ export class BirthdayFormController extends StateController {
     this.birthdaysController
       .deleteBirthday(dialog.birthday.id)
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.closeBirthdayDialogIfCurrent(dialog));
+      .subscribe(() => this.birthdayDialogController.closeBirthdayDialogIfCurrent(dialog));
   }
 
-  // A slow request must not close a dialog the user opened after closing the one it started from.
-  private closeBirthdayDialogIfCurrent(dialog: BirthdayDialogData | null): void {
-    if (this.birthdayDialogState.dialog() === dialog) {
-      this.birthdayDialogController.closeBirthdayDialog();
+  public signInToAddPhoto(): void {
+    this.birthdayDialogController.signInToAddPhoto();
+  }
+
+  // Local birthdays have no photos.
+  private savePhoto({ id }: Birthday, change: BirthdayPhotoChange): Observable<Birthday> {
+    if (!this.authState.isAuthenticated()) {
+      return EMPTY;
+    }
+
+    switch (change.kind) {
+      case 'file':
+        return this.birthdaysController.setPhoto(id, change.image);
+      case 'url':
+        return this.birthdaysController.setPhotoFromUrls(id, change.sourceUrls);
+      case 'remove':
+        return this.birthdaysController.removePhoto(id);
+      default:
+        return EMPTY;
     }
   }
 }

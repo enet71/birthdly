@@ -46,6 +46,97 @@
   container-type: inline-size;
 }
 
+// The photo sits before the name and the date, as tall as both rows. A narrow dialog keeps it next to the name only,
+// so the date fields get the full width.
+.identity {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 1rem;
+
+  &__name {
+    grid-column: 2;
+  }
+
+  &__date {
+    grid-column: 1 / -1;
+  }
+
+  @container (min-width: 28rem) {
+    &__date {
+      grid-column: 2;
+    }
+
+    .photo {
+      grid-row: 1 / span 2;
+    }
+
+    // From the top of the name field to the bottom of the date fields, without the hint under them.
+    .photo__avatar {
+      width: 9.25rem;
+      height: 9.25rem;
+      border-radius: 1.5rem;
+      font-size: 2rem;
+    }
+
+    // A larger camera button to match the larger photo.
+    .photo__edit {
+      @include mat.icon-button-overrides(
+        (
+          state-layer-size: 2.25rem,
+          icon-size: 1.25rem,
+        )
+      );
+    }
+
+    .photo__edit-icon {
+      width: 1.25rem;
+      height: 1.25rem;
+      font-size: 1.25rem;
+    }
+  }
+}
+
+.photo {
+  position: relative;
+  // Not stretched to the rows, so the camera button stays on the avatar's corner.
+  align-self: start;
+
+  &__avatar {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 1rem;
+    font-size: 1.125rem;
+  }
+
+  &__edit {
+    position: absolute;
+    right: -0.5rem;
+    bottom: -0.5rem;
+    // Flex, so the wrapper is exactly as tall as the button and stays a circle.
+    display: flex;
+    border-radius: 50%;
+    background: var(--mat-sys-surface-container-high);
+    box-shadow: var(--mat-sys-level1);
+    @include mat.icon-button-overrides(
+      (
+        state-layer-size: 1.75rem,
+        icon-size: 1rem,
+      )
+    );
+  }
+
+  // The button's icon-size token sets only its padding; the icon keeps its own 24px size unless set here.
+  &__edit-icon {
+    width: 1rem;
+    height: 1rem;
+    font-size: 1rem;
+  }
+
+  &__input {
+    display: none;
+  }
+}
+
 .date {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -56,7 +147,7 @@
   }
 
   @container (min-width: 22rem) {
-    grid-template-columns: minmax(0, 1fr) 6rem 6.5rem;
+    grid-template-columns: minmax(0, 1fr) 6rem 4.5rem;
 
     &__month {
       grid-column: auto;

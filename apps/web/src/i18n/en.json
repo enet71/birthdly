@@ -212,12 +212,14 @@
     "family": "Family",
     "friends": "Friends",
     "colleagues": "Colleagues",
+    "celebrity": "Celebrities",
     "other": "Other"
   },
   "birthdayDialog": {
     "addTitle": "Add Birthday",
     "editTitle": "Edit Birthday",
     "subtitle": "Add a new person and their birthday to your calendar.",
+    "photoSignIn": "Sign in to add a photo",
     "name": "Name",
     "month": "Month",
     "day": "Day",
@@ -835,7 +837,8 @@
     },
     "card": {
       "photoCredit": "Photo: {{ credit }}",
-      "photoLink": "Photo of {{ name }} on Wikimedia Commons: {{ credit }}"
+      "photoLink": "Photo of {{ name }} on Wikimedia Commons: {{ credit }}",
+      "addToCalendar": "Add {{ name }} to your calendar"
     },
     "historicalCountries": {
       "CS": "Czechoslovakia or Serbia and Montenegro",

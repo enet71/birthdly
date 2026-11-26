@@ -11,5 +11,6 @@ export const RELATIONSHIP_OPTIONS: RelationshipOption[] = [
   { value: 'family', label: 'relationship.family' },
   { value: 'friends', label: 'relationship.friends' },
   { value: 'colleagues', label: 'relationship.colleagues' },
+  { value: 'celebrity', label: 'relationship.celebrity' },
   { value: 'other', label: 'relationship.other' },
 ];

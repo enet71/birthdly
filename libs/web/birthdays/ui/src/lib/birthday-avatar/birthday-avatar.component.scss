@@ -19,4 +19,6 @@
   height: 100%;
   border-radius: inherit;
   object-fit: cover;
+  // A photo that is not stored yet, such as a chosen file, is previewed the way it will be cut: from the top.
+  object-position: 50% 0;
 }

@@ -12,7 +12,7 @@ export const birthdays = pgTable(
     name: text('name').notNull(),
     // `yyyy-MM-dd`; the year 0004 marks an unknown birth year.
     birthDate: date('birth_date').notNull(),
-    relationship: text('relationship', { enum: ['family', 'friends', 'colleagues', 'other'] }),
+    relationship: text('relationship', { enum: ['family', 'friends', 'colleagues', 'celebrity', 'other'] }),
     notes: text('notes'),
     googleContactId: text('google_contact_id'),
     googleContactSnapshot: text('google_contact_snapshot'),
@@ -34,7 +34,7 @@ export const birthdays = pgTable(
       .on(table.googleEventId)
       .where(sql`${table.googleEventId} is not null`),
     check('birthdays_name_check', sql`length(trim(${table.name})) between 1 and 200`),
-    check('birthdays_relationship_check', sql`${table.relationship} in ('family', 'friends', 'colleagues', 'other')`),
+    check('birthdays_relationship_check', sql`${table.relationship} in ('family', 'friends', 'colleagues', 'celebrity', 'other')`),
     check('birthdays_notes_check', sql`length(${table.notes}) <= 500`),
   ],
 );

@@ -1,6 +1,6 @@
 import { effect, inject, Injectable, untracked } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
-import { catchError, concatMap, defer, EMPTY, filter, from, map, Observable, of, switchMap, take, tap, toArray } from 'rxjs';
+import { catchError, concatMap, defaultIfEmpty, defer, EMPTY, filter, from, map, Observable, of, switchMap, take, tap, toArray } from 'rxjs';
 import { BirthdayDto, CreateBirthdayRequest } from '@birthday/shared-models';
 import { AuthState } from '@birthday/web-auth-data-access';
 import { injectState, ReadonlyState, StateController } from '@birthday/web-shared-data-access';
@@ -13,7 +13,7 @@ import {
   toBirthdayPhoto,
   WebpNotSupportedError,
 } from '@birthday/web-birthdays-util';
-import { BirthdaysDataService, BirthdaysApiService, BirthdaysLocalStorageService } from '../services';
+import { BirthdaysDataService, BirthdaysApiService, BirthdaysLocalStorageService, RemotePhotosApiService } from '../services';
 import { BirthdayInput } from '../types';
 import { BirthdaysState } from './birthdays.state';
 import { AppTranslateService } from '@birthday/web-shared-i18n';
@@ -25,6 +25,7 @@ export class BirthdaysController extends StateController {
   private readonly birthdaysData: BirthdaysDataService = inject(BirthdaysDataService);
   private readonly localStorage: BirthdaysLocalStorageService = inject(BirthdaysLocalStorageService);
   private readonly birthdaysApi: BirthdaysApiService = inject(BirthdaysApiService);
+  private readonly remotePhotosApi: RemotePhotosApiService = inject(RemotePhotosApiService);
   private readonly notifications: NotificationsService = inject(NotificationsService);
   private readonly translator: AppTranslateService = inject(AppTranslateService);
   private readonly analytics: AnalyticsService = inject(AnalyticsService);
@@ -118,6 +119,22 @@ export class BirthdaysController extends StateController {
         ),
       ),
       tap((updated: Birthday) => this.replaceBirthday(updated)),
+    );
+  }
+
+  // Downloads the first of the images that loads, then stores it like an uploaded photo.
+  public setPhotoFromUrls(id: string, sourceUrls: string[]): Observable<Birthday> {
+    return from(sourceUrls).pipe(
+      concatMap((url: string) => this.remotePhotosApi.download(url).pipe(catchError(() => EMPTY))),
+      take(1),
+      defaultIfEmpty(null),
+      switchMap((image: Blob | null) => {
+        if (image) {
+          return this.setPhoto(id, image);
+        }
+        this.notifications.createErrorNotification(this.translator.translate('notifications.birthdays.photoSaveFailed'));
+        return EMPTY;
+      }),
     );
   }
 

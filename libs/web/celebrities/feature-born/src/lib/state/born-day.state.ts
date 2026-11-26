@@ -1,5 +1,6 @@
 import { computed, Injectable, Signal, signal, WritableSignal } from '@angular/core';
 import { AppLocale, CELEBRITY_COUNTRIES, CelebrityDto, isCelebrityBirthYear } from '@birthday/shared-models';
+import { AuthState } from '@birthday/web-auth-data-access';
 import { injectState, ReadonlyState, State } from '@birthday/web-shared-data-access';
 import { LocaleState } from '@birthday/web-shared-i18n';
 import {
@@ -20,6 +21,7 @@ export class BornDayState extends State {
   private readonly currentYear: number = new Date().getFullYear();
   private readonly today: BornDate = toBornDate(new Date());
   private readonly localeState: ReadonlyState<LocaleState> = injectState(LocaleState);
+  private readonly authState: ReadonlyState<AuthState> = injectState(AuthState);
   // Country names in the current language.
   private readonly countryNames: Signal<Intl.DisplayNames> = computed(() => new Intl.DisplayNames([this.localeState.locale()], { type: 'region' }));
 
@@ -34,6 +36,10 @@ export class BornDayState extends State {
   public readonly hasLoadError: WritableSignal<boolean> = signal(false);
   public readonly isLoading: WritableSignal<boolean> = signal(false);
   public readonly isLoadingMore: WritableSignal<boolean> = signal(false);
+  // A sign-in started by adding a celebrity to the calendar.
+  public readonly isSigningIn: WritableSignal<boolean> = signal(false);
+  // Adding waits until the session is restored, so a signed-in user is not asked to sign in.
+  public readonly canAddToCalendar: Signal<boolean> = computed(() => this.authState.status() !== 'unknown' && !this.isSigningIn());
 
   // The date in a leap year, for formatting and for the datepicker, which stays in that year so February 29 can always be
   // picked; `null` before the first date opens.

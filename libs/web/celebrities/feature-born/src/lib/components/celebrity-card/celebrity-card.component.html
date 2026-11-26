@@ -57,3 +57,18 @@
     </p>
   }
 </div>
+@let addLabel = 'born.card.addToCalendar' | transloco: { name: person.name };
+<!-- The tooltip goes above the card: below, it opened under the cursor of the lifted card and took its hover away. -->
+<button
+  class="add"
+  matIconButton
+  type="button"
+  disabledInteractive
+  [disabled]="isAddDisabled()"
+  matTooltipPosition="above"
+  [matTooltip]="addLabel"
+  [attr.aria-label]="addLabel"
+  (click)="addToCalendar.emit()"
+>
+  <mat-icon>calendar_add_on</mat-icon>
+</button>

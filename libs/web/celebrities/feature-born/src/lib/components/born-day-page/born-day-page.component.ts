@@ -142,6 +142,14 @@ export class BornDayPageComponent {
     this.bornDayController.showMore();
   }
 
+  protected get canAddToCalendar(): Signal<boolean> {
+    return this.bornDayState.canAddToCalendar;
+  }
+
+  protected addToCalendar(celebrityId: string): void {
+    this.bornDayController.addToCalendar(celebrityId);
+  }
+
   protected retry(): void {
     this.bornDayController.retry();
   }

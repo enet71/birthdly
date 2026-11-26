@@ -4,6 +4,8 @@ import { DateAdapter } from '@angular/material/core';
 import { Router, UrlTree } from '@angular/router';
 import { catchError, EMPTY, finalize, Observable, of, Subscription, tap } from 'rxjs';
 import { AppLocale, CelebritiesResponse, CelebrityDto } from '@birthday/shared-models';
+import { AuthController, AuthState } from '@birthday/web-auth-data-access';
+import { BirthdayDialogController } from '@birthday/web-birthdays-data-access';
 import { CelebritiesApiService } from '@birthday/web-celebrities-data-access';
 import { AppLayoutController } from '@birthday/web-layout-data-access';
 import { injectState, ReadonlyState, StateController } from '@birthday/web-shared-data-access';
@@ -18,6 +20,7 @@ import {
   toBornDate,
   toBornFilterQueryParams,
   toCelebritiesRequest,
+  toCelebrityBirthdayDraft,
 } from '../helpers';
 import { BORN_YEAR_QUERY_PARAM } from '../constants';
 import { BornDate, BornFilters } from '../types';
@@ -27,6 +30,9 @@ import { BornDayState } from './born-day.state';
 export class BornDayController extends StateController {
   private readonly bornDayState: BornDayState = inject(BornDayState);
   private readonly celebritiesApi: CelebritiesApiService = inject(CelebritiesApiService);
+  private readonly birthdayDialogController: BirthdayDialogController = inject(BirthdayDialogController);
+  private readonly authController: AuthController = inject(AuthController);
+  private readonly authState: ReadonlyState<AuthState> = injectState(AuthState);
   private readonly router: Router = inject(Router);
   private readonly dateAdapter: DateAdapter<Date> = inject(DateAdapter);
   private readonly localeState: ReadonlyState<LocaleState> = injectState(LocaleState);
@@ -102,6 +108,36 @@ export class BornDayController extends StateController {
       .subscribe();
   }
 
+  // Opens the Add birthday dialog prefilled with the person; adding the same person again is allowed. Celebrities are
+  // added to an account only, so a signed-out user signs in first. Call it while handling the click: it may open the
+  // Google popup.
+  public addToCalendar(celebrityId: string): void {
+    const celebrity: CelebrityDto | undefined = this.bornDayState.celebrities().find(({ id }) => id === celebrityId);
+
+    if (!celebrity || !this.bornDayState.canAddToCalendar()) {
+      return;
+    }
+    if (this.authState.isAuthenticated()) {
+      this.openCelebrityDialog(celebrity);
+      return;
+    }
+
+    this.bornDayState.isSigningIn.set(true);
+    this.authController
+      .signInWithGoogle()
+      .pipe(
+        finalize(() => this.bornDayState.isSigningIn.set(false)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe({
+        complete: () => {
+          if (this.authState.isAuthenticated()) {
+            this.openCelebrityDialog(celebrity);
+          }
+        },
+      });
+  }
+
   // The filters stay when another date opens.
   public openDate(date: Date): void {
     this.router.navigate([getBornDayPath(toBornDate(date))], { queryParamsHandling: 'preserve' });
@@ -170,6 +206,10 @@ export class BornDayController extends StateController {
       }),
       finalize(() => this.bornDayState.isLoading.set(false)),
     );
+  }
+
+  private openCelebrityDialog(celebrity: CelebrityDto): void {
+    this.birthdayDialogController.openAddBirthdayDialogWithDraft(toCelebrityBirthdayDraft(celebrity));
   }
 
   private show(date: BornDate, filters: BornFilters, locale: AppLocale, response: CelebritiesResponse): void {

@@ -100,7 +100,9 @@
       <h2 class="summary">{{ summary() }}</h2>
       <ol class="list">
         @for (card of cards(); track card.id) {
-          <li><ui-celebrity-card [celebrity]="card"></ui-celebrity-card></li>
+          <li>
+            <ui-celebrity-card [celebrity]="card" [isAddDisabled]="!canAddToCalendar()" (addToCalendar)="addToCalendar(card.id)"></ui-celebrity-card>
+          </li>
         }
       </ol>
       @if (hasMore()) {

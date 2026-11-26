@@ -212,12 +212,14 @@
     "family": "Familie",
     "friends": "Freunde",
     "colleagues": "Kollegen",
+    "celebrity": "Prominente",
     "other": "Sonstige"
   },
   "birthdayDialog": {
     "addTitle": "Geburtstag hinzufügen",
     "editTitle": "Geburtstag bearbeiten",
     "subtitle": "Füge eine Person und ihren Geburtstag zu deinem Kalender hinzu.",
+    "photoSignIn": "Melde dich an, um ein Foto hinzuzufügen",
     "name": "Name",
     "month": "Monat",
     "day": "Tag",
@@ -835,7 +837,8 @@
     },
     "card": {
       "photoCredit": "Foto: {{ credit }}",
-      "photoLink": "Foto von {{ name }} auf Wikimedia Commons: {{ credit }}"
+      "photoLink": "Foto von {{ name }} auf Wikimedia Commons: {{ credit }}",
+      "addToCalendar": "{{ name }} zum Kalender hinzufügen"
     },
     "historicalCountries": {
       "CS": "Tschechoslowakei oder Serbien und Montenegro",

@@ -235,6 +235,8 @@ $confetti-lefts: (4, 61, 23, 88, 45, 12, 72, 34, 95, 53, 18, 80, 39, 66);
   // A soft, blurred iridescent ring turns slowly around the avatar while its glow breathes.
   &__avatar-ring {
     position: relative;
+    // Flex, so the ring hugs the avatar; as an inline box it gained the line height below it.
+    display: flex;
     flex-shrink: 0;
     padding: 0.1875rem;
     overflow: hidden;

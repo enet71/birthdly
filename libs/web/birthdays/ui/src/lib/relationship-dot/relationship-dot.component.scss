@@ -18,6 +18,10 @@
   background: var(--app-tone-mint-ink);
 }
 
+:host(.relationship-dot_celebrity) {
+  background: var(--app-tone-peach-ink);
+}
+
 :host(.relationship-dot_other) {
   background: var(--mat-sys-outline);
 }

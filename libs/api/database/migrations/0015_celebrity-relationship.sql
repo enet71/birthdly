@@ -1,0 +1,2 @@
+ALTER TABLE "birthdays" DROP CONSTRAINT "birthdays_relationship_check";--> statement-breakpoint
+ALTER TABLE "birthdays" ADD CONSTRAINT "birthdays_relationship_check" CHECK ("birthdays"."relationship" in ('family', 'friends', 'colleagues', 'celebrity', 'other'));

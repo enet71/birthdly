@@ -1,9 +1,10 @@
 const PHOTO_SIZE_PX = 256;
 const PHOTO_TYPE = 'image/webp';
 const PHOTO_QUALITY = 0.85;
-// The part of a portrait photo's extra height left above the square. Faces are usually in the upper third, so a centred
-// square often cuts the head; a landscape photo stays centred horizontally.
-const PORTRAIT_CROP_TOP_SHARE = 0.25;
+// The part of a portrait photo's extra height left above the square. Portraits usually have little room above the head,
+// so the square starts at the top: any share above it cut the top of the head on most Wikimedia portraits. A landscape
+// photo stays centred horizontally. The avatar's `object-position` previews the same crop.
+const PORTRAIT_CROP_TOP_SHARE = 0;
 
 // A larger file is refused before decoding: a decoded image takes far more memory than its file.
 export const BIRTHDAY_PHOTO_SOURCE_MAX_MB = 20;
