@@ -442,6 +442,8 @@
     "reconnect": "Volver a conectar"
   },
   "reminderSchedule": {
+    "email": "Correo electrónico",
+    "emailScope": "Brevo utiliza el correo de tu cuenta y los datos de cumpleaños del recordatorio para enviártelo.",
     "title": "Recordatorios de cumpleaños",
     "description": "Un horario para todos los cumpleaños",
     "browser": "Navegador",
@@ -711,7 +713,7 @@
       "text35": "Una vez al mes, abre la vista anual y comprueba que no falta nadie importante.",
       "text36": "Preguntas frecuentes",
       "text37": "¿Puede Birthdly enviarme recordatorios por correo?",
-      "text38": "Por ahora no. Birthdly envía notificaciones del navegador, y Google Calendar puede recordártelo después de conectarlo.",
+      "text38": "Sí. Si el correo electrónico está disponible en Ajustes, selecciónalo para recibir el recordatorio en la dirección de tu cuenta.",
       "text39": "¿Cuándo llega el recordatorio?",
       "text40": "Las notificaciones de cumpleaños llegan a la hora que elijas en Ajustes, las 9:00 salvo que la cambies, el mismo día, el día anterior o ambos. Los recordatorios de Google Calendar para los cumpleaños que añades en Birthdly llegan a las 9:00 del día anterior, en la zona horaria de tu Google Calendar. Para los cumpleaños de tus Contactos de Google, Google Calendar sigue su propia configuración de notificaciones.",
       "text41": "¿Recibo recordatorios sin conectar Google Calendar?",

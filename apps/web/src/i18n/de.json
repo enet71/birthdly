@@ -442,6 +442,8 @@
     "reconnect": "Erneut verbinden"
   },
   "reminderSchedule": {
+    "email": "E-Mail",
+    "emailScope": "Brevo verwendet deine Konto-E-Mail-Adresse und die Geburtstagsangaben in der Erinnerung für die Zustellung.",
     "title": "Geburtstagserinnerungen",
     "description": "Ein Zeitplan für alle Geburtstage",
     "browser": "Browser",
@@ -711,7 +713,7 @@
       "text35": "Öffne einmal im Monat die Jahresansicht und prüfe, ob jemand Wichtiges fehlt.",
       "text36": "Häufige Fragen",
       "text37": "Kann Birthdly mir Erinnerungen per E-Mail senden?",
-      "text38": "Derzeit nicht. Birthdly sendet Browserbenachrichtigungen, und Google Kalender kann dich erinnern, nachdem du ihn verbunden hast.",
+      "text38": "Ja. Wenn E-Mail in den Einstellungen verfügbar ist, wähle sie für eine Erinnerung aus, damit sie an deine Konto-E-Mail-Adresse gesendet wird.",
       "text39": "Wann kommt die Erinnerung?",
       "text40": "Geburtstagsbenachrichtigungen kommen zu der Uhrzeit, die du in den Einstellungen wählst – 9:00 Uhr, wenn du sie nicht änderst –, am Tag selbst, am Vortag oder an beiden Tagen. Erinnerungen in Google Kalender für Geburtstage, die du in Birthdly hinzufügst, kommen um 9:00 Uhr am Vortag in der Zeitzone deines Google Kalenders. Für Geburtstage aus deinen Google-Kontakten folgt Google Kalender seinen eigenen Benachrichtigungseinstellungen.",
       "text41": "Erhalte ich Erinnerungen, ohne Google Kalender zu verbinden?",

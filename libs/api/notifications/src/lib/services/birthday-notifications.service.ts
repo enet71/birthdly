@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { DueUser } from '../types';
 import { buildBirthdayNotification, runInChunks } from '../utils';
+import { BrevoEmailService } from './brevo-email.service';
 import { DueNotificationsService } from './due-notifications.service';
 import { UserPushService } from './user-push.service';
 
@@ -15,16 +16,17 @@ export class BirthdayNotificationsService {
   constructor(
     private readonly due: DueNotificationsService,
     private readonly userPush: UserPushService,
+    private readonly email: BrevoEmailService,
   ) {}
 
-  // Returns how many devices received a notification. Stops before the next batch once `signal` is aborted; the users
+  // Counts successful sends. Stops before the next batch once `signal` is aborted; the users
   // not claimed yet are picked up by the next run.
   public async sendDue(signal: AbortSignal): Promise<number> {
     let sent = 0;
 
     await this.due.forgetOldDeliveries();
     while (!signal.aborted) {
-      const users = await this.due.claimDueUsers(CLAIM_BATCH_SIZE);
+      const users = await this.due.claimDueUsers(CLAIM_BATCH_SIZE, this.email.available);
 
       if (users.length === 0) {
         break;
@@ -44,11 +46,13 @@ export class BirthdayNotificationsService {
     return sent;
   }
 
-  // Returns how many of the user's devices received the notification.
   private async notifyUser(user: DueUser): Promise<number> {
     const birthdays = await this.due.findBirthdaysAround(user.userId, user.localDate, user.daysBefore);
     const payload = buildBirthdayNotification(birthdays, user);
 
-    return payload ? this.userPush.pushToUser(user.userId, payload) : 0;
+    if (!payload) {
+      return 0;
+    }
+    return user.email === null ? this.userPush.pushToUser(user.userId, payload) : this.email.sendBirthdayReminder(user.email, payload, user.locale);
   }
 }

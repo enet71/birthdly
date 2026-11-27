@@ -1,4 +1,5 @@
 export * from './birthday-notifications.service';
+export * from './brevo-email.service';
 export * from './due-notifications.service';
 export * from './invite-submission-notifications.service';
 export * from './notifications-jobs.service';

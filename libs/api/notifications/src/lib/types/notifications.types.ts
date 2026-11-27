@@ -6,6 +6,9 @@ export interface NotificationsModuleOptions {
   vapidPrivateKey: string;
   // A `mailto:` or `https:` contact for push services.
   vapidSubject: string;
+  appOrigin: string;
+  brevoApiKey?: string;
+  brevoSenderEmail?: string;
 }
 
 // A user whose chosen hour has come, claimed for their local date.
@@ -16,6 +19,7 @@ export interface DueUser {
   deliveryDate: string;
   minuteOfDay: number;
   daysBefore: number[];
+  email: string | null;
   locale: AppLocale;
 }
 
