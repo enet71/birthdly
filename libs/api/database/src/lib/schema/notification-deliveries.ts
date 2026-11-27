@@ -1,7 +1,7 @@
-import { date, pgTable, primaryKey, smallint, uuid } from 'drizzle-orm/pg-core';
+import { date, pgTable, primaryKey, smallint, text, uuid } from 'drizzle-orm/pg-core';
 import { users } from './users';
 
-// One claim per scheduled minute of a local day. -1 is the legacy daily claim.
+// One claim per channel and scheduled minute of a local day. -1 is the legacy daily browser claim.
 export const notificationDeliveries = pgTable(
   'notification_deliveries',
   {
@@ -10,6 +10,11 @@ export const notificationDeliveries = pgTable(
       .references(() => users.id, { onDelete: 'cascade' }),
     localDate: date('local_date').notNull(),
     minuteOfDay: smallint('minute_of_day').notNull().default(-1),
+    channel: text('channel', { enum: ['browser', 'email'] })
+      .notNull()
+      .default('browser'),
   },
-  (table) => [primaryKey({ columns: [table.userId, table.localDate, table.minuteOfDay] })],
+  (table) => [
+    primaryKey({ name: 'notification_deliveries_slot_channel_pk', columns: [table.userId, table.localDate, table.minuteOfDay, table.channel] }),
+  ],
 );

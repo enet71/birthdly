@@ -18,6 +18,7 @@ export class ReminderScheduleState extends State {
 
   public readonly resource = rxResource({ stream: () => this.api.getSchedule() });
   public readonly reminders = computed(() => (this.resource.hasValue() ? this.resource.value().reminders : []));
+  public readonly emailAvailable = computed(() => this.resource.hasValue() && this.resource.value().emailAvailable);
   public readonly draft = signal<ReminderScheduleDraft | null>(null);
   public readonly saving = signal(false);
   public readonly browserPending = signal(false);

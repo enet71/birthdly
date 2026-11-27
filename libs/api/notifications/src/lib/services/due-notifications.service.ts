@@ -13,6 +13,7 @@ interface DueUserRow extends Record<string, unknown> {
   delivery_date: string;
   minute_of_day: number;
   days_before: number[];
+  email: string | null;
   locale: AppLocale;
 }
 
@@ -29,12 +30,13 @@ export class DueNotificationsService {
   // A 119-minute grace period covers delayed jobs and the one-hour DST gap. The claim uses the scheduled local
   // date and minute, so repeated clock times and overlapping workers cannot send a slot twice. A slot whose time had
   // already come when the schedule was saved is skipped, so editing the schedule does not send a late reminder.
-  public async claimDueUsers(limit: number): Promise<DueUser[]> {
+  public async claimDueUsers(limit: number, emailAvailable: boolean): Promise<DueUser[]> {
     const result = await this.db.execute<DueUserRow>(sql`
       with slots as (
         select settings.user_id, settings.time_zone, settings.schedule_updated_at, local_clock.value::date - date_offset.days as local_date, local_clock.value::date as delivery_date, settings.locale,
           (entry.value->>'minuteOfDay')::int as minute_of_day, (entry.value->>'daysBefore')::int as days_before,
-          extract(hour from local_clock.value)::int * 60 + extract(minute from local_clock.value)::int + date_offset.days * 1440 as current_minute
+          extract(hour from local_clock.value)::int * 60 + extract(minute from local_clock.value)::int + date_offset.days * 1440 as current_minute,
+          channel.name as channel
         from notification_settings settings
         join pg_catalog.pg_timezone_names zone on zone.name = settings.time_zone
         cross join lateral (select now() at time zone settings.time_zone as value) local_clock
@@ -43,30 +45,36 @@ export class DueNotificationsService {
           jsonb_build_object('daysBefore', 0, 'minuteOfDay', settings.hour * 60, 'channels', jsonb_build_array('browser'), 'enabled', settings.remind_on_day),
           jsonb_build_object('daysBefore', 1, 'minuteOfDay', settings.hour * 60, 'channels', jsonb_build_array('browser'), 'enabled', settings.remind_day_before)
         ))) entry
-        where (entry.value->>'enabled')::boolean and (entry.value->'channels') ? 'browser'
-          and exists (select 1 from push_subscriptions subscription where subscription.user_id = settings.user_id)
+        cross join (values ('browser'), ('email')) channel(name)
+        where (entry.value->>'enabled')::boolean and (entry.value->'channels') ? channel.name
+          and case channel.name
+            when 'browser' then exists (select 1 from push_subscriptions subscription where subscription.user_id = settings.user_id)
+            when 'email' then ${emailAvailable}::boolean
+          end
       ),
       due as (
-        select user_id, local_date, delivery_date, minute_of_day, locale, array_agg(days_before order by days_before) as days_before
+        select user_id, local_date, delivery_date, minute_of_day, locale, channel, array_agg(days_before order by days_before) as days_before
         from slots
         where current_minute between minute_of_day and minute_of_day + 119
           and (schedule_updated_at is null
             or (local_date + make_interval(mins => minute_of_day)) at time zone time_zone > schedule_updated_at)
           and not exists (select 1 from notification_deliveries delivery
             where delivery.user_id = slots.user_id and delivery.local_date = slots.local_date
+              and delivery.channel = slots.channel
               and delivery.minute_of_day in (-1, slots.minute_of_day))
-        group by user_id, local_date, delivery_date, minute_of_day, locale
+        group by user_id, local_date, delivery_date, minute_of_day, locale, channel
         limit ${limit}
       ),
       claimed as (
-        insert into notification_deliveries (user_id, local_date, minute_of_day)
-        select user_id, local_date, minute_of_day from due
+        insert into notification_deliveries (user_id, local_date, minute_of_day, channel)
+        select user_id, local_date, minute_of_day, channel from due
         on conflict do nothing
-        returning user_id, local_date, minute_of_day
+        returning user_id, local_date, minute_of_day, channel
       )
       select due.user_id, to_char(due.local_date, 'YYYY-MM-DD') as local_date, to_char(due.delivery_date, 'YYYY-MM-DD') as delivery_date,
-        due.minute_of_day, due.days_before, due.locale
-      from due join claimed using (user_id, local_date, minute_of_day)
+        due.minute_of_day, due.days_before, due.locale, case when due.channel = 'email' then users.email end as email
+      from due join claimed using (user_id, local_date, minute_of_day, channel)
+      join users on users.id = due.user_id
     `);
 
     return result.rows.map((row) => ({
@@ -75,6 +83,7 @@ export class DueNotificationsService {
       deliveryDate: row.delivery_date,
       minuteOfDay: row.minute_of_day,
       daysBefore: row.days_before,
+      email: row.email,
       locale: row.locale,
     }));
   }

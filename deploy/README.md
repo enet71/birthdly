@@ -168,6 +168,11 @@ Birthday push notifications need the VAPID pair whose public key is `vapidPublic
 `VAPID_SUBJECT` such as `mailto:hello@birthdly.com`. Check that `VAPID_PUBLIC_KEY` equals `vapidPublicKey` before
 deploying: with another public key push services reject every message, and the first run deletes every subscription.
 
+For birthday email reminders, authenticate the sending domain and verify the sender in Brevo. Set
+`BREVO_SENDER_EMAIL` to that sender address and `BREVO_API_KEY` to a transactional API key in the server's `.env`.
+After the API restarts with both variables, signed-in users can select Email for a reminder in Settings. To check
+delivery, enable it for an upcoming slot on your own account with a matching birthday and check Brevo's logs.
+
 People's photos live in a private Cloudflare R2 bucket: create it (Cloudflare dashboard → R2), then an API token with
 Object Read & Write on that bucket only, and keep the account ID, the token's access key ID and secret, and the bucket
 name for `.env` (`R2_*`, see `libs/api/storage`). The bucket needs no public access and no CORS: uploads go through the

@@ -207,15 +207,24 @@
         <mat-label>{{ 'reminderSchedule.channels' | transloco }}</mat-label>
         <mat-select multiple [value]="draft.row.channels" (selectionChange)="controller.changeChannels($event.value)">
           @for (channel of channels; track channel) {
-            <mat-option [value]="channel"
-              >{{ 'reminderSchedule.' + channel | transloco }}
-              @if (channel === 'browser' ? !state.browserConnected() : !state.googleConnected()) {
-                <span> · {{ 'reminderSchedule.disconnected' | transloco }}</span>
-              }
-            </mat-option>
+            @if (channel !== 'email' || state.emailAvailable() || draft.row.channels.includes('email')) {
+              <mat-option [value]="channel">
+                {{ 'reminderSchedule.' + channel | transloco }}
+                @if (
+                  (channel === 'browser' && !state.browserConnected()) ||
+                  (channel === 'googleCalendar' && !state.googleConnected()) ||
+                  (channel === 'email' && !state.emailAvailable())
+                ) {
+                  <span> · {{ 'reminderSchedule.disconnected' | transloco }}</span>
+                }
+              </mat-option>
+            }
           }
         </mat-select>
       </mat-form-field>
+      @if (draft.row.channels.includes('email') && state.emailAvailable()) {
+        <p>{{ 'reminderSchedule.emailScope' | transloco }}</p>
+      }
       @if (draft.row.channels.includes('googleCalendar')) {
         <p>{{ 'reminderSchedule.googleScope' | transloco }}</p>
         @if (draft.row.daysBefore === 0) {

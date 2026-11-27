@@ -32,6 +32,8 @@ export const envSchema = z.object({
   VAPID_PRIVATE_KEY: z.string().regex(/^[A-Za-z0-9_-]{43}$/, { message: 'Must be the base64url private key from npm run push:vapid-keys' }),
   // How push services can reach the sender, for example `mailto:hello@birthdly.com`.
   VAPID_SUBJECT: z.string().regex(/^(mailto:|https:\/\/)/, { message: 'Must be a mailto: or https: URL' }),
+  BREVO_API_KEY: optionalSetting(z.string().trim().min(1)),
+  BREVO_SENDER_EMAIL: optionalSetting(z.email()),
   // Comma-separated emails of the users who see the admin pages, for example `me@example.com,you@example.com`; empty or
   // unset means nobody.
   ADMIN_EMAILS: z
@@ -61,6 +63,10 @@ export type Env = z.infer<typeof envSchema>;
 // Used by `ConfigModule`, so the app stops at startup instead of failing on the first request that needs a setting.
 export function validateEnv(config: Record<string, unknown>): Env {
   const result = envSchema
+    .refine((env) => Boolean(env.BREVO_API_KEY) === Boolean(env.BREVO_SENDER_EMAIL), {
+      message: 'Set both BREVO_API_KEY and BREVO_SENDER_EMAIL, or neither',
+      path: ['BREVO_SENDER_EMAIL'],
+    })
     .refine(hasAllOrNoR2Settings, {
       message: 'Set all of R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY and R2_BUCKET, or none of them',
       path: ['R2_BUCKET'],

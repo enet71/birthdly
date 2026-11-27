@@ -442,6 +442,8 @@
     "reconnect": "Reconnecter"
   },
   "reminderSchedule": {
+    "email": "E-mail",
+    "emailScope": "Brevo utilise l’adresse e-mail de votre compte et les informations d’anniversaire du rappel pour vous l’envoyer.",
     "title": "Rappels d’anniversaire",
     "description": "Un planning pour tous les anniversaires",
     "browser": "Navigateur",
@@ -711,7 +713,7 @@
       "text35": "Une fois par mois, ouvrez la vue annuelle et vérifiez que personne d'important ne manque.",
       "text36": "Questions fréquentes",
       "text37": "Birthdly peut-il m'envoyer des rappels par e-mail ?",
-      "text38": "Pas pour le moment. Birthdly envoie des notifications du navigateur, et Google Agenda peut vous rappeler les anniversaires une fois que vous l'avez connecté.",
+      "text38": "Oui. Si l’e-mail est disponible dans les paramètres, sélectionnez-le pour recevoir le rappel à l’adresse de votre compte.",
       "text39": "Quand le rappel arrive-t-il ?",
       "text40": "Les notifications d'anniversaire arrivent à l'heure que vous choisissez dans les paramètres (9 h par défaut), le jour même, la veille ou les deux. Les rappels de Google Agenda pour les anniversaires ajoutés dans Birthdly arrivent à 9 h la veille, dans le fuseau horaire de votre Google Agenda. Pour les anniversaires de vos contacts Google, Google Agenda suit ses propres paramètres de notification.",
       "text41": "Puis-je recevoir des rappels sans connecter Google Agenda ?",

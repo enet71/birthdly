@@ -1,7 +1,7 @@
 import { effect, inject, Injectable, untracked } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, EMPTY, map, Observable, Subject, switchMap, tap } from 'rxjs';
-import { ReminderScheduleDto } from '@birthday/shared-models';
+import { ReminderScheduleDto, ReminderScheduleResponse } from '@birthday/shared-models';
 import { injectState, ReadonlyState, StateController } from '@birthday/web-shared-data-access';
 import { AppLocale, AppTranslateService, LocaleState } from '@birthday/web-shared-i18n';
 import { AnalyticsService, Environment, ENVIRONMENT_TOKEN, NotificationsService } from '@birthday/web-shared-util';
@@ -68,7 +68,7 @@ export class RemindersController extends StateController {
     this.remindersState.deviceSubscriptionResource.reload();
   }
 
-  public saveSchedule(schedule: ReminderScheduleDto): Observable<ReminderScheduleDto> {
+  public saveSchedule(schedule: ReminderScheduleDto): Observable<ReminderScheduleResponse> {
     return this.remindersApi
       .saveSchedule(schedule, {
         timeZone: this.getTimeZone(),

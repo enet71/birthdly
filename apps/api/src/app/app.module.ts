@@ -81,6 +81,9 @@ import { HealthModule } from './health/health.module';
         vapidPublicKey: config.get('VAPID_PUBLIC_KEY', { infer: true }),
         vapidPrivateKey: config.get('VAPID_PRIVATE_KEY', { infer: true }),
         vapidSubject: config.get('VAPID_SUBJECT', { infer: true }),
+        appOrigin: config.get('APP_ORIGIN', { infer: true }),
+        brevoApiKey: config.get('BREVO_API_KEY', { infer: true }),
+        brevoSenderEmail: config.get('BREVO_SENDER_EMAIL', { infer: true }),
       }),
     }),
     StorageModule.forRootAsync({

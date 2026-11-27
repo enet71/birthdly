@@ -442,6 +442,8 @@
     "reconnect": "Reconnect"
   },
   "reminderSchedule": {
+    "email": "Email",
+    "emailScope": "Brevo uses your account email address and the birthday details in the reminder to deliver it.",
     "title": "Birthday reminders",
     "description": "One schedule for all birthdays",
     "browser": "Browser",
@@ -711,7 +713,7 @@
       "text35": "Once a month, open the year view and check that nobody important is missing.",
       "text36": "Frequently asked questions",
       "text37": "Can Birthdly send me email reminders?",
-      "text38": "Not at the moment. Birthdly sends browser notifications, and Google Calendar can remind you after you connect it.",
+      "text38": "Yes. If Email is available in Settings, select it for a reminder to receive it at your account email address.",
       "text39": "When does the reminder arrive?",
       "text40": "Birthday notifications arrive at the time you choose in Settings, 9:00 unless you change it, on the day, the day before, or both. Google Calendar reminders for birthdays you add in Birthdly arrive at 9:00 the day before, in the time zone of your Google Calendar. For birthdays from your Google Contacts, Google Calendar follows its own notification settings.",
       "text41": "Do I get reminders without connecting Google Calendar?",

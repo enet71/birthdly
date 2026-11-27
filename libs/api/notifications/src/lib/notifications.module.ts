@@ -3,6 +3,7 @@ import { InviteSubmissionsListener } from '@birthday/api-invites';
 import { ConfigurableModuleClass } from './notifications.module-definition';
 import {
   BirthdayNotificationsService,
+  BrevoEmailService,
   DueNotificationsService,
   InviteSubmissionNotificationsService,
   NotificationsJobsService,
@@ -19,6 +20,7 @@ import {
     DueNotificationsService,
     UserPushService,
     BirthdayNotificationsService,
+    BrevoEmailService,
     NotificationsJobsService,
     InviteSubmissionNotificationsService,
     { provide: InviteSubmissionsListener, useExisting: InviteSubmissionNotificationsService },

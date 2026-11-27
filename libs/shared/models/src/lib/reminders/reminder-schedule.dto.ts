@@ -1,4 +1,4 @@
-export const REMINDER_CHANNELS = ['browser', 'googleCalendar'] as const;
+export const REMINDER_CHANNELS = ['browser', 'googleCalendar', 'email'] as const;
 export const MAX_REMINDERS = 5;
 export const MAX_REMINDER_DAYS = 28;
 export const MINUTES_PER_DAY = 24 * 60;
@@ -14,6 +14,10 @@ export interface ScheduledReminder {
 
 export interface ReminderScheduleDto {
   reminders: ScheduledReminder[];
+}
+
+export interface ReminderScheduleResponse extends ReminderScheduleDto {
+  emailAvailable: boolean;
 }
 
 // Minutes before the start of an all-day Google event. Google cannot remind after the event starts, so a same-day
