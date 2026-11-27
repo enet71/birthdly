@@ -2,11 +2,14 @@ import { z } from 'zod';
 import {
   APP_LOCALES,
   DevicePushSubscriptionDto,
+  MAX_REMINDER_DAYS,
+  MAX_REMINDERS,
+  MINUTES_PER_DAY,
   PushSubscriptionEndpointRequest,
-  REMINDER_DAYS,
+  REMINDER_CHANNELS,
   ReminderDevicePreferencesRequest,
   ReminderLocaleRequest,
-  ReminderSettingsDto,
+  ReminderScheduleDto,
 } from '@birthday/shared-models';
 
 // The same limits as the database checks.
@@ -16,15 +19,36 @@ const PUSH_KEY_MAX = 256;
 // Only the browsers' push services: the server sends notifications to this URL, so it must not reach anything else.
 const PUSH_ENDPOINT = /^https:\/\/([a-z0-9-]+\.)*(fcm\.googleapis\.com|push\.services\.mozilla\.com|notify\.windows\.com|push\.apple\.com)\//;
 
-const days = z.enum(REMINDER_DAYS);
-const hour = z.number().int().min(0).max(23);
 // The database also checks the name against Postgres's own list; ReminderSettingsService answers that with 400 too.
 const timeZone = z.string().min(1).max(100).refine(isTimeZone, TIME_ZONE_MESSAGE);
 const locale = z.enum(APP_LOCALES);
 
-export const reminderSettingsSchema = z.strictObject({ days, hour, timeZone, locale }) satisfies z.ZodType<ReminderSettingsDto>;
+const scheduledReminder = z
+  .strictObject({
+    daysBefore: z.number().int().min(0).max(MAX_REMINDER_DAYS),
+    minuteOfDay: z
+      .number()
+      .int()
+      .min(0)
+      .max(MINUTES_PER_DAY - 1),
+    channels: z.array(z.enum(REMINDER_CHANNELS)).min(1).max(REMINDER_CHANNELS.length),
+    enabled: z.boolean(),
+  })
+  .refine((row) => new Set(row.channels).size === row.channels.length, 'Channels must be unique');
+
+export const reminderScheduleSchema = z
+  .strictObject({ reminders: z.array(scheduledReminder).max(MAX_REMINDERS) })
+  .refine(
+    ({ reminders }) => new Set(reminders.map(({ daysBefore, minuteOfDay }) => `${daysBefore}:${minuteOfDay}`)).size === reminders.length,
+    'Reminder times must be unique',
+  ) satisfies z.ZodType<ReminderScheduleDto>;
 
 export const devicePreferencesSchema = z.strictObject({ timeZone, locale }) satisfies z.ZodType<ReminderDevicePreferencesRequest>;
+
+export const saveReminderScheduleSchema = z.strictObject({
+  schedule: reminderScheduleSchema,
+  preferences: devicePreferencesSchema,
+});
 
 export const reminderLocaleSchema = z.strictObject({ locale }) satisfies z.ZodType<ReminderLocaleRequest>;
 

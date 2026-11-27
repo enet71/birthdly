@@ -1,5 +1,6 @@
 import { sql } from 'drizzle-orm';
-import { boolean, check, pgTable, smallint, text, uuid } from 'drizzle-orm/pg-core';
+import { boolean, check, jsonb, pgTable, smallint, text, timestamp, uuid } from 'drizzle-orm/pg-core';
+import { ScheduledReminder } from '@birthday/shared-models';
 import { users } from './users';
 
 export const notificationSettings = pgTable(
@@ -10,6 +11,9 @@ export const notificationSettings = pgTable(
       .references(() => users.id, { onDelete: 'cascade' }),
     remindOnDay: boolean('remind_on_day').notNull().default(true),
     remindDayBefore: boolean('remind_day_before').notNull().default(true),
+    schedule: jsonb('schedule').$type<ScheduledReminder[]>(),
+    // When the schedule was last saved: slots that were already due by then are not sent that day.
+    scheduleUpdatedAt: timestamp('schedule_updated_at', { withTimezone: true }),
     // The user's local hour, 0–23.
     hour: smallint('hour').notNull().default(9),
     timeZone: text('time_zone').notNull(),

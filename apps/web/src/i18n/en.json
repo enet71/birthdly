@@ -441,6 +441,27 @@
     "accessLostText": "Google no longer lets Birthdly use your calendar. Connect again to resume syncing.",
     "reconnect": "Reconnect"
   },
+  "reminderSchedule": {
+    "title": "Birthday reminders",
+    "description": "One schedule for all birthdays",
+    "browser": "Browser",
+    "disconnected": "Not connected",
+    "googleCalendar": "Google Calendar",
+    "sameDay": "On the birthday",
+    "inAdvance": "{{ days }} day(s) before",
+    "empty": "No reminders yet",
+    "limit": "Up to {{ maximum }} reminders",
+    "add": "Add reminder",
+    "daysBefore": "Days before (0–28)",
+    "midnight": "In Google Calendar, a reminder on the birthday comes at midnight.",
+    "channels": "Channels",
+    "connectGoogle": "Connect Google Calendar",
+    "connectBrowser": "Enable on this device",
+    "googleScope": "Google Calendar settings apply to events created by Birthdly.",
+    "duplicate": "A reminder already exists for this day and time. You can add channels to it.",
+    "remove": "Delete",
+    "open": "Manage"
+  },
   "reminders": {
     "title": "Birthday notifications",
     "loading": "Loading notification settings",
@@ -453,14 +474,7 @@
     "turnOn": "Turn on for this device",
     "enabled": "On for this device",
     "turnOff": "Turn off for this device",
-    "when": "When to notify",
-    "time": "Time",
-    "timeZoneHint": "Time zone: {{ timeZone }}. These settings apply to all your devices.",
-    "days": {
-      "both": "On the day and the day before",
-      "onDay": "On the day",
-      "dayBefore": "The day before"
-    }
+    "time": "Time"
   },
   "about": {
     "features": {

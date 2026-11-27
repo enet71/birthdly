@@ -1,9 +1,10 @@
 // pg-boss queues: mirroring one birthday change into Google, the first sync after connecting, picking the users due for
-// a background sync, and one user's background sync.
+// a background sync, one user's background sync, and putting changed reminders on a user's events.
 export const PUSH_QUEUE = 'google-calendar-push';
 export const FIRST_SYNC_QUEUE = 'google-calendar-first-sync';
 export const POLL_QUEUE = 'google-calendar-poll';
 export const BACKGROUND_SYNC_QUEUE = 'google-calendar-background-sync';
+export const REMINDERS_QUEUE = 'google-calendar-reminders';
 // Every minute, so the users due for a sync are spread over time instead of all starting at once.
 export const POLL_SCHEDULE = '* * * * *';
 

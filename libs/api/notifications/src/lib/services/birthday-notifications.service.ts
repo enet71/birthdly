@@ -46,7 +46,7 @@ export class BirthdayNotificationsService {
 
   // Returns how many of the user's devices received the notification.
   private async notifyUser(user: DueUser): Promise<number> {
-    const birthdays = await this.due.findBirthdaysAround(user.userId, user.localDate);
+    const birthdays = await this.due.findBirthdaysAround(user.userId, user.localDate, user.daysBefore);
     const payload = buildBirthdayNotification(birthdays, user);
 
     return payload ? this.userPush.pushToUser(user.userId, payload) : 0;

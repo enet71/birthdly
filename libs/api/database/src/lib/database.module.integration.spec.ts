@@ -145,6 +145,10 @@ describe('DatabaseModule with a real Postgres', () => {
         if (column.default === PULLED_EMPTY_ARRAY_DEFAULT) {
           column.default = `'{}'`;
         }
+        // PostgreSQL can render the negative smallint literal with parentheses and a cast.
+        if (column.type === 'smallint' && /^'?\(?-1\)?'?(?:::smallint)?$/.test(String(column.default))) {
+          column.default = -1;
+        }
       }
     }
 

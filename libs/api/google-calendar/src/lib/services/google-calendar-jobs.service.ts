@@ -1,10 +1,18 @@
 import { Inject, Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
-import { Job, JobInsert, PgBoss } from 'pg-boss';
+import { Db, Job, JobInsert, PgBoss } from 'pg-boss';
 import { BirthdayChange } from '@birthday/api-birthdays';
 import { PG_BOSS } from '@birthday/api-jobs';
-import { BACKGROUND_SYNC_INTERVAL_MS, BACKGROUND_SYNC_QUEUE, FIRST_SYNC_QUEUE, POLL_QUEUE, POLL_SCHEDULE, PUSH_QUEUE } from '../constants';
+import {
+  BACKGROUND_SYNC_INTERVAL_MS,
+  BACKGROUND_SYNC_QUEUE,
+  FIRST_SYNC_QUEUE,
+  POLL_QUEUE,
+  POLL_SCHEDULE,
+  PUSH_QUEUE,
+  REMINDERS_QUEUE,
+} from '../constants';
 import { GoogleAccessRevokedError } from '../errors';
-import { BackgroundSyncJob, FirstSyncJob } from '../types';
+import { BackgroundSyncJob, FirstSyncJob, RemindersJob } from '../types';
 import { GoogleCalendarEventsService } from './google-calendar-events.service';
 import { GoogleConnectionsService } from './google-connections.service';
 import { GoogleImportService } from './google-import.service';
@@ -18,6 +26,9 @@ const POLL_QUEUE_OPTIONS = { policy: 'stately', retryLimit: 0, expireInSeconds: 
 // `short` with the user as `singletonKey`: at most one waiting sync per user. A failed sync is not retried; the user is
 // due again after the interval.
 const BACKGROUND_SYNC_QUEUE_OPTIONS = { policy: 'short', retryLimit: 0, expireInSeconds: 10 * 60 } as const;
+// `stately` with the user as `singletonKey`: saving the schedule many times in a row leaves one waiting update per user
+// behind the running one, which reads the latest schedule anyway.
+const REMINDERS_QUEUE_OPTIONS = { policy: 'stately', retryLimit: 3, retryDelay: 30, retryBackoff: true, expireInSeconds: 10 * 60 } as const;
 // Keeps the People API's stricter quota for full reads in reach when many users are due at once.
 const USERS_PER_POLL = 50;
 
@@ -48,6 +59,13 @@ export class GoogleCalendarJobsService implements OnApplicationBootstrap {
       retryLimit: BACKGROUND_SYNC_QUEUE_OPTIONS.retryLimit,
       expireInSeconds: BACKGROUND_SYNC_QUEUE_OPTIONS.expireInSeconds,
     });
+    await this.boss.createQueue(REMINDERS_QUEUE, REMINDERS_QUEUE_OPTIONS);
+    await this.boss.updateQueue(REMINDERS_QUEUE, {
+      retryLimit: REMINDERS_QUEUE_OPTIONS.retryLimit,
+      retryDelay: REMINDERS_QUEUE_OPTIONS.retryDelay,
+      retryBackoff: REMINDERS_QUEUE_OPTIONS.retryBackoff,
+      expireInSeconds: REMINDERS_QUEUE_OPTIONS.expireInSeconds,
+    });
     // pg-boss starts each scheduled pass once, even with several API instances.
     await this.boss.schedule(POLL_QUEUE, POLL_SCHEDULE, null, { tz: 'UTC' });
     // Several jobs at once, so one user's slow Google requests do not hold back everyone else's.
@@ -57,12 +75,20 @@ export class GoogleCalendarJobsService implements OnApplicationBootstrap {
     await this.boss.work<BackgroundSyncJob>(BACKGROUND_SYNC_QUEUE, { localConcurrency: 5 }, ([job]: Job<BackgroundSyncJob>[]) =>
       this.runBackgroundSync(job.data),
     );
+    await this.boss.work<RemindersJob>(REMINDERS_QUEUE, { localConcurrency: 2 }, ([job]: Job<RemindersJob>[]) => this.updateReminders(job.data));
   }
 
   public async enqueueFirstSync(userId: string): Promise<void> {
     const job: FirstSyncJob = { userId };
 
     await this.boss.send(FIRST_SYNC_QUEUE, job);
+  }
+
+  // Sent in the transaction that saves the schedule, so the update never runs before the new schedule is visible.
+  public async enqueueReminderUpdate(userId: string, db: Db): Promise<void> {
+    const job: RemindersJob = { userId };
+
+    await this.boss.send(REMINDERS_QUEUE, job, { db, singletonKey: userId });
   }
 
   private async push(change: BirthdayChange): Promise<void> {
@@ -75,6 +101,21 @@ export class GoogleCalendarJobsService implements OnApplicationBootstrap {
       const accessToken = await this.connections.getAccessToken(change.userId);
 
       await this.events.syncBirthdayEvent(change.userId, accessToken, change.birthdayId, change.deletedGoogleEventId);
+    } catch (error) {
+      if (!(error instanceof GoogleAccessRevokedError)) {
+        throw error;
+      }
+    }
+  }
+
+  private async updateReminders({ userId }: RemindersJob): Promise<void> {
+    // The user disconnected after the update was queued.
+    if (!(await this.connections.isConnected(userId))) {
+      return;
+    }
+
+    try {
+      await this.events.updateReminders(userId, await this.connections.getAccessToken(userId));
     } catch (error) {
       if (!(error instanceof GoogleAccessRevokedError)) {
         throw error;

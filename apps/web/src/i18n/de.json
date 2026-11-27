@@ -441,6 +441,27 @@
     "accessLostText": "Google erlaubt Birthdly nicht mehr, deinen Kalender zu nutzen. Verbinde ihn erneut, um die Synchronisierung fortzusetzen.",
     "reconnect": "Erneut verbinden"
   },
+  "reminderSchedule": {
+    "title": "Geburtstagserinnerungen",
+    "description": "Ein Zeitplan für alle Geburtstage",
+    "browser": "Browser",
+    "disconnected": "Nicht verbunden",
+    "googleCalendar": "Google Kalender",
+    "sameDay": "Am Geburtstag",
+    "inAdvance": "{{ days }} Tag(e) vorher",
+    "empty": "Noch keine Erinnerungen",
+    "limit": "Bis zu {{ maximum }} Erinnerungen",
+    "add": "Erinnerung hinzufügen",
+    "daysBefore": "Tage im Voraus (0–28)",
+    "midnight": "Im Google Kalender kommt die Erinnerung am Geburtstag um Mitternacht.",
+    "channels": "Kanäle",
+    "connectGoogle": "Google Kalender verbinden",
+    "connectBrowser": "Auf diesem Gerät aktivieren",
+    "googleScope": "Die Google-Kalender-Einstellungen gelten für Ereignisse, die Birthdly erstellt hat.",
+    "duplicate": "Für diesen Tag und diese Uhrzeit gibt es bereits eine Erinnerung. Füge dort weitere Kanäle hinzu.",
+    "remove": "Löschen",
+    "open": "Verwalten"
+  },
   "reminders": {
     "title": "Geburtstagsbenachrichtigungen",
     "loading": "Benachrichtigungseinstellungen werden geladen",
@@ -453,14 +474,7 @@
     "turnOn": "Auf diesem Gerät aktivieren",
     "enabled": "Auf diesem Gerät aktiv",
     "turnOff": "Auf diesem Gerät deaktivieren",
-    "when": "Wann benachrichtigen",
-    "time": "Uhrzeit",
-    "timeZoneHint": "Zeitzone: {{ timeZone }}. Diese Einstellungen gelten für alle deine Geräte.",
-    "days": {
-      "both": "Am Tag selbst und am Vortag",
-      "onDay": "Am Tag selbst",
-      "dayBefore": "Am Vortag"
-    }
+    "time": "Uhrzeit"
   },
   "about": {
     "features": {

@@ -13,8 +13,9 @@ Dialogs follow the repository `State + Controller` architecture.
 
 - Components render UI and call controller methods for user events.
 - `State` stores dialog signal data when visibility, payload, progress, or selected dialog content belongs to feature state.
-- `Controller` owns commands that open, close, update, or react to dialogs.
+- `Controller` owns commands that open, close, update, or react to dialogs by changing State.
 - Dialog components should stay focused on rendering dialog content and emitting local user actions.
+- State and Controllers never import components (dialog or otherwise) and never call `MatDialog.open`. The only code that imports the dialog component and opens it is the feature's `provide...Dialog()` (see Opening Patterns). A type-only import (`import type`) for a token-selected component is allowed.
 
 ## State Placement
 
@@ -44,23 +45,25 @@ Do not use state for:
 
 Controllers are the dialog workflow boundary.
 
-- Inject the dialog service, feature state, metrics, router, and API services as needed.
-- Expose named methods such as `openPreview`, `openPermissions`, `closeLoadingDialog`, or `confirmDelete`.
-- Update dialog state before/after opening when the dialog component reads from state.
-- Close dialog refs when the workflow completes, fails, or resets.
+- Inject feature state, metrics, router, and API services as needed; not `MatDialog`.
+- Expose named methods such as `openPreview`, `openPermissions`, `closeLoadingDialog`, or `confirmDelete`. They set the dialog signal in State (for example `isXDialogOpen`) and the payload the dialog reads.
+- A controller provided inside the dialog component may inject `MatDialogRef` to close its own dialog or set `disableClose`.
 - Guard nullable state before opening dialogs; prefer early returns over non-null assertions.
 - Use `takeUntilDestroyed`, `first`, `takeUntil`, or equivalent lifecycle boundaries for dialog-related subscriptions.
 
 ## Opening Patterns
 
-Use the existing pattern that matches the feature:
+Dialogs are driven by a State signal:
 
-- Direct open: the controller calls `MatDialog.open(Component, { data })`, keeps the returned `MatDialogRef` when it must close the dialog later, and reacts to `afterClosed()`.
+- State holds the open signal and payload; the Controller's `open...Dialog()` / `close...Dialog()` only change them.
+- `<feature>.dialogs.ts` at the feature library root exports `provide...Dialog()`: a `provideEnvironmentInitializer` whose `effect` opens the dialog with `MatDialog.open(Component, { injector, ... })` when the signal turns on, closes the stored `MatDialogRef` when it turns off, and calls the controller's close method from `afterClosed()`. Examples: `provideInviteDialog` (`libs/web/birthdays/feature-people/src/lib/people.dialogs.ts`), `provideReminderScheduleDialog` (`libs/web/reminders/feature-settings/src/lib/reminder-settings.dialogs.ts`).
+- Register the State, the Controller, and `provide...Dialog()` in the providers of the route that owns the dialog (add a `*.routes.ts` with `loadChildren` for an app page that has none). Pass the route `injector` to `MatDialog.open`, so the dialog sees the route-scoped State and Controller.
+- Dialog components live in the feature's `dialogs/` folder, not in `components/`.
 - Token-driven component selection: inject a dialog component token when the feature must choose components without depending on a concrete UI library.
 
 For every new dialog, add all of these in the same change:
 
-- a named `open...Dialog()` method in the owning controller;
+- named `open...Dialog()` and `close...Dialog()` methods in the owning controller that change the State signal, and a `provide...Dialog()` registered in the route providers;
 - dialog data types in the feature `types` folder (see Structure in `code-best-practices`);
 - the dialog component export through the nearest UI barrel so the controller's library can import it.
 
@@ -102,7 +105,8 @@ Before adding new dialog trigger logic:
 ## Checklist
 
 - Dialog state lives at the feature state boundary.
-- Dialog opening/closing is owned by a controller or route/shell setup.
+- Dialog opening/closing is driven by a State signal that the controller changes; `MatDialog.open` and the component import live only in `provide...Dialog()`.
+- No State or Controller imports a component or injects `MatDialog`.
 - Dialogs include a controller open method and a UI barrel export.
 - Missing dialog state/controller or registration locations are clarified with the user or explicitly created; paths are not guessed.
 - State does not call dialog services or perform side effects.

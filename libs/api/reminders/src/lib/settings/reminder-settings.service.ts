@@ -1,7 +1,17 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
-import { DrizzleQueryError, eq } from 'drizzle-orm';
-import { AppLocale, ReminderDays, ReminderDevicePreferencesRequest, ReminderSettingsDto } from '@birthday/shared-models';
-import { DATABASE, Database, notificationSettings } from '@birthday/api-database';
+import { DrizzleQueryError, eq, sql } from 'drizzle-orm';
+import { fromDrizzle } from 'pg-boss';
+import {
+  AppLocale,
+  googleCalendarReminderMinutes,
+  ReminderDays,
+  ReminderDevicePreferencesRequest,
+  ReminderScheduleDto,
+  ReminderSettingsDto,
+  ScheduledReminder,
+} from '@birthday/shared-models';
+import { DATABASE, Database, googleCalendarConnections, notificationSettings } from '@birthday/api-database';
+import { GoogleCalendarJobsService } from '@birthday/api-google-calendar';
 import { TIME_ZONE_MESSAGE } from '../schemas';
 
 const SETTINGS_COLUMNS = {
@@ -19,25 +29,95 @@ type SettingsRow = { remindOnDay: boolean; remindDayBefore: boolean; hour: numbe
 // One settings row per user; every query is limited to the signed-in user.
 @Injectable()
 export class ReminderSettingsService {
-  constructor(@Inject(DATABASE) private readonly db: Database) {}
+  constructor(
+    @Inject(DATABASE) private readonly db: Database,
+    private readonly googleJobs: GoogleCalendarJobsService,
+  ) {}
+
+  public async getSchedule(userId: string): Promise<ReminderScheduleDto> {
+    const [row] = await this.db
+      .select({
+        ...SETTINGS_COLUMNS,
+        schedule: notificationSettings.schedule,
+      })
+      .from(notificationSettings)
+      .where(eq(notificationSettings.userId, userId));
+    if (row?.schedule) {
+      return { reminders: row.schedule };
+    }
+
+    const [connection] = await this.db
+      .select({ status: googleCalendarConnections.status })
+      .from(googleCalendarConnections)
+      .where(eq(googleCalendarConnections.userId, userId));
+    const reminders: ScheduledReminder[] = [];
+
+    // The same defaults as the fallback schedule in `DueNotificationsService.claimDueUsers`.
+    if (row?.remindOnDay) {
+      reminders.push({ daysBefore: 0, minuteOfDay: row.hour * 60, channels: ['browser'], enabled: true });
+    }
+    if (row?.remindDayBefore) {
+      reminders.push({ daysBefore: 1, minuteOfDay: row.hour * 60, channels: ['browser'], enabled: true });
+    }
+    if (connection?.status === 'connected' || connection?.status === 'revoked') {
+      const shared = reminders.find(({ daysBefore, minuteOfDay }) => daysBefore === 1 && minuteOfDay === 540);
+
+      if (shared) {
+        shared.channels.push('googleCalendar');
+      } else {
+        reminders.push({ daysBefore: 1, minuteOfDay: 540, channels: ['googleCalendar'], enabled: true });
+      }
+    }
+
+    return { reminders };
+  }
+
+  public async saveSchedule(
+    userId: string,
+    schedule: ReminderScheduleDto,
+    preferences: ReminderDevicePreferencesRequest,
+  ): Promise<ReminderScheduleDto> {
+    await this.db
+      .transaction(async (tx) => {
+        const [previous] = await tx
+          .select({ schedule: notificationSettings.schedule })
+          .from(notificationSettings)
+          .where(eq(notificationSettings.userId, userId))
+          .for('update');
+        // The times are the ones the user sees, so the settings move to this device's time zone and the app's language.
+        const changes = { ...preferences, schedule: schedule.reminders, scheduleUpdatedAt: sql`now()` };
+
+        await tx
+          .insert(notificationSettings)
+          .values({ userId, ...changes })
+          .onConflictDoUpdate({ target: notificationSettings.userId, set: changes });
+
+        const before = googleCalendarReminderMinutes(previous?.schedule);
+        const after = googleCalendarReminderMinutes(schedule.reminders);
+
+        if (before.length === after.length && before.every((minutes, index) => minutes === after[index])) {
+          return;
+        }
+
+        const [connection] = await tx
+          .select({ status: googleCalendarConnections.status })
+          .from(googleCalendarConnections)
+          .where(eq(googleCalendarConnections.userId, userId));
+
+        if (connection?.status === 'connected') {
+          await this.googleJobs.enqueueReminderUpdate(userId, fromDrizzle(tx, sql));
+        }
+      })
+      .catch(rejectUnknownTimeZone);
+
+    return schedule;
+  }
 
   // `null` when the user has never turned notifications on.
   public async get(userId: string): Promise<ReminderSettingsDto | null> {
     const [row] = await this.db.select(SETTINGS_COLUMNS).from(notificationSettings).where(eq(notificationSettings.userId, userId));
 
     return row ? toDto(row) : null;
-  }
-
-  public async save(userId: string, settings: ReminderSettingsDto): Promise<ReminderSettingsDto> {
-    const values = toRow(settings);
-    const [row] = await this.db
-      .insert(notificationSettings)
-      .values({ userId, ...values })
-      .onConflictDoUpdate({ target: notificationSettings.userId, set: values })
-      .returning(SETTINGS_COLUMNS)
-      .catch(rejectUnknownTimeZone);
-
-    return toDto(row);
   }
 
   // Creates the settings with the default days and hour, or keeps them; either way stores this device's time zone and
@@ -70,16 +150,6 @@ function toDays({ remindOnDay, remindDayBefore }: SettingsRow): ReminderDays {
   }
 
   return remindOnDay ? 'onDay' : 'dayBefore';
-}
-
-function toRow(settings: ReminderSettingsDto): SettingsRow {
-  return {
-    remindOnDay: settings.days !== 'dayBefore',
-    remindDayBefore: settings.days !== 'onDay',
-    hour: settings.hour,
-    timeZone: settings.timeZone,
-    locale: settings.locale,
-  };
 }
 
 // The time zone passed the JavaScript check but not Postgres's list, which is stricter, for example about letter case

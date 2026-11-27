@@ -1,0 +1,87 @@
+.header,
+.row,
+.footer,
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.header {
+  padding-inline-end: 1rem;
+}
+
+.schedule,
+.editor {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.fields,
+.details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+}
+
+.channel-status,
+.footer {
+  margin-block: 1rem;
+}
+
+.channel-status {
+  border-block-end: 1px solid var(--mat-sys-outline-variant);
+  padding-block-end: 0.5rem;
+}
+
+.channel-status h3 {
+  font: var(--mat-sys-title-small);
+  margin-block: 0 0.5rem;
+}
+
+.row,
+.editor {
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+}
+
+.editor {
+  background: var(--mat-sys-surface-container-low);
+}
+.editor p {
+  margin: 0;
+}
+
+.summary {
+  height: auto;
+  min-height: 2.5rem;
+  text-align: start;
+}
+
+.details {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.fields mat-form-field {
+  flex: 1 1 9rem;
+  min-width: 0;
+}
+
+.actions {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.remove {
+  margin-inline-end: auto;
+  color: var(--mat-sys-error);
+}
+
+@media (max-width: 32rem) {
+  .footer {
+    align-items: start;
+    flex-direction: column;
+  }
+}

@@ -1,0 +1,256 @@
+<div class="header">
+  <h2 mat-dialog-title>{{ 'reminderSchedule.title' | transloco }}</h2>
+  <button matIconButton mat-dialog-close [attr.aria-label]="'common.close' | transloco" [disabled]="!state.canClose()">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <section class="channel-status" aria-labelledby="reminder-channel-heading" aria-live="polite">
+    <h3 id="reminder-channel-heading">{{ 'reminderSchedule.channels' | transloco }}</h3>
+    @let browser = state.browserView();
+    @switch (browser) {
+      @case ('loading') {
+        <ui-settings-row icon="notifications" [label]="'reminderSchedule.browser' | transloco" [description]="'reminders.loading' | transloco" />
+      }
+      @case ('error') {
+        <ui-settings-row
+          icon="error"
+          tone="negative"
+          [label]="'reminderSchedule.browser' | transloco"
+          [description]="'reminders.loadError' | transloco"
+        >
+          <button uiSettingsRowAction matButton="outlined" type="button" (click)="controller.reloadBrowser()">
+            {{ 'common.tryAgain' | transloco }}
+          </button>
+        </ui-settings-row>
+      }
+      @case ('unsupported') {
+        <ui-settings-row
+          icon="notifications_off"
+          [label]="'reminderSchedule.browser' | transloco"
+          [description]="'reminders.unsupported' | transloco"
+        />
+      }
+      @case ('iosNotInstalled') {
+        <ui-settings-row
+          icon="install_mobile"
+          [label]="'reminderSchedule.browser' | transloco"
+          [description]="'reminders.iosNotInstalled' | transloco"
+        />
+      }
+      @case ('blocked') {
+        <ui-settings-row
+          icon="notifications_off"
+          tone="negative"
+          [label]="'reminders.blocked' | transloco"
+          [description]="'reminders.blockedText' | transloco"
+        />
+      }
+      @default {
+        <ui-settings-row
+          [icon]="browser === 'enabled' ? 'notifications_active' : 'notifications'"
+          [tone]="browser === 'enabled' ? 'positive' : 'neutral'"
+          [label]="'reminderSchedule.browser' | transloco"
+          [description]="(browser === 'enabled' ? 'reminders.enabled' : 'reminders.disabledText') | transloco"
+        >
+          <button
+            uiSettingsRowAction
+            matButton="outlined"
+            type="button"
+            disabledInteractive
+            [disabled]="state.channelPending() || state.saving()"
+            (click)="browser === 'enabled' ? controller.disableBrowser() : controller.enableBrowser()"
+          >
+            {{ (browser === 'enabled' ? 'reminders.turnOff' : 'reminders.turnOn') | transloco }}
+          </button>
+        </ui-settings-row>
+      }
+    }
+    @let google = state.googleView();
+    @switch (google) {
+      @case ('loading') {
+        <ui-settings-row
+          icon="calendar_month"
+          [label]="'reminderSchedule.googleCalendar' | transloco"
+          [description]="'googleCalendar.loading' | transloco"
+        />
+      }
+      @case ('error') {
+        <ui-settings-row
+          icon="error"
+          tone="negative"
+          [label]="'reminderSchedule.googleCalendar' | transloco"
+          [description]="'googleCalendar.loadError' | transloco"
+        >
+          <button uiSettingsRowAction matButton="outlined" type="button" (click)="controller.reloadGoogle()">
+            {{ 'common.tryAgain' | transloco }}
+          </button>
+        </ui-settings-row>
+      }
+      @default {
+        <ui-settings-row
+          icon="calendar_month"
+          [tone]="google === 'connected' ? 'positive' : google === 'revoked' ? 'negative' : 'neutral'"
+          [label]="'reminderSchedule.googleCalendar' | transloco"
+          [description]="
+            (google === 'connected'
+              ? 'googleCalendar.connected'
+              : google === 'revoked'
+                ? 'googleCalendar.accessLostText'
+                : 'reminderSchedule.disconnected'
+            ) | transloco
+          "
+        >
+          <button
+            uiSettingsRowAction
+            matButton="outlined"
+            type="button"
+            disabledInteractive
+            [disabled]="state.channelPending() || state.saving()"
+            (click)="google === 'connected' ? controller.disconnectGoogle() : controller.connectGoogle()"
+          >
+            {{
+              (google === 'connected'
+                ? 'googleCalendar.disconnect'
+                : google === 'revoked'
+                  ? 'googleCalendar.reconnect'
+                  : 'reminderSchedule.connectGoogle'
+              ) | transloco
+            }}
+          </button>
+        </ui-settings-row>
+      }
+    }
+  </section>
+  <p>{{ 'reminderSchedule.description' | transloco }}</p>
+  @if (state.resource.error()) {
+    <p role="alert">{{ 'reminders.loadError' | transloco }}</p>
+    <button matButton type="button" (click)="controller.reload()">{{ 'common.tryAgain' | transloco }}</button>
+  } @else if (!state.resource.hasValue()) {
+    <p aria-live="polite">{{ 'reminders.loading' | transloco }}</p>
+  } @else {
+    <div class="schedule">
+      @for (row of state.reminders(); track $index; let index = $index) {
+        @if (state.draft()?.index === index) {
+          <ng-container [ngTemplateOutlet]="editor" />
+        } @else {
+          <div class="row">
+            <button
+              matButton
+              type="button"
+              class="summary"
+              [attr.data-reminder-index]="index"
+              [disabled]="state.draft() !== null || !state.canChangeSchedule()"
+              (click)="controller.edit(index)"
+            >
+              <span [id]="'reminder-summary-' + index"
+                >{{ (row.daysBefore === 0 ? 'reminderSchedule.sameDay' : 'reminderSchedule.inAdvance') | transloco: { days: row.daysBefore } }} ·
+                {{ clockTime(row.minuteOfDay) | localeDate: 'shortTime' }}</span
+              >
+              <span class="details">
+                @for (channel of row.channels; track channel) {
+                  <span>{{ 'reminderSchedule.' + channel | transloco }}</span>
+                }
+              </span>
+            </button>
+            <mat-slide-toggle
+              [aria-labelledby]="'reminder-summary-' + index"
+              [checked]="row.enabled"
+              [disabled]="state.draft() !== null || !state.canChangeSchedule()"
+              (toggleChange)="controller.toggle(index)"
+            />
+          </div>
+        }
+      } @empty {
+        @if (!state.draft()) {
+          <p>{{ 'reminderSchedule.empty' | transloco }}</p>
+        }
+      }
+      @if (state.draft()?.index === null) {
+        <ng-container [ngTemplateOutlet]="editor" />
+      }
+    </div>
+    <div class="footer">
+      <span>{{ 'reminderSchedule.limit' | transloco: { maximum: maximumReminders } }}</span>
+      <button matButton="filled" type="button" data-add-reminder [disabled]="!state.canAdd()" (click)="controller.edit(null)">
+        <mat-icon>add</mat-icon>{{ 'reminderSchedule.add' | transloco }}
+      </button>
+    </div>
+  }
+</mat-dialog-content>
+
+<ng-template #editor>
+  @if (state.draft(); as draft) {
+    <form class="editor" (submit)="$event.preventDefault(); controller.save()">
+      <div class="fields">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>{{ 'reminderSchedule.daysBefore' | transloco }}</mat-label>
+          <input
+            matInput
+            #days
+            data-reminder-days
+            type="number"
+            min="0"
+            [max]="maximumDays"
+            step="1"
+            required
+            [value]="draft.row.daysBefore"
+            (input)="controller.changeDays(days.valueAsNumber)"
+          />
+        </mat-form-field>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>{{ 'reminders.time' | transloco }}</mat-label>
+          <input matInput #clock type="time" required [value]="time(draft.row.minuteOfDay)" (input)="controller.changeTime(clock.value)" />
+        </mat-form-field>
+      </div>
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>{{ 'reminderSchedule.channels' | transloco }}</mat-label>
+        <mat-select multiple [value]="draft.row.channels" (selectionChange)="controller.changeChannels($event.value)">
+          @for (channel of channels; track channel) {
+            <mat-option [value]="channel"
+              >{{ 'reminderSchedule.' + channel | transloco }}
+              @if (channel === 'browser' ? !state.browserConnected() : !state.googleConnected()) {
+                <span> · {{ 'reminderSchedule.disconnected' | transloco }}</span>
+              }
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      @if (draft.row.channels.includes('googleCalendar')) {
+        <p>{{ 'reminderSchedule.googleScope' | transloco }}</p>
+        @if (draft.row.daysBefore === 0) {
+          <p>{{ 'reminderSchedule.midnight' | transloco }}</p>
+        }
+        @if (!state.googleConnected()) {
+          <button
+            matButton="outlined"
+            type="button"
+            [disabled]="state.saving() || state.channelPending() || state.googleView() === 'loading' || state.googleView() === 'error'"
+            (click)="controller.connectGoogle()"
+          >
+            {{ 'reminderSchedule.connectGoogle' | transloco }}
+          </button>
+        }
+      }
+      @if (draft.row.channels.includes('browser') && state.browserView() === 'disabled') {
+        <button matButton="outlined" type="button" [disabled]="state.saving() || state.channelPending()" (click)="controller.enableBrowser()">
+          {{ 'reminderSchedule.connectBrowser' | transloco }}
+        </button>
+      }
+      @if (state.duplicate()) {
+        <p role="alert">{{ 'reminderSchedule.duplicate' | transloco }}</p>
+      }
+      <div class="actions">
+        @if (draft.index !== null) {
+          <button matButton type="button" class="remove" [disabled]="!state.canChangeSchedule()" (click)="controller.remove()">
+            {{ 'reminderSchedule.remove' | transloco }}
+          </button>
+        }
+        <button matButton type="button" [disabled]="state.saving()" (click)="controller.cancel()">{{ 'common.cancel' | transloco }}</button>
+        <button matButton="filled" type="submit" [disabled]="!state.valid() || !state.canChangeSchedule()">
+          {{ 'common.save' | transloco }}
+        </button>
+      </div>
+    </form>
+  }
+</ng-template>

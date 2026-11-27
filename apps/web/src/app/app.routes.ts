@@ -116,7 +116,7 @@ export const appRoutes: Route[] = [
     path: 'settings',
     title: 'routes.settings.title',
     data: { [APP_NOINDEX_DATA_KEY]: true },
-    loadComponent: () => import('./pages/settings/settings.component').then((m) => m.SettingsComponent),
+    loadChildren: () => import('./pages/settings/settings.routes').then((m) => m.SETTINGS_ROUTES),
   },
   {
     // Google Calendar consent used to return here; a link from before the popup still lands in Settings.

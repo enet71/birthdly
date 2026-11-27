@@ -19,12 +19,10 @@ describe('RemindersController', () => {
   let localeState: LocaleState;
   const remindersApi: {
     saveLocale: Mock<RemindersApiService['saveLocale']>;
-    saveSettings: Mock<RemindersApiService['saveSettings']>;
     saveDevicePreferences: Mock<RemindersApiService['saveDevicePreferences']>;
     saveDeviceSubscription: Mock<RemindersApiService['saveDeviceSubscription']>;
   } = {
     saveLocale: vi.fn(),
-    saveSettings: vi.fn(),
     saveDevicePreferences: vi.fn(),
     saveDeviceSubscription: vi.fn(),
   };
@@ -59,7 +57,6 @@ describe('RemindersController', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     remindersApi.saveLocale.mockReturnValue(of(undefined));
-    remindersApi.saveSettings.mockReturnValue(of(undefined));
     devicePush.getPermission.mockReturnValue('granted');
     devicePush.getSupport.mockReturnValue('unsupported');
 
@@ -142,30 +139,6 @@ describe('RemindersController', () => {
       deSave.next();
 
       expect(state.settings()).toEqual({ ...SETTINGS, locale: 'fr' });
-    });
-
-    it('patches the current settings, so a settings save made meanwhile is not undone', () => {
-      const localeSave: Subject<void> = new Subject<void>();
-      remindersApi.saveLocale.mockReturnValue(localeSave);
-      loadSettings(SETTINGS);
-      switchLocale('de');
-
-      controller.saveSettings({ hour: 20 }).subscribe();
-      localeSave.next();
-
-      expect(state.settings()).toEqual({ ...SETTINGS, hour: 20, timeZone: expect.any(String), locale: 'de' });
-    });
-  });
-
-  describe('saveSettings', () => {
-    it('saves the settings in the app language', () => {
-      loadSettings(SETTINGS);
-      localeState.locale.set('uk');
-
-      controller.saveSettings({ days: 'onDay' }).subscribe();
-
-      expect(remindersApi.saveSettings).toHaveBeenCalledWith({ ...SETTINGS, days: 'onDay', timeZone: expect.any(String), locale: 'uk' });
-      expect(state.settings()).toEqual({ ...SETTINGS, days: 'onDay', timeZone: expect.any(String), locale: 'uk' });
     });
   });
 

@@ -441,6 +441,27 @@
     "accessLostText": "Google n'autorise plus Birthdly à utiliser votre agenda. Reconnectez-le pour reprendre la synchronisation.",
     "reconnect": "Reconnecter"
   },
+  "reminderSchedule": {
+    "title": "Rappels d’anniversaire",
+    "description": "Un planning pour tous les anniversaires",
+    "browser": "Navigateur",
+    "disconnected": "Non connecté",
+    "googleCalendar": "Google Agenda",
+    "sameDay": "Le jour de l’anniversaire",
+    "inAdvance": "{{ days }} jour(s) avant",
+    "empty": "Aucun rappel",
+    "limit": "Jusqu’à {{ maximum }} rappels",
+    "add": "Ajouter un rappel",
+    "daysBefore": "Jours à l’avance (0–28)",
+    "midnight": "Dans Google Agenda, le rappel du jour de l’anniversaire arrive à minuit.",
+    "channels": "Canaux",
+    "connectGoogle": "Connecter Google Agenda",
+    "connectBrowser": "Activer sur cet appareil",
+    "googleScope": "Les réglages Google Agenda s’appliquent aux événements créés par Birthdly.",
+    "duplicate": "Un rappel existe déjà pour ce jour et cette heure. Vous pouvez y ajouter des canaux.",
+    "remove": "Supprimer",
+    "open": "Gérer"
+  },
   "reminders": {
     "title": "Notifications d'anniversaire",
     "loading": "Chargement des paramètres de notification",
@@ -453,14 +474,7 @@
     "turnOn": "Activer sur cet appareil",
     "enabled": "Activées sur cet appareil",
     "turnOff": "Désactiver sur cet appareil",
-    "when": "Quand notifier",
-    "time": "Heure",
-    "timeZoneHint": "Fuseau horaire : {{ timeZone }}. Ces paramètres s'appliquent à tous vos appareils.",
-    "days": {
-      "both": "Le jour même et la veille",
-      "onDay": "Le jour même",
-      "dayBefore": "La veille"
-    }
+    "time": "Heure"
   },
   "about": {
     "features": {

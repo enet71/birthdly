@@ -144,6 +144,8 @@ describe('database schema with a real Postgres', () => {
         userId,
         remindOnDay: true,
         remindDayBefore: true,
+        schedule: null,
+        scheduleUpdatedAt: null,
         hour: 9,
         timeZone: 'Europe/Berlin',
         locale: 'en',

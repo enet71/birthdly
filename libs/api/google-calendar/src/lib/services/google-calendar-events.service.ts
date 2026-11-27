@@ -1,7 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { and, eq, inArray, isNotNull, isNull } from 'drizzle-orm';
 import { randomBytes } from 'node:crypto';
-import { birthdays, DATABASE, Database } from '@birthday/api-database';
+import { birthdays, DATABASE, Database, notificationSettings } from '@birthday/api-database';
+import { googleCalendarReminderMinutes } from '@birthday/shared-models';
 import { UNKNOWN_BIRTH_YEAR } from '../constants';
 import { MODULE_OPTIONS_TOKEN } from '../google-calendar.module-definition';
 import { BirthdayRecord, GoogleCalendarModuleOptions, GoogleEvent } from '../types';
@@ -12,8 +13,6 @@ import { GoogleConnectionsService } from './google-connections.service';
 const BIRTHDAY_EVENTS_URL = 'https://www.googleapis.com/calendar/v3/calendars/primary/events';
 // A leap year, so a year-less Feb 29 still starts on Feb 29.
 const YEARLESS_START_YEAR = '2000';
-// All-day reminders count from the start of the day, so this is 9:00 the day before.
-const REMINDER_MINUTES = 15 * 60;
 const EVENT_ID_ALPHABET = '0123456789abcdefghijklmnopqrstuv';
 const PARALLEL_REQUESTS = 5;
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -38,7 +37,14 @@ export class GoogleCalendarEventsService {
   // arrive out of order, so the current row decides between updating and deleting the event. A birthday linked to a
   // Google contact has no event of Birthdly's, because Google shows the contact's birthday already.
   // `deletedEventId` is the event of a birthday that no longer exists, which only the change itself still knows.
-  public async syncBirthdayEvent(userId: string, accessToken: string, birthdayId: string, deletedEventId: string | null = null): Promise<void> {
+  // `reminderMinutes` lets a caller syncing many birthdays read the user's reminders once.
+  public async syncBirthdayEvent(
+    userId: string,
+    accessToken: string,
+    birthdayId: string,
+    deletedEventId: string | null = null,
+    reminderMinutes?: number[],
+  ): Promise<void> {
     const birthday = await findBirthdayRecord(this.db, userId, birthdayId);
 
     if (!birthday) {
@@ -48,7 +54,7 @@ export class GoogleCalendarEventsService {
       return;
     }
     if (!birthday.googleContactId) {
-      await this.upsertBirthdayEvent(accessToken, birthday);
+      await this.upsertBirthdayEvent(accessToken, birthday, reminderMinutes ?? (await this.findReminderMinutes(userId)));
       return;
     }
     if (birthday.googleEventId) {
@@ -64,13 +70,32 @@ export class GoogleCalendarEventsService {
     // still is gets created again with a new id on the next sync.
     const ownEventIds = this.pickOwnEventIds(await this.listBirthdayEvents(accessToken));
     const records = await readBirthdayRecords(this.db, userId);
+    const reminderMinutes = await this.findReminderMinutes(userId);
     const usedEventIds = new Set(records.map((record) => record.googleEventId));
     const orphanEventIds = ownEventIds.filter((eventId) => !usedEventIds.has(eventId));
 
     // Each birthday is read again right before its event is written, so a change made during the reconcile wins.
-    await this.runInParallel(records, (record) => this.syncBirthdayEvent(userId, accessToken, record.id));
+    await this.runInParallel(records, (record) => this.syncBirthdayEvent(userId, accessToken, record.id, null, reminderMinutes));
     await this.runInParallel(await this.findTrueOrphans(userId, orphanEventIds), (eventId) => this.deleteEvent(accessToken, eventId));
+    // A schedule saved during the run may have been overwritten with the reminders read at its start.
+    if (!sameMinutes(reminderMinutes, await this.findReminderMinutes(userId))) {
+      await this.updateReminders(userId, accessToken);
+    }
     await this.connections.markSynced(userId);
+  }
+
+  // Puts the user's current reminders on the events Birthdly created for them. It only changes existing events, so it
+  // can run beside a sync; a missing event gets these reminders when the next sync creates it again.
+  public async updateReminders(userId: string, accessToken: string): Promise<void> {
+    const reminders = this.toGoogleReminders(await this.findReminderMinutes(userId));
+    const records = await readBirthdayRecords(this.db, userId);
+    const eventIds = records
+      .filter((record) => !record.googleContactId && record.googleEventId && this.isOwnEventId(record.googleEventId))
+      .map((record) => record.googleEventId as string);
+
+    await this.runInParallel(eventIds, async (eventId) => {
+      await this.api.request(accessToken, 'PATCH', `${BIRTHDAY_EVENTS_URL}/${eventId}`, { reminders }, [404, 410]);
+    });
   }
 
   // Forgets the user's event ids, then removes the events Birthdly created in the user's Google Calendar; the birthdays
@@ -151,9 +176,9 @@ export class GoogleCalendarEventsService {
   // Updates the birthday's event, or creates one with a new id when it has none, Google deleted it, or its id lacks this
   // installation's tag. Such an event, made before the tag existed or by another installation whose database this one
   // was copied from, is only forgotten, never deleted: the installation it belongs to removes it as an orphan.
-  private async upsertBirthdayEvent(accessToken: string, birthday: BirthdayRecord): Promise<void> {
+  private async upsertBirthdayEvent(accessToken: string, birthday: BirthdayRecord, reminderMinutes: number[]): Promise<void> {
     if (birthday.googleEventId && this.isOwnEventId(birthday.googleEventId)) {
-      const event = this.toGoogleEvent(birthday, birthday.googleEventId);
+      const event = this.toGoogleEvent(birthday, birthday.googleEventId, reminderMinutes);
       const updated = await this.api.request(accessToken, 'PUT', `${BIRTHDAY_EVENTS_URL}/${birthday.googleEventId}`, event, [404, 410]);
 
       // Updating a deleted event may succeed and leave it deleted, so only a live event counts.
@@ -168,7 +193,7 @@ export class GoogleCalendarEventsService {
     }
 
     const eventId = this.createEventId(birthday.id);
-    const created = await this.api.request(accessToken, 'POST', BIRTHDAY_EVENTS_URL, this.toGoogleEvent(birthday, eventId));
+    const created = await this.api.request(accessToken, 'POST', BIRTHDAY_EVENTS_URL, this.toGoogleEvent(birthday, eventId, reminderMinutes));
 
     if (created.id !== eventId) {
       await this.deleteEvent(accessToken, created.id);
@@ -185,6 +210,15 @@ export class GoogleCalendarEventsService {
       await this.saveEventId({ id: birthday.id, googleEventId: eventId }, null);
       await this.deleteEvent(accessToken, eventId);
     }
+  }
+
+  private async findReminderMinutes(userId: string): Promise<number[]> {
+    const [settings] = await this.db
+      .select({ schedule: notificationSettings.schedule })
+      .from(notificationSettings)
+      .where(eq(notificationSettings.userId, userId));
+
+    return googleCalendarReminderMinutes(settings?.schedule);
   }
 
   // Of Birthdly's events, keeps those no birthday points to right now and whose birthday is not another Birthdly
@@ -227,7 +261,7 @@ export class GoogleCalendarEventsService {
   }
 
   // A Google birthday event: Google allows only these fields on it.
-  private toGoogleEvent(birthday: BirthdayRecord, eventId: string): Record<string, unknown> {
+  private toGoogleEvent(birthday: BirthdayRecord, eventId: string, reminderMinutes: number[]): Record<string, unknown> {
     const [year, month, day] = birthday.birthDate.split('-');
     const startDate = `${year !== UNKNOWN_BIRTH_YEAR ? year : YEARLESS_START_YEAR}-${month}-${day}`;
     const endDate = new Date(Date.parse(`${startDate}T00:00:00Z`) + DAY_MS).toISOString().slice(0, 10);
@@ -244,9 +278,17 @@ export class GoogleCalendarEventsService {
       recurrence: [recurrence],
       visibility: 'private',
       transparency: 'transparent',
-      reminders: { useDefault: false, overrides: [{ method: 'popup', minutes: REMINDER_MINUTES }] },
+      reminders: this.toGoogleReminders(reminderMinutes),
     };
   }
+
+  private toGoogleReminders(reminderMinutes: number[]): Record<string, unknown> {
+    return { useDefault: false, overrides: reminderMinutes.map((minutes) => ({ method: 'popup', minutes })) };
+  }
+}
+
+function sameMinutes(a: number[], b: number[]): boolean {
+  return a.length === b.length && a.every((minutes, index) => minutes === b[index]);
 }
 
 // The birthday id inside a Birthdly event id.

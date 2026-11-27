@@ -61,31 +61,48 @@ const NOTIFICATION_TEXTS: Record<AppLocale, NotificationTexts> = {
   },
 };
 
+const UPCOMING_TITLES: Record<AppLocale, string> = {
+  en: 'Upcoming birthdays',
+  es: 'Próximos cumpleaños',
+  de: 'Bevorstehende Geburtstage',
+  fr: 'Prochains anniversaires',
+  ru: 'Ближайшие дни рождения',
+  uk: 'Найближчі дні народження',
+};
+
 // `null` when no birthday falls on a reminded day.
 export function buildBirthdayNotification(birthdays: NotifiedBirthday[], options: BirthdayNotificationOptions): AngularPushPayload | null {
-  const today = options.remindOnDay ? getNamesOn(birthdays, options.localDate) : [];
-  const tomorrow = options.remindDayBefore ? getNamesOn(birthdays, addDays(options.localDate, 1)) : [];
   const texts = NOTIFICATION_TEXTS[options.locale] ?? NOTIFICATION_TEXTS.en;
-  const lines: string[] = [];
-
-  if (today.length) {
-    lines.push(texts.today + joinNames(today, texts.more));
-  }
-  if (tomorrow.length) {
-    lines.push(texts.tomorrow + joinNames(tomorrow, texts.more));
-  }
-  if (!lines.length) {
+  const dateFormat = new Intl.DateTimeFormat(options.locale, { month: 'short', day: 'numeric', timeZone: 'UTC' });
+  const tomorrow = addDays(options.deliveryDate, 1);
+  const groups = options.daysBefore
+    .map((days) => {
+      const date = addDays(options.localDate, days);
+      return { date, names: getNamesOn(birthdays, date) };
+    })
+    .filter(({ names }) => names.length > 0);
+  const [first] = groups;
+  if (!first) {
     return null;
   }
+  const title =
+    first.date === options.deliveryDate
+      ? getTitle(first.names, texts.titleToday)
+      : first.date === tomorrow
+        ? getTitle(first.names, texts.titleTomorrow)
+        : UPCOMING_TITLES[options.locale];
+  const lines = groups.map(({ date, names }) => {
+    const prefix = date === options.deliveryDate ? texts.today : date === tomorrow ? texts.tomorrow : dateFormat.format(new Date(date)) + ': ';
+    return prefix + joinNames(names, texts.more);
+  });
 
   return {
     notification: {
-      title: today.length ? getTitle(today, texts.titleToday) : getTitle(tomorrow, texts.titleTomorrow),
+      title,
       body: lines.join('\n'),
       lang: options.locale,
       icon: '/icon-192.png',
-      // A later notification for the same day replaces this one instead of stacking.
-      tag: `birthdays-${options.localDate}`,
+      tag: `birthdays-${options.localDate}-${options.minuteOfDay}`,
       data: { onActionClick: { default: { operation: 'navigateLastFocusedOrOpen', url: '/' } } },
     },
   };

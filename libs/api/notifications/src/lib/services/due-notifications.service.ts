@@ -10,8 +10,9 @@ const DELIVERY_RETENTION_DAYS = 7;
 interface DueUserRow extends Record<string, unknown> {
   user_id: string;
   local_date: string;
-  remind_on_day: boolean;
-  remind_day_before: boolean;
+  delivery_date: string;
+  minute_of_day: number;
+  days_before: number[];
   locale: AppLocale;
 }
 
@@ -25,58 +26,69 @@ export class DueNotificationsService {
     await this.db.delete(notificationDeliveries).where(sql`${notificationDeliveries.localDate} < current_date - ${DELIVERY_RETENTION_DAYS}::int`);
   }
 
-  // Claims up to `limit` due users and returns their settings. A user is due during the chosen local hour and the next
-  // one, which catches an hour skipped by a daylight saving change; the window never crosses midnight, so the local
-  // date stays the notified day. Only users with a device count. The claim (a row in `notification_deliveries`) comes
-  // before sending, so overlapping runs never notify a user twice on one local day. Joining the time zone names skips a
-  // stored name the database no longer knows instead of failing for everyone.
+  // A 119-minute grace period covers delayed jobs and the one-hour DST gap. The claim uses the scheduled local
+  // date and minute, so repeated clock times and overlapping workers cannot send a slot twice. A slot whose time had
+  // already come when the schedule was saved is skipped, so editing the schedule does not send a late reminder.
   public async claimDueUsers(limit: number): Promise<DueUser[]> {
     const result = await this.db.execute<DueUserRow>(sql`
-      with due as (
-        select settings.user_id, (now() at time zone settings.time_zone)::date as local_date
+      with slots as (
+        select settings.user_id, settings.time_zone, settings.schedule_updated_at, local_clock.value::date - date_offset.days as local_date, local_clock.value::date as delivery_date, settings.locale,
+          (entry.value->>'minuteOfDay')::int as minute_of_day, (entry.value->>'daysBefore')::int as days_before,
+          extract(hour from local_clock.value)::int * 60 + extract(minute from local_clock.value)::int + date_offset.days * 1440 as current_minute
         from notification_settings settings
         join pg_catalog.pg_timezone_names zone on zone.name = settings.time_zone
-        where extract(hour from now() at time zone settings.time_zone) between settings.hour and least(settings.hour + 1, 23)
+        cross join lateral (select now() at time zone settings.time_zone as value) local_clock
+        cross join generate_series(0, 1) date_offset(days)
+        cross join lateral jsonb_array_elements(coalesce(settings.schedule, jsonb_build_array(
+          jsonb_build_object('daysBefore', 0, 'minuteOfDay', settings.hour * 60, 'channels', jsonb_build_array('browser'), 'enabled', settings.remind_on_day),
+          jsonb_build_object('daysBefore', 1, 'minuteOfDay', settings.hour * 60, 'channels', jsonb_build_array('browser'), 'enabled', settings.remind_day_before)
+        ))) entry
+        where (entry.value->>'enabled')::boolean and (entry.value->'channels') ? 'browser'
           and exists (select 1 from push_subscriptions subscription where subscription.user_id = settings.user_id)
-          and not exists (
-            select 1
-            from notification_deliveries delivery
-            where delivery.user_id = settings.user_id and delivery.local_date = (now() at time zone settings.time_zone)::date
-          )
+      ),
+      due as (
+        select user_id, local_date, delivery_date, minute_of_day, locale, array_agg(days_before order by days_before) as days_before
+        from slots
+        where current_minute between minute_of_day and minute_of_day + 119
+          and (schedule_updated_at is null
+            or (local_date + make_interval(mins => minute_of_day)) at time zone time_zone > schedule_updated_at)
+          and not exists (select 1 from notification_deliveries delivery
+            where delivery.user_id = slots.user_id and delivery.local_date = slots.local_date
+              and delivery.minute_of_day in (-1, slots.minute_of_day))
+        group by user_id, local_date, delivery_date, minute_of_day, locale
         limit ${limit}
       ),
       claimed as (
-        insert into notification_deliveries (user_id, local_date)
-        select due.user_id, due.local_date from due
+        insert into notification_deliveries (user_id, local_date, minute_of_day)
+        select user_id, local_date, minute_of_day from due
         on conflict do nothing
-        returning notification_deliveries.user_id, notification_deliveries.local_date
+        returning user_id, local_date, minute_of_day
       )
-      select claimed.user_id, to_char(claimed.local_date, 'YYYY-MM-DD') as local_date, settings.remind_on_day, settings.remind_day_before, settings.locale
-      from claimed
-      join notification_settings settings on settings.user_id = claimed.user_id
+      select due.user_id, to_char(due.local_date, 'YYYY-MM-DD') as local_date, to_char(due.delivery_date, 'YYYY-MM-DD') as delivery_date,
+        due.minute_of_day, due.days_before, due.locale
+      from due join claimed using (user_id, local_date, minute_of_day)
     `);
 
     return result.rows.map((row) => ({
       userId: row.user_id,
       localDate: row.local_date,
-      remindOnDay: row.remind_on_day,
-      remindDayBefore: row.remind_day_before,
+      deliveryDate: row.delivery_date,
+      minuteOfDay: row.minute_of_day,
+      daysBefore: row.days_before,
       locale: row.locale,
     }));
   }
 
-  // The few birthdays a notification for `localDate` can mention: that day, the next one, and Feb 29, which falls on
-  // Feb 28 in other years. `buildBirthdayNotification` picks the exact ones, so a user's whole list is never read.
-  public findBirthdaysAround(userId: string, localDate: string): Promise<NotifiedBirthday[]> {
+  // Fetches birthdays for the configured offsets and includes leap-day birthdays for the final date match.
+  public findBirthdaysAround(userId: string, localDate: string, offsets: number[]): Promise<NotifiedBirthday[]> {
+    const targetDates = sql.join(
+      offsets.map((days) => sql`to_char(${localDate}::date + ${days}::int, 'MM-DD')`),
+      sql`, `,
+    );
     return this.db
       .select({ name: birthdays.name, birthDate: birthdays.birthDate })
       .from(birthdays)
-      .where(
-        and(
-          eq(birthdays.userId, userId),
-          sql`to_char(${birthdays.birthDate}, 'MM-DD') in (to_char(${localDate}::date, 'MM-DD'), to_char(${localDate}::date + 1, 'MM-DD'), '02-29')`,
-        ),
-      );
+      .where(and(eq(birthdays.userId, userId), sql`to_char(${birthdays.birthDate}, 'MM-DD') in (${targetDates}, '02-29')`));
   }
 
   public findSubscriptions(userId: string): Promise<StoredPushSubscription[]> {

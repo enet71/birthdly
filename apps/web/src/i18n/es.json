@@ -441,6 +441,27 @@
     "accessLostText": "Google ya no permite que Birthdly use tu calendario. Vuelve a conectarlo para reanudar la sincronización.",
     "reconnect": "Volver a conectar"
   },
+  "reminderSchedule": {
+    "title": "Recordatorios de cumpleaños",
+    "description": "Un horario para todos los cumpleaños",
+    "browser": "Navegador",
+    "disconnected": "No conectado",
+    "googleCalendar": "Google Calendar",
+    "sameDay": "El día del cumpleaños",
+    "inAdvance": "{{ days }} día(s) antes",
+    "empty": "Aún no hay recordatorios",
+    "limit": "Hasta {{ maximum }} recordatorios",
+    "add": "Añadir recordatorio",
+    "daysBefore": "Días de antelación (0–28)",
+    "midnight": "En Google Calendar, el aviso del día del cumpleaños llega a medianoche.",
+    "channels": "Canales",
+    "connectGoogle": "Conectar Google Calendar",
+    "connectBrowser": "Activar en este dispositivo",
+    "googleScope": "Los ajustes de Google Calendar se aplican a los eventos creados por Birthdly.",
+    "duplicate": "Ya existe un recordatorio para ese día y hora. Puedes añadirle canales.",
+    "remove": "Eliminar",
+    "open": "Gestionar"
+  },
   "reminders": {
     "title": "Notificaciones de cumpleaños",
     "loading": "Cargando los ajustes de notificaciones",
@@ -453,14 +474,7 @@
     "turnOn": "Activar en este dispositivo",
     "enabled": "Activadas en este dispositivo",
     "turnOff": "Desactivar en este dispositivo",
-    "when": "Cuándo avisar",
-    "time": "Hora",
-    "timeZoneHint": "Zona horaria: {{ timeZone }}. Estos ajustes se aplican a todos tus dispositivos.",
-    "days": {
-      "both": "El mismo día y el día anterior",
-      "onDay": "El mismo día",
-      "dayBefore": "El día anterior"
-    }
+    "time": "Hora"
   },
   "about": {
     "features": {

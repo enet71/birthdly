@@ -1,6 +1,7 @@
 import { effect, inject, Injectable, untracked } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, EMPTY, map, Observable, Subject, switchMap, tap } from 'rxjs';
+import { ReminderScheduleDto } from '@birthday/shared-models';
 import { injectState, ReadonlyState, StateController } from '@birthday/web-shared-data-access';
 import { AppLocale, AppTranslateService, LocaleState } from '@birthday/web-shared-i18n';
 import { AnalyticsService, Environment, ENVIRONMENT_TOKEN, NotificationsService } from '@birthday/web-shared-util';
@@ -67,6 +68,24 @@ export class RemindersController extends StateController {
     this.remindersState.deviceSubscriptionResource.reload();
   }
 
+  public saveSchedule(schedule: ReminderScheduleDto): Observable<ReminderScheduleDto> {
+    return this.remindersApi
+      .saveSchedule(schedule, {
+        timeZone: this.getTimeZone(),
+        locale: this.localeState.locale(),
+      })
+      .pipe(
+        tap(() => {
+          this.remindersState.settingsResource.reload();
+          this.notifications.createSuccessNotification(this.translator.translate('notifications.reminders.saved'));
+        }),
+        catchError(() => {
+          this.notifications.createErrorNotification(this.translator.translate('notifications.reminders.saveFailed'));
+          return EMPTY;
+        }),
+      );
+  }
+
   // The methods below complete without emitting when the request fails.
   // Asks for permission first when the user has not answered yet.
   public enableOnDevice(): Observable<void> {
@@ -116,28 +135,6 @@ export class RemindersController extends StateController {
       }),
       catchError(() => {
         this.notifications.createErrorNotification(this.translator.translate('notifications.reminders.turnOffFailed'));
-        return EMPTY;
-      }),
-    );
-  }
-
-  // Also moves the settings to this browser's time zone and the app's language, so the hour is the time the user sees.
-  public saveSettings(changes: Partial<Pick<ReminderSettings, 'days' | 'hour'>>): Observable<void> {
-    const current: ReminderSettings | null = this.remindersState.settings();
-
-    if (!current) {
-      return EMPTY;
-    }
-
-    const settings: ReminderSettings = { ...current, ...changes, timeZone: this.getTimeZone(), locale: this.localeState.locale() };
-
-    return this.remindersApi.saveSettings(settings).pipe(
-      tap(() => {
-        this.setSettings(settings);
-        this.notifications.createSuccessNotification(this.translator.translate('notifications.reminders.saved'));
-      }),
-      catchError(() => {
-        this.notifications.createErrorNotification(this.translator.translate('notifications.reminders.saveFailed'));
         return EMPTY;
       }),
     );

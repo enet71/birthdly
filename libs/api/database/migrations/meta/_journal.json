@@ -120,6 +120,20 @@
       "when": 1795696312650,
       "tag": "0016_release-celebrities-in-calendar",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1795776607014,
+      "tag": "0017_reminder-schedule",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1795787708381,
+      "tag": "0018_reminder-schedule-updated-at",
+      "breakpoints": true
     }
   ]
 }

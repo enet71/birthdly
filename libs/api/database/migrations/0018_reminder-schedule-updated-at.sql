@@ -1,0 +1,1 @@
+ALTER TABLE "notification_settings" ADD COLUMN "schedule_updated_at" timestamp with time zone;

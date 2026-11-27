@@ -64,3 +64,7 @@ export interface FirstSyncJob {
 export interface BackgroundSyncJob {
   userId: string;
 }
+
+export interface RemindersJob {
+  userId: string;
+}

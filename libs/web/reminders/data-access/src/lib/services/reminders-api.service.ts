@@ -6,6 +6,7 @@ import {
   PushSubscriptionLookupResponse,
   ReminderDevicePreferencesRequest,
   ReminderLocaleRequest,
+  ReminderScheduleDto,
 } from '@birthday/shared-models';
 import { ApiService } from '@birthday/web-shared-data-access';
 import { DevicePushSubscription, ReminderSettings } from '../types';
@@ -37,8 +38,12 @@ export class RemindersApiService extends ApiService {
     return this.httpClient.patch<void>(`${this.settingsUrl}/locale`, body);
   }
 
-  public saveSettings(settings: ReminderSettings): Observable<void> {
-    return this.httpClient.put<ReminderSettings>(this.settingsUrl, settings).pipe(map(() => undefined));
+  public getSchedule(): Observable<ReminderScheduleDto> {
+    return this.httpClient.get<ReminderScheduleDto>(`${this.settingsUrl}/schedule`);
+  }
+
+  public saveSchedule(schedule: ReminderScheduleDto, preferences: ReminderDevicePreferencesRequest): Observable<ReminderScheduleDto> {
+    return this.httpClient.put<ReminderScheduleDto>(`${this.settingsUrl}/schedule`, { schedule, preferences });
   }
 
   // Whether the signed-in user gets notifications at `endpoint`.

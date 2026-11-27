@@ -13,8 +13,9 @@ export interface DueUser {
   userId: string;
   // `yyyy-MM-dd`.
   localDate: string;
-  remindOnDay: boolean;
-  remindDayBefore: boolean;
+  deliveryDate: string;
+  minuteOfDay: number;
+  daysBefore: number[];
   locale: AppLocale;
 }
 
@@ -27,8 +28,9 @@ export interface NotifiedBirthday {
 export interface BirthdayNotificationOptions {
   // The user's local date, `yyyy-MM-dd`.
   localDate: string;
-  remindOnDay: boolean;
-  remindDayBefore: boolean;
+  deliveryDate: string;
+  minuteOfDay: number;
+  daysBefore: number[];
   locale: AppLocale;
 }
 

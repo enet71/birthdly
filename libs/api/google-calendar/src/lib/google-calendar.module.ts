@@ -31,6 +31,6 @@ import {
     GoogleCalendarService,
     { provide: BirthdayChangesListener, useExisting: GoogleCalendarPushQueue },
   ],
-  exports: [BirthdayChangesListener],
+  exports: [BirthdayChangesListener, GoogleCalendarJobsService],
 })
 export class GoogleCalendarModule extends ConfigurableModuleClass {}
